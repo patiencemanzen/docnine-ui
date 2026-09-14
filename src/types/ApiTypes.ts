@@ -22,5 +22,5 @@ export class ApiException extends Error {
 
 export interface AuthResponse {
   user: User;
-  accessToken: string;
+  accessToken?: string;
 }

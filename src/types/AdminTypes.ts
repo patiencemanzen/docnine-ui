@@ -8,14 +8,26 @@ export interface AdminStats {
   paidSubscriptions: number;
 }
 
+export interface AdminSubscriptionInfo {
+  _id?: string;
+  plan: string;
+  status: string;
+  billingCycle?: string | null;
+  seats?: number;
+  currentPeriodEnd?: string | null;
+  trialEndsAt?: string | null;
+  lastBillingNote?: string | null;
+}
+
 export interface AdminUser {
   _id: string;
   name: string;
   email: string;
   role: string;
   provider: string;
+  isEmailVerified?: boolean;
   createdAt: string;
-  subscription: { plan: string; status: string; billingCycle?: string | null };
+  subscription: AdminSubscriptionInfo;
 }
 
 export interface AdminProject {
@@ -32,6 +44,8 @@ export interface AdminSubscription {
   plan: string;
   status: string;
   billingCycle: string | null;
+  seats?: number;
+  currentPeriodEnd?: string | null;
   createdAt: string;
   userId: { _id: string; name: string; email: string } | null;
 }

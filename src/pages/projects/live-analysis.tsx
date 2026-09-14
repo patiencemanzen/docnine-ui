@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import { useParams, Link, useNavigate } from "react-router-dom"
 import { useProjectStore } from "@/store/projects"
-import { getAccessToken, API_BASE } from "@/lib/api"
+import { getAccessToken, API_BASE, refreshToken } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
@@ -117,24 +117,30 @@ export function LiveAnalysisPage() {
 
     const ctrl = new AbortController()
     abortRef.current = ctrl
-    const token = getAccessToken()
 
     ;(async () => {
-      try {
-        await fetchEventSource(`${API_BASE}/projects/${id}/stream`, {
-          headers: { Authorization: token ? `Bearer ${token}` : "" },
-          signal: ctrl.signal,
-          credentials: "include",
+      let token = getAccessToken() || await refreshToken()
+      for (let attempt = 0; attempt < 2; attempt++) {
+        try {
+          await fetchEventSource(`${API_BASE}/projects/${id}/stream`, {
+            headers: { Authorization: token ? `Bearer ${token}` : "" },
+            signal: ctrl.signal,
+            credentials: "include",
 
-          onopen: async (res) => {
-            if (res.ok) {
-              setConnectionState("connected")
-              setLoadError(null)
-            } else {
-              const body = await res.json().catch(() => ({}))
-              throw new Error(body?.error?.message ?? `HTTP ${res.status}`)
-            }
-          },
+            onopen: async (res) => {
+              if (res.status === 401) {
+                const err = new Error("SSE_AUTH") as Error & { code?: string }
+                err.code = "SSE_AUTH"
+                throw err
+              }
+              if (res.ok) {
+                setConnectionState("connected")
+                setLoadError(null)
+              } else {
+                const body = await res.json().catch(() => ({}))
+                throw new Error(body?.error?.message ?? `HTTP ${res.status}`)
+              }
+            },
 
           onmessage: (ev) => {
             try {
@@ -177,6 +183,7 @@ export function LiveAnalysisPage() {
           },
 
           onerror: (err) => {
+            if ((err as { code?: string })?.code === "SSE_AUTH") throw err
             if (ctrl.signal.aborted) return
             setConnectionState("reconnecting")
           },
@@ -185,10 +192,17 @@ export function LiveAnalysisPage() {
             if (!ctrl.signal.aborted) setConnectionState("disconnected")
           },
         })
-      } catch (err: any) {
-        if (!ctrl.signal.aborted) {
-          setConnectionState("disconnected")
-          setLoadError(err?.message ?? "Failed to connect to the pipeline stream.")
+          return
+        } catch (err: any) {
+          if (err?.code === "SSE_AUTH" && attempt === 0) {
+            token = await refreshToken()
+            if (token) continue
+          }
+          if (!ctrl.signal.aborted) {
+            setConnectionState("disconnected")
+            setLoadError(err?.message ?? "Failed to connect to the pipeline stream.")
+          }
+          return
         }
       }
     })()

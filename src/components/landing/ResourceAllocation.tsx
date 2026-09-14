@@ -1,80 +1,27 @@
 import { DashedLine } from "@/components/landing/DashedLine"
+import {
+  ArchivePreview,
+  NotifyPreview,
+  SharePreview,
+} from "@/components/landing/ProductPreviews"
 import { cn } from "@/lib/utils"
 
 const topItems = [
   {
-    title: "Reusable doc templates.",
+    title: "Reusable doc structure.",
     description:
-      "Draft lightning-fast documentation with smart instructions and project templates.",
-    images: [
-      {
-        src: "/landing/resource-allocation/templates.webp",
-        alt: "Documentation template interface",
-        width: 495,
-        height: 186,
-      },
-    ],
+      "Start from clear sections — README, API reference, schemas, and security — then edit what matters.",
+    kind: "templates" as const,
     className:
-      "flex-1 [&>.title-container]:mb-5 md:[&>.title-container]:mb-8 xl:[&>.image-container]:translate-x-6 [&>.image-container]:translate-x-2",
-    fade: [""],
+      "flex-1 [&>.title-container]:mb-5 md:[&>.title-container]:mb-8",
   },
   {
     title: "Simplify your stack.",
     description:
-      "Connect GitHub, GitLab, and Notion,stop juggling Confluence, SharePoint, and stale wikis.",
-    images: [
-      {
-        src: "/landing/logos/github.svg",
-        alt: "GitHub logo",
-        width: 48,
-        height: 48,
-      },
-      {
-        src: "/landing/logos/gitlab.svg",
-        alt: "GitLab logo",
-        width: 48,
-        height: 48,
-      },
-      {
-        src: "/landing/logos/notion.svg",
-        alt: "Notion logo",
-        width: 48,
-        height: 48,
-      },
-      {
-        src: "/landing/logos/openai.svg",
-        alt: "OpenAI logo",
-        width: 48,
-        height: 48,
-      },
-      {
-        src: "/landing/logos/claude.svg",
-        alt: "Claude logo",
-        width: 48,
-        height: 48,
-      },
-      {
-        src: "/landing/logos/confluence.svg",
-        alt: "Confluence logo",
-        width: 48,
-        height: 48,
-      },
-      {
-        src: "/landing/logos/drive.svg",
-        alt: "Google Drive logo",
-        width: 48,
-        height: 48,
-      },
-      {
-        src: "/landing/logos/notion.svg",
-        alt: "Notion logo",
-        width: 48,
-        height: 48,
-      },
-    ],
+      "Connect GitHub, GitLab, and Notion. Stop juggling Confluence, SharePoint, and stale wikis.",
+    kind: "stack" as const,
     className:
-      "flex-1 [&>.title-container]:mb-5 md:[&>.title-container]:mb-8 md:[&>.title-container]:translate-x-2 xl:[&>.title-container]:translate-x-4 [&>.title-container]:translate-x-0",
-    fade: [],
+      "flex-1 [&>.title-container]:mb-5 md:[&>.title-container]:mb-8",
   },
 ]
 
@@ -82,51 +29,36 @@ const bottomItems = [
   {
     title: "Archive what you outgrow.",
     description:
-      "Retire outdated docs without losing history,restore anything when you need it again.",
-    images: [
-      {
-        src: "/landing/resource-allocation/graveyard.webp",
-        alt: "Archive interface",
-        width: 305,
-        height: 280,
-      },
-    ],
-    className:
-      "[&>.title-container]:mb-5 md:[&>.title-container]:mb-8 xl:[&>.image-container]:translate-x-6 [&>.image-container]:translate-x-2",
-    fade: ["bottom"],
+      "Retire outdated docs without losing history. Restore anything when you need it again.",
+    kind: "archive" as const,
+    className: "[&>.title-container]:mb-5 md:[&>.title-container]:mb-8",
   },
   {
     title: "Collaboration built in.",
     description:
-      "Comment, review, and approve docs together so documentation stays a team habit.",
-    images: [
-      {
-        src: "/landing/resource-allocation/discussions.webp",
-        alt: "Collaboration interface",
-        width: 320,
-        height: 103,
-      },
-    ],
+      "Invite editors and viewers so documentation stays a team habit, not a solo chore.",
+    kind: "share" as const,
     className:
-      "justify-normal [&>.title-container]:mb-5 md:[&>.title-container]:mb-0 [&>.image-container]:flex-1 md:[&>.image-container]:place-items-center md:[&>.image-container]:-translate-y-3",
-    fade: [""],
+      "justify-normal [&>.title-container]:mb-5 md:[&>.title-container]:mb-0",
   },
   {
     title: "Stay notified.",
     description:
-      "Get alerts when docs drift from the codebase or a teammate needs your review.",
-    images: [
-      {
-        src: "/landing/resource-allocation/notifications.webp",
-        alt: "Notifications interface",
-        width: 305,
-        height: 280,
-      },
-    ],
-    className:
-      "[&>.title-container]:mb-5 md:[&>.title-container]:mb-8 xl:[&>.image-container]:translate-x-6 [&>.image-container]:translate-x-2",
-    fade: ["bottom"],
+      "Know when docs regenerate after a push, a portal goes live, or a teammate joins.",
+    kind: "notify" as const,
+    className: "[&>.title-container]:mb-5 md:[&>.title-container]:mb-8",
   },
+]
+
+const STACK_LOGOS = [
+  { src: "/landing/logos/github.svg", alt: "GitHub" },
+  { src: "/landing/logos/gitlab.svg", alt: "GitLab" },
+  { src: "/landing/logos/notion.svg", alt: "Notion" },
+  { src: "/landing/logos/openai.svg", alt: "OpenAI" },
+  { src: "/landing/logos/claude.svg", alt: "Claude" },
+  { src: "/landing/logos/drive.svg", alt: "Google Drive" },
+  { src: "/landing/logos/confluence.svg", alt: "Confluence" },
+  { src: "/landing/logos/jira.svg", alt: "Jira" },
 ]
 
 export function ResourceAllocation() {
@@ -173,10 +105,84 @@ export function ResourceAllocation() {
   )
 }
 
+type ItemData =
+  | (typeof topItems)[number]
+  | (typeof bottomItems)[number]
+
 interface ItemProps {
-  item: (typeof topItems)[number] | (typeof bottomItems)[number]
+  item: ItemData
   isLast?: boolean
   className?: string
+}
+
+function ItemVisual({ kind }: { kind: ItemData["kind"] }) {
+  if (kind === "stack") {
+    return (
+      <div className="relative overflow-hidden">
+        <div className="flex flex-col gap-4">
+          <div className="flex translate-x-3 justify-end gap-3">
+            {STACK_LOGOS.slice(0, 4).map((logo) => (
+              <div
+                key={logo.alt}
+                className="grid size-14 place-items-center rounded-2xl border border-border/60 bg-background p-2 lg:size-16"
+              >
+                <img
+                  src={logo.src}
+                  alt={`${logo.alt} logo`}
+                  className="size-7 object-contain dark:invert"
+                />
+              </div>
+            ))}
+          </div>
+          <div className="flex -translate-x-3 gap-3">
+            {STACK_LOGOS.slice(4).map((logo) => (
+              <div
+                key={logo.alt}
+                className="grid size-14 place-items-center rounded-2xl border border-border/60 bg-background p-2 lg:size-16"
+              >
+                <img
+                  src={logo.src}
+                  alt={`${logo.alt} logo`}
+                  className="size-7 object-contain dark:invert"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (kind === "templates") {
+    return (
+      <div className="rounded-xl border border-border/60 bg-background/40 p-3">
+        <div className="space-y-2">
+          {["README", "API reference", "Schemas", "Security report"].map(
+            (label, i) => (
+              <div
+                key={label}
+                className={cn(
+                  "flex items-center justify-between rounded-lg border px-3 py-2 text-sm",
+                  i === 1
+                    ? "border-primary/40 bg-primary/10"
+                    : "border-border/60 bg-muted/30",
+                )}
+              >
+                <span className="font-medium">{label}</span>
+                <span className="text-xs text-muted-foreground">
+                  {i === 1 ? "Editing" : "Ready"}
+                </span>
+              </div>
+            ),
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  if (kind === "archive") return <ArchivePreview />
+  if (kind === "share") return <SharePreview />
+  return <NotifyPreview />
 }
 
 function Item({ item, isLast, className }: ItemProps) {
@@ -199,62 +205,9 @@ function Item({ item, isLast, className }: ItemProps) {
         </span>
       </div>
 
-      {item.fade.includes("bottom") && (
-        <div className="from-muted/80 absolute inset-0 z-10 bg-linear-to-t via-transparent to-transparent md:hidden" />
-      )}
-      {item.images.length > 4 ? (
-        <div className="relative overflow-hidden">
-          <div className="flex flex-col gap-5">
-            <div className="flex translate-x-4 justify-end gap-5">
-              {item.images.slice(0, 4).map((image, j) => (
-                <div
-                  key={`${image.src}-${j}`}
-                  className="bg-background grid aspect-square size-14 place-items-center rounded-2xl p-2 lg:size-16"
-                >
-                  <img
-                    src={image.src}
-                    alt={image.alt}
-                    width={image.width}
-                    height={image.height}
-                    className="object-contain object-left-top"
-                  />
-                  <div className="from-muted/80 absolute inset-y-0 right-0 z-10 w-16 bg-linear-to-l to-transparent" />
-                </div>
-              ))}
-            </div>
-            <div className="flex -translate-x-4 gap-5">
-              {item.images.slice(4).map((image, j) => (
-                <div
-                  key={`${image.src}-${j}`}
-                  className="bg-background grid aspect-square size-14 place-items-center rounded-2xl lg:size-16"
-                >
-                  <img
-                    src={image.src}
-                    alt={image.alt}
-                    width={image.width}
-                    height={image.height}
-                    className="object-contain object-left-top"
-                  />
-                  <div className="from-muted absolute inset-y-0 bottom-0 left-0 z-10 w-14 bg-linear-to-r to-transparent" />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="image-container grid grid-cols-1 gap-4">
-          {item.images.map((image) => (
-            <img
-              key={image.src}
-              src={image.src}
-              alt={image.alt}
-              width={image.width}
-              height={image.height}
-              className="object-contain object-left-top"
-            />
-          ))}
-        </div>
-      )}
+      <div className="image-container mt-5">
+        <ItemVisual kind={item.kind} />
+      </div>
 
       {!isLast && (
         <>

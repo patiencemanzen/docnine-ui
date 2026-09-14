@@ -418,8 +418,8 @@ export function HomePage() {
                             <QuickAction
                                 href="/logs"
                                 icon={TerminalSquare}
-                                label="Activity Logs"
-                                description="View pipeline run history"
+                                label="Activity"
+                                description="See what happened in your projects"
                             />
                             <QuickAction
                                 href="/settings"

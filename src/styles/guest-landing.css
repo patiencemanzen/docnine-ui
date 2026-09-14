@@ -265,3 +265,12 @@ html:not(.js) [data-animate] {
 .timeline-pulse-dot {
   animation: timeline-pulse 2s ease-in-out infinite;
 }
+
+/* Self-hosted pricing backdrop — warm dunes tones matching guest dark theme */
+.landing-pricing-bg {
+  background:
+    radial-gradient(120% 80% at 20% 10%, rgba(196, 140, 78, 0.35) 0%, transparent 55%),
+    radial-gradient(90% 70% at 85% 30%, rgba(90, 58, 36, 0.55) 0%, transparent 50%),
+    radial-gradient(70% 60% at 50% 100%, rgba(20, 14, 10, 0.9) 0%, transparent 60%),
+    linear-gradient(160deg, #1a1410 0%, #3a2818 38%, #6b4424 62%, #1c1510 100%);
+}

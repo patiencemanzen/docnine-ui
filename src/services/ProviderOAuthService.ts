@@ -15,23 +15,18 @@ import { OAuthStatus } from "@/types/OauthIntergrationTypes";
 
 export class ProviderOAuthService {
   /**
-   * Get OAuth window URL for a provider
+   * Fetch the provider consent URL with the session JWT, then open it.
+   * Never puts the access token in a query string.
    */
-  static getOAuthUrl(provider: ProviderKey, accessToken?: string): string {
-    const base = window.location.origin;
-    const token = accessToken ? `&token=${encodeURIComponent(accessToken)}` : "";
-    switch (provider) {
-      case "github":
-        return `${base}/auth/github?popup=1`;
-      case "gitlab":
-        return `${base}/auth/gitlab?popup=1${token}`;
-      case "bitbucket":
-        return `${base}/auth/bitbucket?popup=1${token}`;
-      case "azure":
-        return `${base}/auth/azure?popup=1${token}`;
-      default:
-        throw new Error(`Unknown provider: ${provider}`);
-    }
+  static async getOAuthStartUrl(provider: ProviderKey): Promise<string> {
+    let data: { url: string };
+    if (provider === "github") data = await githubApi.getOAuthStartUrl();
+    else if (provider === "gitlab") data = await gitlabApi.getOAuthStartUrl();
+    else if (provider === "bitbucket") data = await bitbucketApi.getOAuthStartUrl();
+    else if (provider === "azure") data = await azureApi.getOAuthStartUrl();
+    else throw new Error(`Unknown provider: ${provider}`);
+    if (!data?.url) throw new Error("Provider did not return an OAuth URL");
+    return data.url;
   }
 
   /**
@@ -39,7 +34,7 @@ export class ProviderOAuthService {
    */
   static async openOAuthWindow(
     provider: ProviderKey,
-    accessToken: string,
+    _accessToken: string,
     onStatusChange: (
       status: OAuthStatus,
       user?: string,
@@ -48,13 +43,25 @@ export class ProviderOAuthService {
   ): Promise<void> {
     clearOAuthResult(provider);
 
+    let startUrl: string;
+    try {
+      startUrl = await this.getOAuthStartUrl(provider);
+    } catch (err) {
+      onStatusChange(
+        "error",
+        undefined,
+        err instanceof Error ? err.message : "Failed to start OAuth.",
+      );
+      return;
+    }
+
     const width = 600;
     const height = 700;
     const left = window.screenX + (window.outerWidth - width) / 2;
     const top = window.screenY + (window.outerHeight - height) / 2;
 
     const popup = window.open(
-      this.getOAuthUrl(provider, accessToken),
+      startUrl,
       `${provider}-oauth`,
       `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`,
     );

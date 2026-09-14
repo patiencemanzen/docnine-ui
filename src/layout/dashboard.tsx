@@ -35,7 +35,7 @@ const ROUTE_LABELS: Record<string, string> = {
   documentations: "Documentations",
   docs: "Documentation",
   live: "Live analysis",
-  logs: "Logs",
+  logs: "Activity",
   settings: "Settings",
   profile: "Profile",
   admin: "Administration",
@@ -124,7 +124,7 @@ const PRIMARY_NAV = [
   { name: "Home", href: "/home", icon: HomeIcon },
   { name: "Projects", href: "/projects", icon: FolderCodeIcon },
   { name: "Doc Sites", href: "/documentations", icon: FilesIcon },
-  { name: "Logs", href: "/logs", icon: TerminalIcon },
+  { name: "Activity", href: "/logs", icon: TerminalIcon },
 ]
 
 const ACCOUNT_NAV = [

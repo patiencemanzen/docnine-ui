@@ -67,12 +67,12 @@ export function ContactPage() {
                                         <div>
                                             <p className="text-sm font-medium text-foreground">GitHub Issues</p>
                                             <a
-                                                href="https://github.com/Docsnine"
+                                                href="https://github.com/docnineai"
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="text-sm text-muted-foreground hover:text-primary transition-colors"
                                             >
-                                                github.com/Docsnine
+                                                github.com/docnineai
                                             </a>
                                         </div>
                                     </li>

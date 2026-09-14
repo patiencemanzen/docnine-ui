@@ -53,7 +53,7 @@ export function Footer() {
                         <h4 className="font-semibold text-sm text-foreground mb-6">Support</h4>
                         <ul className="space-y-3 text-muted-foreground text-sm">
                             <li><a href="#faq" className="hover:text-foreground transition-colors">FAQ</a></li>
-                            <li><a href="https://github.com/Docsnine" target="_blank" rel="noreferrer" className="hover:text-foreground transition-colors">GitHub</a></li>
+                            <li><a href="https://github.com/docnineai" target="_blank" rel="noreferrer" className="hover:text-foreground transition-colors">GitHub</a></li>
                             <li><a href="https://discord.gg/docnineai" target="_blank" rel="noreferrer" className="hover:text-foreground transition-colors">Community</a></li>
                             <li><Link to="/contact" className="hover:text-foreground transition-colors">Help Center</Link></li>
                         </ul>

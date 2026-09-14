@@ -55,6 +55,10 @@ export function LoginPage() {
     setError(null)
     try {
       const result = await authApi.login({ email: data.email, password: data.password })
+      if (!result.accessToken) {
+        setError("Login did not return a session. Please try again.")
+        return
+      }
       setTokens(result.user, result.accessToken)
       navigate(redirectTo)
     } catch (err) {
@@ -63,6 +67,8 @@ export function LoginPage() {
           setError("Incorrect email or password. Please try again.")
         } else if (err.code === "EMAIL_NOT_VERIFIED") {
           setError("Please verify your email before logging in. Check your inbox.")
+        } else if (err.code === "USE_OAUTH_PROVIDER") {
+          setError(err.message)
         } else {
           setError(err.message)
         }

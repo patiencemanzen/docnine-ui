@@ -15,6 +15,8 @@ const ERROR_MESSAGES: Record<string, string> = {
   GOOGLE_CODE_INVALID: "The Google authorisation code expired. Please try again.",
   GOOGLE_NO_EMAIL: "No verified email found on your Google account.",
   GOOGLE_LOGIN_NOT_CONFIGURED: "Google login is not configured. Contact support.",
+  OAUTH_UNVERIFIED_ACCOUNT: "An account with this email already exists. Verify your email, then sign in with your password.",
+  OAUTH_EMAIL_CONFLICT: "This email is already associated with a different account.",
   OAUTH_ERROR: "An error occurred during sign-in. Please try again.",
 }
 
@@ -26,29 +28,24 @@ export function AuthCallbackPage() {
 
   useEffect(() => {
     const error = searchParams.get("error")
-    const accessToken = searchParams.get("accessToken")
 
     if (error) {
       setErrorMessage(ERROR_MESSAGES[error] ?? ERROR_MESSAGES.OAUTH_ERROR)
       return
     }
 
-    if (!accessToken) {
-      setErrorMessage("No access token received. Please try signing in again.")
-      return
-    }
-
-    
-    setAccessToken(accessToken)
-
-    
-    authApi.me().then(({ user }) => {
-      setTokens(user, accessToken)
+    authApi.refresh().then((data) => {
+      if (!data?.accessToken || !data.user) {
+        setErrorMessage("No access token received. Please try signing in again.")
+        return
+      }
+      setAccessToken(data.accessToken)
+      setTokens(data.user, data.accessToken)
       navigate("/home", { replace: true })
     }).catch(() => {
       setErrorMessage("Failed to load your account. Please try signing in again.")
     })
-  }, []) 
+  }, [])
 
   return (
     <div className="relative min-h-screen bg-background text-foreground flex flex-col items-center justify-center overflow-hidden font-sans">

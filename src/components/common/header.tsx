@@ -19,7 +19,7 @@ export function TopHeader({ className }: { className?: string }) {
             Docs
           </Link>
           <a
-            href="https://github.com/Docsnine"
+            href="https://github.com/docnineai"
             target="_blank"
             rel="noreferrer"
             className="transition-colors hover:text-foreground"
@@ -78,7 +78,7 @@ export function TopHeader({ className }: { className?: string }) {
               Docs
             </Link>
             <a
-              href="https://github.com/Docsnine"
+              href="https://github.com/docnineai"
               target="_blank"
               rel="noreferrer"
               className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"

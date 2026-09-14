@@ -19,12 +19,12 @@ export function HeroSection() {
             data-animate
             className="max-w-[16ch] text-4xl font-bold tracking-tight drop-shadow-[0_2px_24px_rgba(0,0,0,0.45)] sm:text-5xl md:text-6xl lg:text-[5rem] lg:leading-[1.05]"
           >
-            Docs that stay in sync with your Infrastructure
+            Docs that stay in sync with your infrastructure
           </h1>
           <div data-animate data-delay="1" className="flex flex-col gap-5">
             <p className="leading-relaxed text-white/70 drop-shadow-[0_1px_12px_rgba(0,0,0,0.4)]">
               Connect a repo, generate clear documentation, and keep every page
-              up to date as your team ships,without rewriting by hand.
+              up to date as your team ships — without rewriting by hand.
             </p>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <Button

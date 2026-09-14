@@ -78,7 +78,11 @@ function BillingRedirect() {
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
-  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />
+  const location = useLocation()
+  if (isAuthenticated) return <>{children}</>
+  const redirect = `${location.pathname}${location.search}`
+  const to = redirect && redirect !== "/" ? `/login?redirect=${encodeURIComponent(redirect)}` : "/login"
+  return <Navigate to={to} replace />
 }
 
 function LandingOnlyRoute({ children }: { children: React.ReactNode }) {

@@ -25,6 +25,7 @@ export function HomePage() {
 
       <Testimonials />
       <Pricing />
+      <FAQ />
     </div>
   )
 }

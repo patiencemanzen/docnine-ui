@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react"
 import { useParams, Link, useNavigate } from "react-router-dom"
 import { useProjectStore } from "@/store/projects"
-import { projectsApi } from "@/lib/api"
+import { projectsApi, activityLogsApi } from "@/lib/api"
+import { formatActivityLabel } from "@/lib/activity-copy"
+import { useAuthStore } from "@/store/auth"
 import { prepareExportData, getExportSummary, getFormattedTabContent } from "@/lib/export-utils"
 import { generatePDFHTML } from "@/lib/pdf-generator"
 import { useSubscriptionStore, meetsMinPlan } from "@/store/subscription"
@@ -72,8 +74,10 @@ export function ProjectOverviewPage() {
     const [githubReadme, setGithubReadme] = useState<string | null>(null)
     const [isReadmeLoading, setIsReadmeLoading] = useState(false)
     const [showShare, setShowShare] = useState(false)
+    const [activity, setActivity] = useState<import("@/types/activity-log").ActivityLog[]>([])
+    const viewerUserId = useAuthStore((s) => s.user?.id)
 
-    const isOwner = !project || project.shareRole === "owner"
+    const isOwner = project?.shareRole === "owner"
 
     const { subscription } = useSubscriptionStore()
     const [upgradeOpen, setUpgradeOpen] = useState(false)
@@ -110,6 +114,9 @@ export function ProjectOverviewPage() {
             })
             .catch((err: any) => setError(err?.message ?? "Failed to load project."))
             .finally(() => setIsLoading(false))
+        activityLogsApi.listByProject(id, { limit: 8 })
+            .then((d) => setActivity(d.logs ?? []))
+            .catch(() => setActivity([]))
     }, [id, getProject])
 
     
@@ -668,6 +675,41 @@ export function ProjectOverviewPage() {
                         </CardContent>
                     </Card>
                 </div>
+
+                {activity.length > 0 && (
+                    <Card className="shadow-none">
+                        <CardHeader className="pb-3">
+                            <div className="flex items-center justify-between gap-3">
+                                <div>
+                                    <CardTitle className="text-[15px] font-semibold">Recent activity</CardTitle>
+                                    <CardDescription className="text-[13px]">
+                                        What happened on this project.
+                                    </CardDescription>
+                                </div>
+                                <Button asChild variant="ghost" size="sm" className="h-8 text-muted-foreground">
+                                    <Link to="/logs">View all</Link>
+                                </Button>
+                            </div>
+                        </CardHeader>
+                        <CardContent className="pt-0">
+                            <ul className="divide-y divide-border/60">
+                                {activity.map((log) => (
+                                    <li key={log._id} className="py-2.5 flex items-start justify-between gap-3">
+                                        <p className="text-[13px] text-foreground/90 leading-5">
+                                            {formatActivityLabel(log, { viewerUserId })}
+                                        </p>
+                                        <time
+                                            dateTime={log.createdAt}
+                                            className="text-[11px] text-muted-foreground shrink-0 whitespace-nowrap"
+                                        >
+                                            {formatDistanceToNow(new Date(log.createdAt), { addSuffix: true })}
+                                        </time>
+                                    </li>
+                                ))}
+                            </ul>
+                        </CardContent>
+                    </Card>
+                )}
             </div>
 
             {project && (

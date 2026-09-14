@@ -46,7 +46,7 @@ export function UpgradeModal({
             setLoading(true)
             setError(null)
             const res = await billingApi.checkout(requiredPlan, "monthly", undefined, true)
-            if (res.trial) {
+            if (res.type === "trial" || res.trial) {
                 await refresh()
                 onClose()
                 return
