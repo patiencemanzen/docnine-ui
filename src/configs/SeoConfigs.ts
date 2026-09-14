@@ -48,6 +48,7 @@ export const PUBLIC_PAGES: Record<string, SeoConfig> = {
     pathname: "/",
     keywords: MARKETING_KEYWORDS,
     appendSiteName: false,
+    image: "/landing/cocoon/og-image.png",
     imageWidth: 1200,
     imageHeight: 630,
     structuredData: [
@@ -57,7 +58,7 @@ export const PUBLIC_PAGES: Record<string, SeoConfig> = {
         name: "Docnine",
         url: siteUrl,
         logo: `${siteUrl}/web-app-manifest-512x512.png`,
-        sameAs: ["https://github.com/Docsnine"],
+        sameAs: ["https://github.com/docnineai"],
       },
       {
         "@context": "https://schema.org",

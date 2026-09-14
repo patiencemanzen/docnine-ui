@@ -15,15 +15,19 @@ import {
   CreditCard,
   BarChart3,
   RefreshCw,
+  Pencil,
+  History,
 } from "@/components/icons"
 import { adminApi } from "@/lib/api"
 import { useAuthStore } from "@/store/auth"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import Loader1 from "@/components/ui/loader1"
-import { AdminProject, AdminStats, AdminSubscription, AdminUser } from "@/types/AdminTypes"
+import { AdminProject, AdminStats, AdminSubscription, AdminSubscriptionInfo, AdminUser } from "@/types/AdminTypes"
+import { ActivityLog } from "@/types/activity-log"
+import { CATEGORY_LABELS, formatActivityLabel } from "@/lib/activity-copy"
+import { EditPlanDialog, EditUserDialog, PlanEditTarget } from "@/pages/admin/admin-dialogs"
 
 
 
@@ -163,14 +167,19 @@ function DeleteButton({ onConfirm, loading }: { onConfirm: () => void; loading?:
 
 
 
-type Tab = "overview" | "users" | "projects" | "subscriptions"
+type Tab = "overview" | "users" | "projects" | "subscriptions" | "activity"
 
 const TABS: { id: Tab; label: string; Icon: React.ElementType }[] = [
   { id: "overview", label: "Overview", Icon: BarChart3 },
   { id: "users", label: "Users", Icon: Users },
   { id: "projects", label: "Projects", Icon: FolderKanban },
   { id: "subscriptions", label: "Subscriptions", Icon: CreditCard },
+  { id: "activity", label: "Activity", Icon: History },
 ]
+
+function ownerId(userId: AdminSubscription["userId"]): string | null {
+  return userId && typeof userId === "object" ? userId._id : null
+}
 
 
 
@@ -217,6 +226,9 @@ export function SuperAdminPage() {
   const [usersSearch, setUsersSearch] = useState("")
   const [usersLoading, setUsersLoading] = useState(false)
   const [deletingUserId, setDeletingUserId] = useState<string | null>(null)
+  const [planTarget, setPlanTarget] = useState<PlanEditTarget | null>(null)
+  const [userTarget, setUserTarget] = useState<AdminUser | null>(null)
+  const [actionError, setActionError] = useState<string | null>(null)
 
   const loadUsers = useCallback(async (page = 1, search = "") => {
     setUsersLoading(true)
@@ -237,15 +249,36 @@ export function SuperAdminPage() {
 
   const handleDeleteUser = async (id: string) => {
     setDeletingUserId(id)
+    setActionError(null)
     try {
       await adminApi.deleteUser(id)
       setUsers((prev) => prev.filter((u) => u._id !== id))
       setUsersTotal((prev) => prev - 1)
       
       loadStats()
-    } catch {  } finally {
+    } catch (e: unknown) {
+      setActionError((e as Error).message ?? "Failed to delete user")
+    } finally {
       setDeletingUserId(null)
     }
+  }
+
+  const applySubscriptionUpdate = (userId: string, subscription: AdminSubscriptionInfo) => {
+    setUsers((prev) =>
+      prev.map((u) => (u._id === userId ? { ...u, subscription: { ...u.subscription, ...subscription } } : u)),
+    )
+    setSubs((prev) =>
+      prev.map((s) => {
+        const id = ownerId(s.userId)
+        return id === userId ? { ...s, ...subscription, plan: subscription.plan, status: subscription.status, billingCycle: subscription.billingCycle ?? null } : s
+      }),
+    )
+    loadStats()
+  }
+
+  const openPlanEditor = (target: PlanEditTarget) => {
+    setActionError(null)
+    setPlanTarget(target)
   }
 
   
@@ -293,11 +326,17 @@ export function SuperAdminPage() {
   const [subsTotalPages, setSubsTotalPages] = useState(1)
   const [subsLoading, setSubsLoading] = useState(false)
   const [subsPlanFilter, setSubsPlanFilter] = useState("")
+  const [subsStatusFilter, setSubsStatusFilter] = useState("")
 
-  const loadSubs = useCallback(async (page = 1, plan = "") => {
+  const loadSubs = useCallback(async (page = 1, plan = "", status = "") => {
     setSubsLoading(true)
     try {
-      const res = await adminApi.listSubscriptions({ page, limit: 20, plan: plan || undefined })
+      const res = await adminApi.listSubscriptions({
+        page,
+        limit: 20,
+        plan: plan || undefined,
+        status: status || undefined,
+      })
       setSubs(res.subscriptions)
       setSubsTotal(res.pagination.total)
       setSubsPage(res.pagination.page)
@@ -308,8 +347,38 @@ export function SuperAdminPage() {
   }, [])
 
   useEffect(() => {
-    if (activeTab === "subscriptions") loadSubs(1, subsPlanFilter)
+    if (activeTab === "subscriptions") loadSubs(1, subsPlanFilter, subsStatusFilter)
   }, [activeTab, loadSubs])
+
+  const [activity, setActivity] = useState<ActivityLog[]>([])
+  const [activityTotal, setActivityTotal] = useState(0)
+  const [activityPage, setActivityPage] = useState(1)
+  const [activityTotalPages, setActivityTotalPages] = useState(1)
+  const [activitySearch, setActivitySearch] = useState("")
+  const [activityCategory, setActivityCategory] = useState("")
+  const [activityLoading, setActivityLoading] = useState(false)
+
+  const loadActivity = useCallback(async (page = 1, search = "", category = "") => {
+    setActivityLoading(true)
+    try {
+      const res = await adminApi.listActivity({
+        page,
+        limit: 30,
+        search: search || undefined,
+        category: category || undefined,
+      })
+      setActivity(res.logs)
+      setActivityTotal(res.pagination.total)
+      setActivityPage(res.pagination.page)
+      setActivityTotalPages(res.pagination.totalPages)
+    } catch {  } finally {
+      setActivityLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (activeTab === "activity") loadActivity(1, activitySearch, activityCategory)
+  }, [activeTab, loadActivity])
 
   
   if (!user || user.role !== "super-admin") {
@@ -446,6 +515,13 @@ export function SuperAdminPage() {
             <span className="text-sm text-muted-foreground ml-auto">{usersTotal} total</span>
           </div>
 
+          {actionError && activeTab === "users" && (
+            <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-2 text-sm text-destructive">
+              <AlertCircle className="h-4 w-4" />
+              {actionError}
+            </div>
+          )}
+
           <div className="rounded-lg border border-border overflow-hidden">
             <table className="w-full text-sm">
               <thead>
@@ -484,6 +560,11 @@ export function SuperAdminPage() {
                               <ShieldAlert className="h-3 w-3" /> admin
                             </span>
                           )}
+                          {u.isEmailVerified === false && (
+                            <span className="inline-flex items-center gap-1 mt-0.5 text-xs text-amber-600 dark:text-amber-400">
+                              unverified
+                            </span>
+                          )}
                         </div>
                       </td>
                       <td className="px-4 py-3 hidden md:table-cell">
@@ -501,10 +582,38 @@ export function SuperAdminPage() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <DeleteButton
-                          loading={deletingUserId === u._id}
-                          onConfirm={() => handleDeleteUser(u._id)}
-                        />
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground"
+                            title="Edit plan"
+                            onClick={() => openPlanEditor({
+                              userId: u._id,
+                              userName: u.name,
+                              userEmail: u.email,
+                              plan: u.subscription?.plan ?? "free",
+                              status: u.subscription?.status ?? "free",
+                              billingCycle: u.subscription?.billingCycle,
+                              seats: u.subscription?.seats,
+                            })}
+                          >
+                            <CreditCard className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground"
+                            title="Manage user"
+                            onClick={() => { setActionError(null); setUserTarget(u) }}
+                          >
+                            <Pencil className="h-3.5 w-3.5" />
+                          </Button>
+                          <DeleteButton
+                            loading={deletingUserId === u._id}
+                            onConfirm={() => handleDeleteUser(u._id)}
+                          />
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -610,7 +719,7 @@ export function SuperAdminPage() {
             <select
               className="h-9 rounded-md border border-border bg-background px-3 text-sm"
               value={subsPlanFilter}
-              onChange={(e) => { setSubsPlanFilter(e.target.value); loadSubs(1, e.target.value) }}
+              onChange={(e) => { setSubsPlanFilter(e.target.value); loadSubs(1, e.target.value, subsStatusFilter) }}
             >
               <option value="">All plans</option>
               <option value="free">Free</option>
@@ -618,7 +727,20 @@ export function SuperAdminPage() {
               <option value="pro">Pro</option>
               <option value="team">Team</option>
             </select>
-            <Button variant="outline" size="sm" onClick={() => loadSubs(1, subsPlanFilter)}>
+            <select
+              className="h-9 rounded-md border border-border bg-background px-3 text-sm"
+              value={subsStatusFilter}
+              onChange={(e) => { setSubsStatusFilter(e.target.value); loadSubs(1, subsPlanFilter, e.target.value) }}
+            >
+              <option value="">All statuses</option>
+              <option value="free">Free</option>
+              <option value="active">Active</option>
+              <option value="trialing">Trialing</option>
+              <option value="past_due">Past due</option>
+              <option value="cancelled">Cancelled</option>
+              <option value="paused">Paused</option>
+            </select>
+            <Button variant="outline" size="sm" onClick={() => loadSubs(1, subsPlanFilter, subsStatusFilter)}>
               <RefreshCw className="h-3.5 w-3.5" />
             </Button>
             <span className="text-sm text-muted-foreground ml-auto">{subsTotal} total</span>
@@ -633,20 +755,21 @@ export function SuperAdminPage() {
                   <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden sm:table-cell">Status</th>
                   <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden md:table-cell">Billing</th>
                   <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden md:table-cell">Since</th>
+                  <th className="text-right px-4 py-3 font-medium text-muted-foreground">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {subsLoading ? (
                   Array.from({ length: 5 }).map((_, i) => (
                     <tr key={i} className="border-b border-border/50">
-                      <td className="px-4 py-3" colSpan={5}>
+                      <td className="px-4 py-3" colSpan={6}>
                         <div className="h-4 rounded bg-muted animate-pulse" />
                       </td>
                     </tr>
                   ))
                 ) : subs.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground text-sm">
+                    <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground text-sm">
                       No subscriptions found
                     </td>
                   </tr>
@@ -666,11 +789,116 @@ export function SuperAdminPage() {
                       <td className="px-4 py-3"><PlanBadge plan={s.plan} /></td>
                       <td className="px-4 py-3 hidden sm:table-cell"><StatusBadge status={s.status} /></td>
                       <td className="px-4 py-3 hidden md:table-cell">
-                        <span className="text-xs capitalize text-muted-foreground">{s.billingCycle ?? ":"}</span>
+                        <span className="text-xs capitalize text-muted-foreground">{s.billingCycle ?? "—"}</span>
                       </td>
                       <td className="px-4 py-3 hidden md:table-cell">
                         <span className="text-xs text-muted-foreground">
                           {formatDistanceToNow(new Date(s.createdAt), { addSuffix: true })}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        {s.userId ? (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground"
+                            title="Edit plan"
+                            onClick={() => openPlanEditor({
+                              userId: (s.userId as { _id: string })._id,
+                              userName: (s.userId as { name: string }).name,
+                              userEmail: (s.userId as { email: string }).email,
+                              plan: s.plan,
+                              status: s.status,
+                              billingCycle: s.billingCycle,
+                              seats: s.seats,
+                            })}
+                          >
+                            <Pencil className="h-3.5 w-3.5" />
+                          </Button>
+                        ) : null}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          <Pagination page={subsPage} totalPages={subsTotalPages} onPage={(p) => { setSubsPage(p); loadSubs(p, subsPlanFilter, subsStatusFilter) }} />
+        </div>
+      )}
+
+      {activeTab === "activity" && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-3 flex-wrap">
+            <div className="relative flex-1 max-w-sm">
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search actor, email, or summary…"
+                className="pl-9"
+                value={activitySearch}
+                onChange={(e) => setActivitySearch(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") loadActivity(1, activitySearch, activityCategory) }}
+              />
+            </div>
+            <select
+              className="h-9 rounded-md border border-border bg-background px-3 text-sm"
+              value={activityCategory}
+              onChange={(e) => { setActivityCategory(e.target.value); loadActivity(1, activitySearch, e.target.value) }}
+            >
+              <option value="">All categories</option>
+              {Object.entries(CATEGORY_LABELS).map(([id, label]) => (
+                <option key={id} value={id}>{label}</option>
+              ))}
+            </select>
+            <Button variant="outline" size="sm" onClick={() => loadActivity(1, activitySearch, activityCategory)}>
+              <RefreshCw className="h-3.5 w-3.5" />
+            </Button>
+            <span className="text-sm text-muted-foreground ml-auto">{activityTotal} total</span>
+          </div>
+
+          <div className="rounded-lg border border-border overflow-hidden">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-muted/40 border-b border-border">
+                  <th className="text-left px-4 py-3 font-medium text-muted-foreground">Event</th>
+                  <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden md:table-cell">Category</th>
+                  <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden sm:table-cell">When</th>
+                </tr>
+              </thead>
+              <tbody>
+                {activityLoading ? (
+                  Array.from({ length: 8 }).map((_, i) => (
+                    <tr key={i} className="border-b border-border/50">
+                      <td className="px-4 py-3" colSpan={3}>
+                        <div className="h-4 rounded bg-muted animate-pulse" />
+                      </td>
+                    </tr>
+                  ))
+                ) : activity.length === 0 ? (
+                  <tr>
+                    <td colSpan={3} className="px-4 py-8 text-center text-muted-foreground text-sm">
+                      No activity found
+                    </td>
+                  </tr>
+                ) : (
+                  activity.map((log) => (
+                    <tr key={log._id} className="border-b border-border/50 hover:bg-muted/20 transition-colors">
+                      <td className="px-4 py-3">
+                        <p className="font-medium">{formatActivityLabel(log)}</p>
+                        <p className="text-xs text-muted-foreground truncate max-w-[420px]">
+                          {log.actorEmail || log.actorName}
+                          {log.projectName ? ` · ${log.projectName}` : ""}
+                        </p>
+                      </td>
+                      <td className="px-4 py-3 hidden md:table-cell">
+                        <span className="text-xs capitalize text-muted-foreground">
+                          {CATEGORY_LABELS[log.category] ?? log.category}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 hidden sm:table-cell">
+                        <span className="text-xs text-muted-foreground">
+                          {formatDistanceToNow(new Date(log.createdAt), { addSuffix: true })}
                         </span>
                       </td>
                     </tr>
@@ -680,9 +908,25 @@ export function SuperAdminPage() {
             </table>
           </div>
 
-          <Pagination page={subsPage} totalPages={subsTotalPages} onPage={(p) => { setSubsPage(p); loadSubs(p, subsPlanFilter) }} />
+          <Pagination page={activityPage} totalPages={activityTotalPages} onPage={(p) => { setActivityPage(p); loadActivity(p, activitySearch, activityCategory) }} />
         </div>
       )}
+
+      <EditPlanDialog
+        open={!!planTarget}
+        target={planTarget}
+        onClose={() => setPlanTarget(null)}
+        onSaved={applySubscriptionUpdate}
+      />
+      <EditUserDialog
+        open={!!userTarget}
+        user={userTarget}
+        currentUserId={user.id}
+        onClose={() => setUserTarget(null)}
+        onSaved={(updated) => {
+          setUsers((prev) => prev.map((u) => (u._id === updated._id ? { ...u, ...updated } : u)))
+        }}
+      />
     </div>
   )
 }

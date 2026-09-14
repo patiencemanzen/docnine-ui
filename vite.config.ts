@@ -18,6 +18,10 @@ export default defineConfig(({ mode }) => {
     secure: false,
     bypass(req: { url?: string; headers?: Record<string, string> }) {
       if (req.url?.startsWith("/github/oauth/callback")) return undefined;
+      if (req.url?.startsWith("/gitlab/oauth/callback")) return undefined;
+      if (req.url?.startsWith("/bitbucket/oauth/callback")) return undefined;
+      if (req.url?.startsWith("/azure/oauth/callback")) return undefined;
+      if (req.url?.startsWith("/slack/oauth/callback")) return undefined;
       if (req.url?.startsWith("/auth/github/callback")) return undefined;
       if (req.url?.startsWith("/auth/google/callback")) return undefined;
 
@@ -31,12 +35,19 @@ export default defineConfig(({ mode }) => {
   const proxyConfig: Record<string, object> = {
     "/auth": makeProxy(),
     "/github": makeProxy(),
+    "/gitlab": makeProxy(),
+    "/bitbucket": makeProxy(),
+    "/azure": makeProxy(),
     "/projects": makeProxy(),
     "/billing": makeProxy(),
     "/portal": makeProxy(),
     "/webhook": makeProxy(),
     "/api": makeProxy(),
     "/health": makeProxy(),
+    "/admin": makeProxy(),
+    "/activity-logs": makeProxy(),
+    "/notifications": makeProxy(),
+    "/slack": makeProxy(),
   };
 
   return {

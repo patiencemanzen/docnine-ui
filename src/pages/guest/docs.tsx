@@ -1145,7 +1145,7 @@ jobs:
                                         </div>
                                     </a>
                                     <a
-                                        href="https://github.com/Docsnine"
+                                        href="https://github.com/docnineai"
                                         target="_blank"
                                         rel="noreferrer"
                                         className="flex items-center gap-3 rounded-xl border border-border bg-background/80 backdrop-blur-md p-4 hover:bg-muted/70 transition-colors group"

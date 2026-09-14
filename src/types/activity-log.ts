@@ -23,13 +23,12 @@ export interface ActivityLog {
   action: string;
   category: ActivityCategory;
   severity: ActivitySeverity;
+  summary?: string;
   projectId?: string;
   projectName?: string;
   resourceId?: string;
   resourceType?: string;
   metadata?: Record<string, unknown>;
-  ipAddress?: string;
-  userAgent?: string;
   createdAt: string;
 }
 

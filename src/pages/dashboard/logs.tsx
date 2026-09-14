@@ -31,6 +31,8 @@ import {
   ChevronDown,
   ChevronRight,
 } from "@/components/icons"
+import { formatActivityLabel, CATEGORY_LABELS, visibleMetadata } from "@/lib/activity-copy"
+import { useAuthStore } from "@/store/auth"
 import { cn } from "@/lib/utils"
 import TopBar from "@/components/projects/top-bar"
 
@@ -81,97 +83,6 @@ const SEVERITY_ROW: Record<string, string> = {
 }
 
 
-function actionLabel(log: ActivityLog): string {
-  const actor = log.actorName || "Someone"
-  const project = log.projectName ? ` on ${log.projectName}` : ""
-  const meta = (log.metadata ?? {}) as Record<string, string>
-
-  switch (log.action) {
-    
-    case "AUTH_SIGNUP": return `${actor} signed up`
-    case "AUTH_LOGIN": return `${actor} signed in`
-    case "AUTH_LOGOUT": return `${actor} signed out`
-    case "AUTH_PASSWORD_CHANGED": return `${actor} changed their password`
-    case "AUTH_PASSWORD_RESET_REQUESTED": return `${actor} requested a password reset`
-    case "AUTH_PASSWORD_RESET": return `${actor} reset their password`
-    case "AUTH_EMAIL_VERIFIED": return `${actor} verified their email`
-    
-    case "PROJECT_CREATED": return `${actor} created project${project}`
-    case "PROJECT_DELETED": return `${actor} deleted project${project}`
-    case "PROJECT_ARCHIVED": return `${actor} archived project${project}`
-    case "PROJECT_RENAMED": return `${actor} renamed project${project}`
-    
-    case "PIPELINE_STARTED": return `Pipeline started${project}`
-    case "PIPELINE_COMPLETED": return `Pipeline completed${project}`
-    case "PIPELINE_FAILED": return `Pipeline failed${project}`
-    case "PIPELINE_TIMEOUT": return `Pipeline timed out${project}`
-    
-    case "AGENT_STARTED": return `Agent started${project}`
-    case "AGENT_COMPLETED": return `Agent completed${project}`
-    case "AGENT_FAILED": return `Agent failed${project}`
-    
-    case "DOC_SECTION_EDITED": return `${actor} edited ${meta.section ?? "a section"}${project}`
-    case "DOC_SECTION_RESET": return `${actor} reset a doc section${project}`
-    case "DOC_VERSION_SNAPSHOT": return `Doc snapshot taken${project}`
-    case "DOC_VERSION_RESTORED": return `Doc version restored${project}`
-    
-    case "SECURITY_SCAN_STARTED": return `Security scan started${project}`
-    case "SECURITY_SCAN_COMPLETED": return `Security scan completed${project}`
-    case "SECURITY_FINDING_HIGH": return `High-severity security finding${project}`
-    case "SECURITY_FINDING_CRITICAL": return `Critical security finding${project}`
-    
-    case "APISPEC_UPLOADED": return `${actor} uploaded an API spec${project}`
-    case "APISPEC_REANALYZED": return `API spec reanalyzed${project}`
-    
-    case "ATTACHMENT_UPLOADED": return `${actor} uploaded an attachment${project}`
-    case "ATTACHMENT_DELETED": return `${actor} deleted an attachment${project}`
-    
-    case "SHARE_INVITE_SENT": return `${actor} invited ${meta.inviteeEmail ?? "a user"}${project}`
-    case "SHARE_INVITE_ACCEPTED": return `${meta.inviteeEmail ?? "A user"} accepted an invite${project}`
-    case "SHARE_MEMBER_REMOVED": return `${actor} removed ${meta.inviteeEmail ?? "a user"}${project}`
-    case "SHARE_ROLE_CHANGED": return `${actor} changed ${meta.inviteeEmail ?? "a user"}'s role to ${meta.newRole ?? "a new role"}${project}`
-    
-    case "PORTAL_PUBLISHED": return `${actor} published portal${project}`
-    case "PORTAL_UNPUBLISHED": return `${actor} unpublished portal${project}`
-    case "PORTAL_SETTINGS_UPDATED": return `${actor} updated portal settings${project}`
-    
-    case "EXPORT_PDF": return `${actor} exported PDF${project}`
-    case "EXPORT_YAML": return `${actor} exported YAML${project}`
-    case "EXPORT_NOTION": return `${actor} exported to Notion${project}`
-    case "EXPORT_GOOGLE_DOCS": return `${actor} exported to Google Docs${project}`
-    
-    case "INTEGRATION_GITHUB_CONNECTED": return `${actor} connected GitHub`
-    case "INTEGRATION_GITHUB_DISCONNECTED": return `${actor} disconnected GitHub`
-    case "INTEGRATION_GITLAB_CONNECTED": return `${actor} connected GitLab`
-    case "INTEGRATION_GITLAB_DISCONNECTED": return `${actor} disconnected GitLab`
-    case "INTEGRATION_BITBUCKET_CONNECTED": return `${actor} connected Bitbucket`
-    case "INTEGRATION_BITBUCKET_DISCONNECTED": return `${actor} disconnected Bitbucket`
-    case "INTEGRATION_AZURE_CONNECTED": return `${actor} connected Azure DevOps`
-    case "INTEGRATION_AZURE_DISCONNECTED": return `${actor} disconnected Azure DevOps`
-    case "INTEGRATION_NOTION_CONFIGURED": return `${actor} configured Notion`
-    case "INTEGRATION_NOTION_DISCONNECTED": return `${actor} disconnected Notion`
-    case "INTEGRATION_SLACK_CONFIGURED": return `${actor} configured Slack`
-    case "INTEGRATION_SLACK_DISCONNECTED": return `${actor} disconnected Slack`
-    case "INTEGRATION_GOOGLE_CONNECTED": return `${actor} connected Google`
-    case "INTEGRATION_GOOGLE_DISCONNECTED": return `${actor} disconnected Google`
-    
-    case "SUBSCRIPTION_UPGRADED": return `${actor} upgraded subscription`
-    case "SUBSCRIPTION_DOWNGRADED": return `${actor} downgraded subscription`
-    case "SUBSCRIPTION_CANCELLED": return `${actor} cancelled subscription`
-    case "SUBSCRIPTION_RENEWED": return `Subscription renewed`
-    case "SUBSCRIPTION_PAYMENT_FAILED": return `Subscription payment failed`
-    case "SUBSCRIPTION_TRIAL_STARTED": return `${actor} started a trial`
-    case "SUBSCRIPTION_TRIAL_ENDED": return `Trial ended`
-    
-    case "API_TOKEN_CREATED": return `${actor} created an API token`
-    case "API_TOKEN_REVOKED": return `${actor} revoked an API token`
-    
-    case "SYSTEM_ERROR": return `System error`
-    default: return log.action.replace(/_/g, " ").toLowerCase()
-  }
-}
-
-
 function Initials({ name }: { name: string }) {
   const parts = (name || "?").trim().split(/\s+/)
   const text = parts.length >= 2
@@ -211,7 +122,7 @@ function MetadataPanel({ metadata }: { metadata: Record<string, unknown> }) {
 }
 
 
-function LogEntry({ log }: { log: ActivityLog }) {
+function LogEntry({ log, viewerUserId }: { log: ActivityLog; viewerUserId?: string }) {
   const [expanded, setExpanded] = useState(false)
   const ts = new Date(log.createdAt)
   const relTime = formatDistanceToNow(ts, { addSuffix: true })
@@ -220,21 +131,22 @@ function LogEntry({ log }: { log: ActivityLog }) {
   const rowHighlight = SEVERITY_ROW[log.severity] ?? ""
   const catColor = CATEGORY_COLOR[log.category] ?? "bg-muted text-muted-foreground"
   const catIcon = CATEGORY_ICON[log.category] ?? <Info className="h-3.5 w-3.5" />
-  const hasMeta = log.metadata && Object.keys(log.metadata).length > 0
+  const details = visibleMetadata(log.metadata as Record<string, unknown> | undefined)
+  const hasMeta = Object.keys(details).length > 0
+  const isSelf = !!(viewerUserId && log.userId === viewerUserId)
+  const displayName = isSelf ? "You" : (log.actorName?.trim() || log.actorEmail || "?")
 
   return (
     <div className={cn("group px-4 py-3 flex items-start gap-3 hover:bg-muted/30 transition-colors", rowHighlight)}>
-      {}
       <span className={cn("mt-0.5 rounded-md p-1.5 shrink-0", catColor)}>
         {catIcon}
       </span>
 
-      {}
       <div className="flex-1 min-w-0">
         <div className="flex items-start gap-2 flex-wrap">
-          <Initials name={log.actorName} />
+          <Initials name={displayName} />
           <span className="text-sm text-foreground/90 leading-6 min-w-0 wrap-break-word">
-            {actionLabel(log)}
+            {formatActivityLabel(log, { viewerUserId })}
           </span>
           {sevBadge && (
             <span className={cn("text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0", sevBadge.cls)}>
@@ -243,7 +155,6 @@ function LogEntry({ log }: { log: ActivityLog }) {
           )}
         </div>
 
-        {}
         {hasMeta && (
           <button
             className="mt-1 flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors"
@@ -257,7 +168,7 @@ function LogEntry({ log }: { log: ActivityLog }) {
           </button>
         )}
         {expanded && hasMeta && (
-          <MetadataPanel metadata={log.metadata as Record<string, unknown>} />
+          <MetadataPanel metadata={details} />
         )}
       </div>
 
@@ -279,6 +190,7 @@ const SEVERITIES = ["info", "success", "warning", "error", "critical"] as const
 
 
 export function LogsPage() {
+  const viewerUserId = useAuthStore((s) => s.user?.id)
   const [logs, setLogs] = useState<ActivityLog[]>([])
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
@@ -335,7 +247,7 @@ export function LogsPage() {
 
   return (
     <div>
-      <TopBar title="Activity Log" description="Full audit trail for your workspace : auth, pipelines, exports, and more.">
+      <TopBar title="Activity" description="What happened in your account and projects — documentation, sharing, billing, and settings.">
         <Button
           variant="outline"
           size="sm"
@@ -360,7 +272,7 @@ export function LogsPage() {
             >
               <option value="">All categories</option>
               {CATEGORIES.map((c) => (
-                <option key={c} value={c} className="capitalize">{c}</option>
+                <option key={c} value={c}>{CATEGORY_LABELS[c] ?? c}</option>
               ))}
             </Select>
           </div>
@@ -452,7 +364,7 @@ export function LogsPage() {
             <p className="text-muted-foreground mt-2 text-sm">
               {category || severity || from || to
                 ? "No events match your current filters."
-                : "Activity will appear here as you and your team use Docnine."}
+                : "Projects you create, docs you generate, and account changes will show up here."}
             </p>
           </div>
         )}
@@ -467,7 +379,7 @@ export function LogsPage() {
                 </h3>
                 <div className="border border-border rounded-xl overflow-hidden divide-y divide-border/50 bg-card">
                   {grouped[group].map((log) => (
-                    <LogEntry key={log._id} log={log} />
+                    <LogEntry key={log._id} log={log} viewerUserId={viewerUserId} />
                   ))}
                 </div>
               </div>
@@ -492,7 +404,7 @@ export function LogsPage() {
         )}
 
         <p className="text-xs text-muted-foreground text-center pb-2">
-          Events are retained for 90 days.
+          Events are kept for 90 days. Sign-in and sign-out are not recorded.
         </p>
       </div>
     </div>

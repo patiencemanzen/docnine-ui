@@ -121,7 +121,7 @@ export function PricingPage() {
                 undefined,
                 true,
             )
-            if (res.trial) {
+            if (res.type === "trial" || res.trial) {
                 navigate("/billing?welcome=1")
                 return
             }

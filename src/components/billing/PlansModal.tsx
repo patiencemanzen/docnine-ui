@@ -56,7 +56,7 @@ export function PlansModal({ open, onClose }: PlansModalProps) {
             setLoading(plan.id)
             setError(null)
             const res = await billingApi.checkout(plan.id, annual ? "annual" : "monthly", undefined, true)
-            if (res.trial) {
+            if (res.type === "trial" || res.trial) {
                 await refresh()
                 onClose()
                 return

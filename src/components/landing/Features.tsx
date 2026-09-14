@@ -2,23 +2,28 @@ import { Link } from "react-router-dom"
 
 import { ChevronRight } from "@/components/icons"
 import { DashedLine } from "@/components/landing/DashedLine"
+import {
+  DocsWorkspacePreview,
+  PortalPreview,
+  SyncPreview,
+} from "@/components/landing/ProductPreviews"
 import { Card, CardContent } from "@/components/ui/card"
 
 const items = [
   {
     title: "Generate docs from your codebase",
-    image: "/landing/features/triage-card.svg",
     href: "/#features",
+    Preview: DocsWorkspacePreview,
   },
   {
     title: "Keep docs in sync with every commit",
-    image: "/landing/features/cycle-card.svg",
     href: "/#resource-allocation",
+    Preview: SyncPreview,
   },
   {
     title: "Share portals your team will use",
-    image: "/landing/features/overview-card.svg",
     href: "/signup",
+    Preview: PortalPreview,
   },
 ]
 
@@ -52,7 +57,7 @@ export function Features() {
         </div>
 
         <Card className="mt-10 rounded-2xl md:mt-12">
-          <CardContent className="flex p-0 max-md:flex-col bg-gray-900/50">
+          <CardContent className="flex bg-gray-900/50 p-0 max-md:flex-col">
             {items.map((item, i) => (
               <div
                 key={item.title}
@@ -61,13 +66,9 @@ export function Features() {
                 data-delay={String(i + 1)}
               >
                 <div className="flex-1 p-5 md:p-6">
-                  <div className="relative aspect-[1.28/1] overflow-hidden rounded-xl">
-                    <img
-                      src={item.image}
-                      alt={`${item.title} interface`}
-                      className="absolute inset-0 size-full object-cover object-left-top"
-                    />
-                    <div className="from-background absolute inset-0 z-10 bg-linear-to-t via-transparent to-transparent" />
+                  <div className="relative aspect-[1.28/1] overflow-hidden rounded-xl bg-[#0c0b0a]">
+                    <item.Preview className="absolute inset-0 size-full" />
+                    <div className="pointer-events-none absolute inset-0 z-10 bg-linear-to-t from-background via-transparent to-transparent" />
                   </div>
 
                   <Link

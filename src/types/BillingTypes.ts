@@ -58,6 +58,8 @@ export interface SubscriptionData {
   cancelAtPeriodEnd: boolean;
   pendingPlan: string | null;
   pauseEndsAt: string | null;
+  trialUsedAt: string | null;
+  trialEligible: boolean;
   limits: BillingPlanLimits;
   features: BillingPlanFeatures;
 }

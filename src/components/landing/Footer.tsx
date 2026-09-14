@@ -2,6 +2,8 @@ import { Link } from "react-router-dom"
 
 import { ArrowUp } from "@/components/icons"
 
+const GITHUB_URL = "https://github.com/docnineai"
+
 export function Footer() {
   const navigation = [
     { name: "Product", href: "/#features" },
@@ -28,7 +30,7 @@ export function Footer() {
         <p
           data-animate
           data-delay="1"
-          className="mx-auto max-w-xl leading-relaxed text-muted-foreground text-balance"
+          className="mx-auto max-w-xl text-balance leading-relaxed text-muted-foreground"
         >
           Connect a repo, generate clear docs, and keep every page up to date as
           your team ships.
@@ -57,7 +59,9 @@ export function Footer() {
           ))}
           <li>
             <a
-              href="#"
+              href={GITHUB_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center gap-0.5 text-sm font-medium transition-opacity hover:opacity-75"
             >
               GitHub{" "}
@@ -79,7 +83,7 @@ export function Footer() {
         </ul>
       </nav>
 
-      <div className="text-primary mt-6 w-full overflow-hidden md:mt-10">
+      <div className="mt-6 w-full overflow-hidden text-primary md:mt-10">
         <p
           aria-hidden="true"
           className="font-display w-full translate-y-4 bg-linear-to-b from-primary to-transparent bg-clip-text text-center text-[clamp(6rem,22vw,22rem)] leading-none font-bold tracking-tighter text-transparent select-none sm:translate-y-6 md:translate-y-8"

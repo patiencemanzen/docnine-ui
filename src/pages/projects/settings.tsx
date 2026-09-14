@@ -56,7 +56,7 @@ export function ProjectSettingsPage() {
     const [syncLoading, setSyncLoading] = useState(false)
     const [syncFeedback, setSyncFeedback] = useState<{ type: "success" | "error"; msg: string } | null>(null)
 
-    const isOwner = !project || project.shareRole === "owner"
+    const isOwner = project?.shareRole === "owner"
     const slackStatus = searchParams.get("slack")
     const slackMessage = searchParams.get("message")
     const slackWorkspace = searchParams.get("workspace")

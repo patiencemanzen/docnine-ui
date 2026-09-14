@@ -21,9 +21,14 @@ function buildFeatures(plan: BillingPlan): string[] {
   if (plan.features.customDomain) list.push("Custom domain")
   if (plan.features.openApiImporter) list.push("OpenAPI importer")
   if (plan.limits.portals === null) list.push("Unlimited portals")
-  else if (plan.limits.portals > 0) list.push(`${plan.limits.portals} portal`)
+  else if (plan.limits.portals > 0)
+    list.push(
+      `${plan.limits.portals} portal${plan.limits.portals === 1 ? "" : "s"}`,
+    )
   if (plan.limits.exportFormats?.length)
-    list.push(`Export: ${plan.limits.exportFormats.join(", ")}`)
+    list.push(
+      `Export: ${plan.limits.exportFormats.map((f) => f.replace(/_/g, " ")).join(", ")}`,
+    )
   return list.slice(0, 6)
 }
 
@@ -66,18 +71,12 @@ export function Pricing() {
         style={{ maxWidth: 1152 }}
       >
         <div className="relative overflow-hidden rounded-2xl px-6 py-[calc(48px+8vh)]">
+          <div className="landing-pricing-bg absolute inset-0" aria-hidden />
           <div
             className="absolute inset-0"
             style={{
               background:
-                "url('https://cdn.pixabay.com/photo/2023/03/18/01/44/desert-7859694_1280.jpg') center/cover no-repeat",
-            }}
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(to bottom, rgba(0,0,0,0.65), transparent)",
+                "linear-gradient(to bottom, rgba(0,0,0,0.72), rgba(0,0,0,0.35) 45%, rgba(0,0,0,0.55))",
             }}
           />
 
@@ -93,7 +92,7 @@ export function Pricing() {
                   </h2>
                   <p className="mt-4 leading-relaxed text-white/70">
                     Start free. Upgrade when you need sync, portals, and team
-                    seats,no surprises.
+                    seats — no surprises.
                   </p>
                   <Link
                     to="/pricing"

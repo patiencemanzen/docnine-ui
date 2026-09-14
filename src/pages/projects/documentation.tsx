@@ -1204,7 +1204,7 @@ export function DocumentationViewerPage() {
                   <ApiReferenceViewer
                     spec={apiSpec}
                     projectId={id ?? ""}
-                    canEdit={true}
+                    canEdit={project?.shareRole !== "viewer"}
                     onReimport={() => requirePlan("API Spec Importer", "pro", "Import and manage OpenAPI specifications.", () => setApiSpecImportOpen(true))}
                     onSync={apiSpec.source === "url" ? async () => {
                       if (!id) return

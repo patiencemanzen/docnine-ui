@@ -39,12 +39,23 @@ function useGuestDarkLock() {
 export function GuestLayout() {
   useScrollReveal()
   useGuestDarkLock()
-  const { pathname } = useLocation()
+  const { pathname, hash } = useLocation()
   const isDocs = pathname === "/docs"
 
   useEffect(() => {
     document.documentElement.classList.add("js")
   }, [])
+
+  useEffect(() => {
+    if (!hash) return
+    const id = hash.replace("#", "")
+    const el = document.getElementById(id)
+    if (!el) return
+    const t = window.setTimeout(() => {
+      el.scrollIntoView({ behavior: "smooth", block: "start" })
+    }, 80)
+    return () => window.clearTimeout(t)
+  }, [pathname, hash])
 
   return (
     <ErrorBoundary>

@@ -58,6 +58,7 @@ import {
   AdminProject,
   AdminStats,
   AdminSubscription,
+  AdminSubscriptionInfo,
   AdminUser,
   Pagination,
 } from "@/types/AdminTypes";
@@ -99,7 +100,7 @@ let _refreshPromise: Promise<string | null> | null = null;
  * Attempt a silent token refresh via the httpOnly refresh-token cookie.
  * ---------------------------------------------------------------------------
  * */
-async function refreshToken(): Promise<string | null> {
+export async function refreshToken(): Promise<string | null> {
   if (_isRefreshing && _refreshPromise) return _refreshPromise;
 
   _isRefreshing = true;
@@ -989,38 +990,69 @@ export function chatStream(
   },
 ): AbortController {
   const ctrl = new AbortController();
-  const token = _accessToken;
 
-  fetchEventSource(`${API_BASE}/projects/${projectId}/chat`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    credentials: "include",
-    body: JSON.stringify({ message }),
-    signal: ctrl.signal,
-    openWhenHidden: true,
-    onmessage(ev) {
-      try {
-        const data = JSON.parse(ev.data);
-        if (data.type === "token") handlers.onToken(data.token);
-        else if (data.type === "done") {
-          handlers.onDone(data);
-          ctrl.abort();
-        } else if (data.type === "error")
-          handlers.onError(new Error(data.message));
-      } catch {
-        /* ignore parse errors */
+  const run = async (token: string | null) => {
+    await fetchEventSource(`${API_BASE}/projects/${projectId}/chat`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      credentials: "include",
+      body: JSON.stringify({ message }),
+      signal: ctrl.signal,
+      openWhenHidden: true,
+      async onopen(res) {
+        if (res.status === 401) {
+          const err = new Error("SSE_AUTH") as Error & { code?: string };
+          err.code = "SSE_AUTH";
+          throw err;
+        }
+        if (!res.ok) {
+          throw new Error(`Chat stream failed (${res.status})`);
+        }
+      },
+      onmessage(ev) {
+        try {
+          const data = JSON.parse(ev.data);
+          if (data.type === "token") handlers.onToken(data.token);
+          else if (data.type === "done") {
+            handlers.onDone(data);
+            ctrl.abort();
+          } else if (data.type === "error")
+            handlers.onError(new Error(data.message));
+        } catch {
+          /* ignore parse errors */
+        }
+      },
+      onerror(err) {
+        if ((err as { code?: string })?.code === "SSE_AUTH") throw err;
+        handlers.onError(err instanceof Error ? err : new Error(String(err)));
+        throw err;
+      },
+    });
+  };
+
+  (async () => {
+    try {
+      await run(_accessToken);
+    } catch (err: any) {
+      if (err?.name === "AbortError") return;
+      if (err?.code === "SSE_AUTH") {
+        const next = await refreshToken();
+        if (next) {
+          try {
+            await run(next);
+            return;
+          } catch (retryErr: any) {
+            if (retryErr?.name !== "AbortError") handlers.onError(retryErr);
+            return;
+          }
+        }
       }
-    },
-    onerror(err) {
       handlers.onError(err instanceof Error ? err : new Error(String(err)));
-      throw err; // prevents auto-reconnect
-    },
-  }).catch((err) => {
-    if (err?.name !== "AbortError") handlers.onError(err);
-  });
+    }
+  })();
 
   return ctrl;
 }
@@ -1215,8 +1247,8 @@ export const billingApi = {
 
   /**
    * Initiate checkout.
-   * For free plan trials → returns `{ trial: true }`.
-   * For paid plans → returns `{ paymentLink, txRef }` to redirect to FW.
+   * Trial starts return `{ type: 'trial', trial: true }`.
+   * Paid plans return `{ type: 'payment', paymentLink, txRef }`.
    */
   checkout: (
     planId: string,
@@ -1224,7 +1256,7 @@ export const billingApi = {
     seats?: number,
     startTrial?: boolean,
   ) =>
-    apiFetch<{ trial?: boolean; paymentLink?: string; txRef?: string }>(
+    apiFetch<{ type?: "trial" | "payment"; trial?: boolean; paymentLink?: string; txRef?: string }>(
       "/billing/checkout",
       {
         method: "POST",
@@ -1354,6 +1386,37 @@ export const adminApi = {
   deleteUser: (id: string) =>
     apiFetch<null>(`/admin/users/${id}`, { method: "DELETE" }),
 
+  updateUser: (
+    id: string,
+    data: {
+      role?: "user" | "super-admin";
+      isEmailVerified?: boolean;
+      revokeSessions?: boolean;
+    },
+  ) =>
+    apiFetch<{ user: AdminUser }>(`/admin/users/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    }),
+
+  updateUserSubscription: (
+    userId: string,
+    data: {
+      plan: string;
+      status?: string;
+      billingCycle?: string | null;
+      seats?: number;
+      note?: string;
+    },
+  ) =>
+    apiFetch<{ subscription: AdminSubscriptionInfo }>(
+      `/admin/users/${userId}/subscription`,
+      {
+        method: "PATCH",
+        body: JSON.stringify(data),
+      },
+    ),
+
   listProjects: (params?: {
     page?: number;
     limit?: number;
@@ -1388,6 +1451,24 @@ export const adminApi = {
       subscriptions: AdminSubscription[];
       pagination: Pagination;
     }>(`/admin/subscriptions?${q}`);
+  },
+
+  listActivity: (params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    category?: string;
+    userId?: string;
+  }) => {
+    const q = new URLSearchParams();
+    if (params?.page) q.set("page", String(params.page));
+    if (params?.limit) q.set("limit", String(params.limit));
+    if (params?.search) q.set("search", params.search);
+    if (params?.category) q.set("category", params.category);
+    if (params?.userId) q.set("userId", params.userId);
+    return apiFetch<{ logs: ActivityLog[]; pagination: Pagination }>(
+      `/admin/activity?${q}`,
+    );
   },
 };
 
