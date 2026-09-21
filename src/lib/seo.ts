@@ -1,11 +1,11 @@
 import { SeoConfig } from "@/types/SeoTypes";
 import { useEffect, useRef } from "react";
 
-const DEFAULT_SITE_NAME = "Docnine"
+const DEFAULT_SITE_NAME = "Docnine";
 const DEFAULT_DESCRIPTION =
-  "Generate and maintain developer documentation with AI. Docnine creates docs from your codebase and keeps them up to date as your code evolves."
-const DEFAULT_IMAGE_PATH = "/web-app-manifest-512x512.png"
-const TITLE_SUFFIX = " | Docnine"
+  "Generate and maintain developer documentation with AI. Docnine creates docs from your codebase and keeps them up to date as your code evolves.";
+const DEFAULT_IMAGE_PATH = "/web-app-manifest-512x512.png";
+const TITLE_SUFFIX = " | Docnine";
 
 function trimSlash(value: string): string {
   return value.replace(/\/+$/, "");
@@ -18,21 +18,15 @@ export function getSiteUrl(): string {
   return "https://docnineai.com";
 }
 
-function toAbsoluteUrl(
-  urlOrPath: string | undefined,
-  siteUrl: string,
-): string | undefined {
+function toAbsoluteUrl(urlOrPath: string | undefined, siteUrl: string): string | undefined {
   if (!urlOrPath) return undefined;
   if (/^https?:\/\//i.test(urlOrPath)) return urlOrPath;
   const cleanPath = urlOrPath.startsWith("/") ? urlOrPath : `/${urlOrPath}`;
   return `${trimSlash(siteUrl)}${cleanPath}`;
 }
 
-
 function upsertMeta(attr: "name" | "property", value: string, content: string) {
-  let el = document.head.querySelector<HTMLMetaElement>(
-    `meta[${attr}="${value}"]`,
-  );
+  let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${value}"]`);
   if (!el) {
     el = document.createElement("meta");
     el.setAttribute(attr, value);
@@ -73,8 +67,6 @@ function removeStructuredData(id: string) {
   document.head.querySelector<HTMLScriptElement>(`script#${id}`)?.remove();
 }
 
-// ─── Core apply function ──────────────────────────────────────────
-
 export function applySeo(config: SeoConfig | null) {
   if (!config || typeof document === "undefined") return;
 
@@ -86,32 +78,26 @@ export function applySeo(config: SeoConfig | null) {
   const type = config.type ?? "website";
   const sdId = config.structuredDataId ?? "docnine-seo-jsonld";
   const image = toAbsoluteUrl(config.image ?? DEFAULT_IMAGE_PATH, siteUrl);
-  const twitterCard =
-    config.twitterCard ?? (image ? "summary_large_image" : "summary");
+  const twitterCard = config.twitterCard ?? (image ? "summary_large_image" : "summary");
 
-  // Build canonical URL
   const canonicalUrl =
     config.canonicalUrl ??
     toAbsoluteUrl(
-      config.pathname ??
-        (typeof window !== "undefined" ? window.location.pathname : "/"),
+      config.pathname ?? (typeof window !== "undefined" ? window.location.pathname : "/"),
       siteUrl,
     ) ??
     siteUrl;
 
-  // Build title: append " | Docnine" unless the title already contains "Docnine"
-  const appendSuffix = config.appendSiteName ?? true
+  const appendSuffix = config.appendSiteName ?? true;
   const fullTitle =
     appendSuffix && !/docnine/i.test(config.title)
       ? `${config.title}${TITLE_SUFFIX}`
-      : config.title
+      : config.title;
 
   const keywords = (config.keywords ?? []).filter(Boolean).join(", ");
 
-  // ── <title> ───────────────────────────────────────────────────
   document.title = fullTitle;
 
-  // ── Canonical + core meta ─────────────────────────────────────
   upsertLink("canonical", canonicalUrl);
   upsertMeta("name", "description", description);
   upsertMeta("name", "robots", robots);
@@ -120,7 +106,6 @@ export function applySeo(config: SeoConfig | null) {
   if (keywords) upsertMeta("name", "keywords", keywords);
   else removeMeta("name", "keywords");
 
-  // ── Open Graph ────────────────────────────────────────────────
   upsertMeta("property", "og:title", fullTitle);
   upsertMeta("property", "og:description", description);
   upsertMeta("property", "og:type", type);
@@ -130,10 +115,8 @@ export function applySeo(config: SeoConfig | null) {
 
   if (image) {
     upsertMeta("property", "og:image", image);
-    if (config.imageWidth)
-      upsertMeta("property", "og:image:width", String(config.imageWidth));
-    if (config.imageHeight)
-      upsertMeta("property", "og:image:height", String(config.imageHeight));
+    if (config.imageWidth) upsertMeta("property", "og:image:width", String(config.imageWidth));
+    if (config.imageHeight) upsertMeta("property", "og:image:height", String(config.imageHeight));
     upsertMeta("property", "og:image:alt", fullTitle);
   } else {
     removeMeta("property", "og:image");
@@ -142,29 +125,18 @@ export function applySeo(config: SeoConfig | null) {
     removeMeta("property", "og:image:alt");
   }
 
-  // ── Twitter / X card ─────────────────────────────────────────
   upsertMeta("name", "twitter:card", twitterCard);
   upsertMeta("name", "twitter:title", fullTitle);
   upsertMeta("name", "twitter:description", description);
   if (image) upsertMeta("name", "twitter:image", image);
   else removeMeta("name", "twitter:image");
 
-  if (config.twitterSite)
-    upsertMeta("name", "twitter:site", config.twitterSite);
+  if (config.twitterSite) upsertMeta("name", "twitter:site", config.twitterSite);
 
-  // ── Structured data (JSON-LD) ─────────────────────────────────
   if (config.structuredData) upsertStructuredData(config.structuredData, sdId);
   else removeStructuredData(sdId);
 }
 
-// ─── React hook ───────────────────────────────────────────────────
-
-/**
- * Apply SEO config whenever it changes.
- * Restores the previous title and description on unmount so
- * components that set their own SEO don't leave stale values
- * if they're conditionally rendered.
- */
 export function useSeo(config: SeoConfig | null) {
   const prevTitle = useRef<string>("");
   const sdId = config?.structuredDataId ?? "docnine-seo-jsonld";
@@ -174,8 +146,6 @@ export function useSeo(config: SeoConfig | null) {
     applySeo(config);
 
     return () => {
-      // Only clean up structured data : title/meta are overwritten
-      // by the next page's useSeo call, so no flicker needed.
       removeStructuredData(sdId);
     };
   }, [config, sdId]);

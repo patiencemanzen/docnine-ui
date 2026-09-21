@@ -1,11 +1,11 @@
-import { useState } from "react"
-import { Button } from "../ui/button"
-import { Link } from "react-router-dom"
-import { Menu, X } from "@/components/icons"
-import { ApplicationLogo } from "./application-logo"
+import { useState } from "react";
+import { Button } from "../ui/button";
+import { Link } from "react-router-dom";
+import { Menu, X } from "@/components/icons";
+import { ApplicationLogo } from "./application-logo";
 
 export function TopHeader({ className }: { className?: string }) {
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <header
@@ -110,5 +110,5 @@ export function TopHeader({ className }: { className?: string }) {
         </div>
       )}
     </header>
-  )
+  );
 }

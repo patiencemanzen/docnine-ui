@@ -1,8 +1,3 @@
-/**
- * Service: Provider OAuth Management
- * Handles OAuth window flows and result polling
- */
-
 import { githubApi, gitlabApi, bitbucketApi, azureApi } from "@/lib/api";
 import {
   readOAuthResult,
@@ -14,10 +9,6 @@ import type { ProviderKey } from "@/types/ProjectTypes";
 import { OAuthStatus } from "@/types/OauthIntergrationTypes";
 
 export class ProviderOAuthService {
-  /**
-   * Fetch the provider consent URL with the session JWT, then open it.
-   * Never puts the access token in a query string.
-   */
   static async getOAuthStartUrl(provider: ProviderKey): Promise<string> {
     let data: { url: string };
     if (provider === "github") data = await githubApi.getOAuthStartUrl();
@@ -29,17 +20,10 @@ export class ProviderOAuthService {
     return data.url;
   }
 
-  /**
-   * Open OAuth window and handle the authentication flow
-   */
   static async openOAuthWindow(
     provider: ProviderKey,
     _accessToken: string,
-    onStatusChange: (
-      status: OAuthStatus,
-      user?: string,
-      message?: string,
-    ) => void,
+    onStatusChange: (status: OAuthStatus, user?: string, message?: string) => void,
   ): Promise<void> {
     clearOAuthResult(provider);
 
@@ -67,11 +51,7 @@ export class ProviderOAuthService {
     );
 
     if (!popup) {
-      onStatusChange(
-        "error",
-        undefined,
-        "Failed to open OAuth window. Please allow popups.",
-      );
+      onStatusChange("error", undefined, "Failed to open OAuth window. Please allow popups.");
       return;
     }
 
@@ -103,41 +83,31 @@ export class ProviderOAuthService {
     }, OAUTH_TIMEOUT_MS);
 
     const poll = setInterval(() => {
-      // Check localStorage for result
       const result = readOAuthResult(provider);
       if (result) {
         finish(result.status, result.user, result.msg);
         return;
       }
 
-      // Check if popup was closed
       if (popup.closed) {
         if (!settled) {
           settled = true;
           cleanup(poll);
 
-          // Fallback: check provider status
           this.checkProviderStatus(provider)
             .then((connected) => {
               if (connected) {
                 finish("success", undefined, "Connected successfully");
               }
             })
-            .catch(() => {
-              /* network error */
-            });
+            .catch(() => {});
         }
         return;
       }
     }, OAUTH_POLL_INTERVAL_MS);
   }
 
-  /**
-   * Check if a provider is currently connected
-   */
-  private static async checkProviderStatus(
-    provider: ProviderKey,
-  ): Promise<boolean> {
+  private static async checkProviderStatus(provider: ProviderKey): Promise<boolean> {
     try {
       let status: any;
       if (provider === "github") {

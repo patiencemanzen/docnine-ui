@@ -1,13 +1,13 @@
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
 
-import { ChevronRight } from "@/components/icons"
-import { DashedLine } from "@/components/landing/DashedLine"
+import { ChevronRight } from "@/components/icons";
+import { DashedLine } from "@/components/landing/DashedLine";
 import {
   DocsWorkspacePreview,
   PortalPreview,
   SyncPreview,
-} from "@/components/landing/ProductPreviews"
-import { Card, CardContent } from "@/components/ui/card"
+} from "@/components/landing/ProductPreviews";
+import { Card, CardContent } from "@/components/ui/card";
 
 const items = [
   {
@@ -25,7 +25,7 @@ const items = [
     href: "/signup",
     Preview: PortalPreview,
   },
-]
+];
 
 export function Features() {
   return (
@@ -39,10 +39,7 @@ export function Features() {
         </div>
 
         <div className="mx-auto mt-10 grid max-w-4xl items-start gap-4 md:mt-12 lg:grid-cols-2 lg:gap-8">
-          <h2
-            data-animate
-            className="text-3xl font-bold tracking-tight sm:text-4xl"
-          >
+          <h2 data-animate className="text-3xl font-bold tracking-tight sm:text-4xl">
             Made for modern engineering teams
           </h2>
           <p
@@ -50,9 +47,8 @@ export function Features() {
             data-delay="1"
             className="mt-0 leading-relaxed text-muted-foreground lg:mt-1"
           >
-            Docnine connects to your repositories, drafts clear documentation
-            with AI, and keeps every page in sync so your team can ship without
-            outdated wiki pages.
+            Docnine connects to your repositories, drafts clear documentation with AI, and keeps
+            every page in sync so your team can ship without outdated wiki pages.
           </p>
         </div>
 
@@ -99,5 +95,5 @@ export function Features() {
         </Card>
       </div>
     </section>
-  )
+  );
 }

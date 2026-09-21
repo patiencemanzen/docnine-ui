@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from "react"
-import { Button } from "@/components/ui/button"
-import { DocHeaderProps } from "@/types/DocumentationTypes"
+import { useState, useEffect, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { DocHeaderProps } from "@/types/DocumentationTypes";
 
 export function DocHeader({ title, isSidebarOpen, onSidebarToggle, onBack }: DocHeaderProps) {
   return (
@@ -13,5 +13,5 @@ export function DocHeader({ title, isSidebarOpen, onSidebarToggle, onBack }: Doc
         {isSidebarOpen ? "Close" : "Open"} Sidebar
       </Button>
     </div>
-  )
+  );
 }

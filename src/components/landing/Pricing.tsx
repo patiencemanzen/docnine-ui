@@ -1,67 +1,61 @@
-import { useEffect, useMemo, useState } from "react"
-import { Link } from "react-router-dom"
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 
-import { Check } from "@/components/icons"
-import Loader1 from "@/components/ui/loader1"
-import { billingApi } from "@/lib/api"
-import { useSubscriptionStore } from "@/store/subscription"
-import { BillingPlan } from "@/types/BillingTypes"
+import { Check } from "@/components/icons";
+import Loader1 from "@/components/ui/loader1";
+import { billingApi } from "@/lib/api";
+import { useSubscriptionStore } from "@/store/subscription";
+import { BillingPlan } from "@/types/BillingTypes";
 
 function buildFeatures(plan: BillingPlan): string[] {
-  const list: string[] = []
-  if (plan.limits.projects === null) list.push("Unlimited projects")
-  else list.push(`${plan.limits.projects} projects`)
-  if (plan.limits.seats === null) list.push("Unlimited seats")
-  else if (plan.limits.seats > 1) list.push(`Up to ${plan.limits.seats} seats`)
-  if (plan.features.githubSync) list.push("GitHub sync")
-  if (plan.features.shareViewOnly) list.push("Share docs")
-  if (plan.features.archiveRestore) list.push("Archive & restore")
+  const list: string[] = [];
+  if (plan.limits.projects === null) list.push("Unlimited projects");
+  else list.push(`${plan.limits.projects} projects`);
+  if (plan.limits.seats === null) list.push("Unlimited seats");
+  else if (plan.limits.seats > 1) list.push(`Up to ${plan.limits.seats} seats`);
+  if (plan.features.githubSync) list.push("GitHub sync");
+  if (plan.features.shareViewOnly) list.push("Share docs");
+  if (plan.features.archiveRestore) list.push("Archive & restore");
   if (plan.limits.aiChatsPerMonth && plan.limits.aiChatsPerMonth > 0)
-    list.push(`${plan.limits.aiChatsPerMonth} AI chats/month`)
-  if (plan.features.customDomain) list.push("Custom domain")
-  if (plan.features.openApiImporter) list.push("OpenAPI importer")
-  if (plan.limits.portals === null) list.push("Unlimited portals")
+    list.push(`${plan.limits.aiChatsPerMonth} AI chats/month`);
+  if (plan.features.customDomain) list.push("Custom domain");
+  if (plan.features.openApiImporter) list.push("OpenAPI importer");
+  if (plan.limits.portals === null) list.push("Unlimited portals");
   else if (plan.limits.portals > 0)
-    list.push(
-      `${plan.limits.portals} portal${plan.limits.portals === 1 ? "" : "s"}`,
-    )
+    list.push(`${plan.limits.portals} portal${plan.limits.portals === 1 ? "" : "s"}`);
   if (plan.limits.exportFormats?.length)
-    list.push(
-      `Export: ${plan.limits.exportFormats.map((f) => f.replace(/_/g, " ")).join(", ")}`,
-    )
-  return list.slice(0, 6)
+    list.push(`Export: ${plan.limits.exportFormats.map((f) => f.replace(/_/g, " ")).join(", ")}`);
+  return list.slice(0, 6);
 }
 
 function formatPrice(amount: number) {
-  if (amount === 0) return "$0"
-  return `$${Number.isInteger(amount) ? amount : amount.toFixed(2)}`
+  if (amount === 0) return "$0";
+  return `$${Number.isInteger(amount) ? amount : amount.toFixed(2)}`;
 }
 
 export function Pricing() {
-  const { loadPlans } = useSubscriptionStore()
-  const [plans, setPlans] = useState<BillingPlan[]>([])
-  const [fetching, setFetching] = useState(true)
+  const { loadPlans } = useSubscriptionStore();
+  const [plans, setPlans] = useState<BillingPlan[]>([]);
+  const [fetching, setFetching] = useState(true);
 
   useEffect(() => {
     billingApi
       .getPlans()
       .then((res) => {
-        setPlans(res.plans)
-        loadPlans()
+        setPlans(res.plans);
+        loadPlans();
       })
-      .catch(() => {
-        /* leave plans empty on failure */
-      })
-      .finally(() => setFetching(false))
-  }, [loadPlans])
+      .catch(() => {})
+      .finally(() => setFetching(false));
+  }, [loadPlans]);
 
   const displayPlans = useMemo(() => {
-    const starter = plans.find((p) => p.id === "starter")
-    const pro = plans.find((p) => p.id === "pro")
-    const picked = [starter, pro].filter(Boolean) as BillingPlan[]
-    if (picked.length === 2) return picked
-    return plans.filter((p) => p.prices.monthly > 0).slice(0, 2)
-  }, [plans])
+    const starter = plans.find((p) => p.id === "starter");
+    const pro = plans.find((p) => p.id === "pro");
+    const picked = [starter, pro].filter(Boolean) as BillingPlan[];
+    if (picked.length === 2) return picked;
+    return plans.filter((p) => p.prices.monthly > 0).slice(0, 2);
+  }, [plans]);
 
   return (
     <section id="pricing" className="mb-10">
@@ -82,17 +76,13 @@ export function Pricing() {
 
           <div className="relative mx-auto max-w-5xl">
             <div className="px-6 md:px-10">
-              <div
-                className="grid grid-cols-1 gap-8 md:grid-cols-3"
-                data-animate
-              >
+              <div className="grid grid-cols-1 gap-8 md:grid-cols-3" data-animate>
                 <div>
                   <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
                     Simple, transparent pricing
                   </h2>
                   <p className="mt-4 leading-relaxed text-white/70">
-                    Start free. Upgrade when you need sync, portals, and team
-                    seats — no surprises.
+                    Start free. Upgrade when you need sync, portals, and team seats — no surprises.
                   </p>
                   <Link
                     to="/pricing"
@@ -108,14 +98,11 @@ export function Pricing() {
                   </div>
                 ) : (
                   displayPlans.map((plan, index) => {
-                    const features = buildFeatures(plan)
-                    const isLast = index === displayPlans.length - 1
+                    const features = buildFeatures(plan);
+                    const isLast = index === displayPlans.length - 1;
 
                     return (
-                      <div
-                        key={plan.id}
-                        className={isLast ? "md:pb-12" : undefined}
-                      >
+                      <div key={plan.id} className={isLast ? "md:pb-12" : undefined}>
                         <div
                           className="overflow-hidden rounded-2xl border border-white/10 bg-black text-white"
                           style={{
@@ -131,9 +118,7 @@ export function Pricing() {
                               <span className="text-4xl font-bold tracking-tight text-white">
                                 {formatPrice(plan.prices.monthly)}
                               </span>
-                              <span className="text-sm text-white/50">
-                                / month
-                              </span>
+                              <span className="text-sm text-white/50">/ month</span>
                             </div>
                             <p className="mt-3 text-sm leading-relaxed text-white/60">
                               {plan.tagline}
@@ -160,7 +145,7 @@ export function Pricing() {
                           </div>
                         </div>
                       </div>
-                    )
+                    );
                   })
                 )}
               </div>
@@ -169,5 +154,5 @@ export function Pricing() {
         </div>
       </div>
     </section>
-  )
+  );
 }

@@ -1,148 +1,160 @@
-/**
- * API Tokens Management Component
- * Allows users to generate, list, and revoke API tokens for MCP, CLI, etc.
- */
-
-import { useState, useEffect, useCallback } from "react"
-import { authApi } from "@/lib/api"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Copy, Check, Trash2, Eye, EyeOff, Copy as CopyIcon, Plus, AlertTriangle } from "@/components/icons"
-import { format } from "date-fns"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Checkbox } from "@/components/ui/checkbox"
-import { ConfirmDialog } from "@/components/dialogs/ConfirmDialog"
-import { useConfirm } from "@/hooks/useConfirm"
+import { useState, useEffect, useCallback } from "react";
+import { authApi } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Copy,
+  Check,
+  Trash2,
+  Eye,
+  EyeOff,
+  Copy as CopyIcon,
+  Plus,
+  AlertTriangle,
+} from "@/components/icons";
+import { format } from "date-fns";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ConfirmDialog } from "@/components/dialogs/ConfirmDialog";
+import { useConfirm } from "@/hooks/useConfirm";
 
 interface Token {
-  id: string
-  name: string
-  description?: string
-  lastChars: string
-  scope: string[]
-  expiresAt?: string
-  lastUsedAt?: string
-  createdAt: string
-  isRevoked: boolean
+  id: string;
+  name: string;
+  description?: string;
+  lastChars: string;
+  scope: string[];
+  expiresAt?: string;
+  lastUsedAt?: string;
+  createdAt: string;
+  isRevoked: boolean;
 }
 
 interface TokenStats {
-  total: number
-  active: number
-  revoked: number
-  expiringSoon: number
+  total: number;
+  active: number;
+  revoked: number;
+  expiringSoon: number;
 }
 
 interface NewToken {
-  plainToken: string
-  id: string
-  name: string
-  lastChars: string
-  scope: string[]
-  expiresAt?: string
-  createdAt: string
+  plainToken: string;
+  id: string;
+  name: string;
+  lastChars: string;
+  scope: string[];
+  expiresAt?: string;
+  createdAt: string;
 }
 
 export function APITokensCard() {
-  const [tokens, setTokens] = useState<Token[]>([])
-  const [stats, setStats] = useState<TokenStats | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [newToken, setNewToken] = useState<NewToken | null>(null)
-  const [showNewToken, setShowNewToken] = useState(false)
-  const [tokenCopied, setTokenCopied] = useState(false)
-  const [isCreating, setIsCreating] = useState(false)
-  const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null)
-  const [showCreateDialog, setShowCreateDialog] = useState(false)
-  const { confirm, state, handleConfirm, handleCancel } = useConfirm()
+  const [tokens, setTokens] = useState<Token[]>([]);
+  const [stats, setStats] = useState<TokenStats | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [newToken, setNewToken] = useState<NewToken | null>(null);
+  const [showNewToken, setShowNewToken] = useState(false);
+  const [tokenCopied, setTokenCopied] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(
+    null,
+  );
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const { confirm, state, handleConfirm, handleCancel } = useConfirm();
   const [createForm, setCreateForm] = useState({
     name: "",
     description: "",
     scope: ["api"],
     expiresAt: "",
-  })
-  const [revokeLoading, setRevokeLoading] = useState<string | null>(null)
+  });
+  const [revokeLoading, setRevokeLoading] = useState<string | null>(null);
 
   const loadTokens = useCallback(async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const data = await authApi.listTokens()
-      setTokens(data.tokens)
-      setStats(data.stats)
+      const data = await authApi.listTokens();
+      setTokens(data.tokens);
+      setStats(data.stats);
     } catch (err) {
-      setFeedback({ type: "error", message: "Failed to load tokens" })
+      setFeedback({ type: "error", message: "Failed to load tokens" });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    loadTokens()
-  }, [loadTokens])
+    loadTokens();
+  }, [loadTokens]);
 
   const handleCreateToken = async () => {
-    setFeedback(null)
+    setFeedback(null);
     if (!createForm.name.trim()) {
-      setFeedback({ type: "error", message: "Token name is required" })
-      return
+      setFeedback({ type: "error", message: "Token name is required" });
+      return;
     }
 
-    setIsCreating(true)
+    setIsCreating(true);
     try {
       const result = await authApi.createToken({
         name: createForm.name,
         description: createForm.description,
         scope: createForm.scope,
         expiresAt: createForm.expiresAt ? new Date(createForm.expiresAt).toISOString() : undefined,
-      })
+      });
 
-      setNewToken(result)
-      setShowNewToken(true)
-      setCreateForm({ name: "", description: "", scope: ["api"], expiresAt: "" })
-      setShowCreateDialog(false)
+      setNewToken(result);
+      setShowNewToken(true);
+      setCreateForm({ name: "", description: "", scope: ["api"], expiresAt: "" });
+      setShowCreateDialog(false);
 
-      // Refresh list
-      await loadTokens()
+      await loadTokens();
     } catch (err: any) {
       setFeedback({
         type: "error",
         message: err?.message ?? "Failed to create token",
-      })
+      });
     } finally {
-      setIsCreating(false)
+      setIsCreating(false);
     }
-  }
+  };
 
   const handleCopyToken = () => {
-    if (!newToken) return
-    navigator.clipboard.writeText(newToken.plainToken)
-    setTokenCopied(true)
-    setTimeout(() => setTokenCopied(false), 2000)
-  }
+    if (!newToken) return;
+    navigator.clipboard.writeText(newToken.plainToken);
+    setTokenCopied(true);
+    setTimeout(() => setTokenCopied(false), 2000);
+  };
 
   const handleRevokeToken = async (tokenId: string) => {
     const confirmed = await confirm({
       title: "Revoke Token",
       message: "Revoke this token? Applications using it will stop working immediately.",
       isDangerous: true,
-      confirmText: "Revoke"
-    })
-    if (!confirmed) return
+      confirmText: "Revoke",
+    });
+    if (!confirmed) return;
 
-    setRevokeLoading(tokenId)
+    setRevokeLoading(tokenId);
     try {
-      await authApi.revokeToken(tokenId)
-      setFeedback({ type: "success", message: "Token revoked" })
-      await loadTokens()
+      await authApi.revokeToken(tokenId);
+      setFeedback({ type: "success", message: "Token revoked" });
+      await loadTokens();
     } catch (err: any) {
-      setFeedback({ type: "error", message: err?.message ?? "Failed to revoke token" })
+      setFeedback({ type: "error", message: err?.message ?? "Failed to revoke token" });
     } finally {
-      setRevokeLoading(null)
+      setRevokeLoading(null);
     }
-  }
+  };
 
   return (
     <>
@@ -154,14 +166,17 @@ export function APITokensCard() {
               Create tokens for API access, MCP integration, CLI, and more.
             </CardDescription>
           </div>
-          <Button onClick={() => setShowCreateDialog(true)} size="sm" className="gap-2 shrink-0 w-full sm:w-auto">
+          <Button
+            onClick={() => setShowCreateDialog(true)}
+            size="sm"
+            className="gap-2 shrink-0 w-full sm:w-auto"
+          >
             <Plus className="h-4 w-4" />
             New Token
           </Button>
         </CardHeader>
 
         <CardContent className="space-y-6">
-          {/* Stats ─────────────────────────────────────────────────────── */}
           {stats && !isLoading && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <div className="rounded-2xl bg-muted p-3">
@@ -183,7 +198,6 @@ export function APITokensCard() {
             </div>
           )}
 
-          {/* Token List ────────────────────────────────────────────────── */}
           {isLoading ? (
             <div className="space-y-3">
               <Skeleton className="h-16 w-full" />
@@ -250,10 +264,11 @@ export function APITokensCard() {
 
           {feedback && (
             <div
-              className={`rounded-lg p-3 text-sm ${feedback.type === "success"
-                ? "bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-200"
-                : "bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-200"
-                }`}
+              className={`rounded-lg p-3 text-sm ${
+                feedback.type === "success"
+                  ? "bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-200"
+                  : "bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-200"
+              }`}
             >
               {feedback.message}
             </div>
@@ -261,7 +276,6 @@ export function APITokensCard() {
         </CardContent>
       </Card>
 
-      {/* Create Token Dialog ────────────────────────────────────────── */}
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
         <DialogContent>
           <DialogHeader>
@@ -309,7 +323,7 @@ export function APITokensCard() {
                           scope: checked
                             ? [...createForm.scope, scope]
                             : createForm.scope.filter((s) => s !== scope),
-                        })
+                        });
                       }}
                     />
                     <label htmlFor={`scope-${scope}`} className="text-sm cursor-pointer flex-1">
@@ -348,7 +362,6 @@ export function APITokensCard() {
         </DialogContent>
       </Dialog>
 
-      {/* New Token Display Dialog ──────────────────────────────────── */}
       {newToken && (
         <Dialog open={showNewToken} onOpenChange={setShowNewToken}>
           <DialogContent className="max-w-lg">
@@ -378,19 +391,39 @@ export function APITokensCard() {
               </div>
 
               <div className="rounded-lg border border-border p-3 space-y-2 text-sm">
-                <div><strong>Token Name:</strong> {newToken.name}</div>
-                <div><strong>Last Chars:</strong> <code className="text-xs bg-muted px-2 py-1 rounded">...{newToken.lastChars}</code></div>
-                <div><strong>Scopes:</strong> {newToken.scope.join(", ")}</div>
+                <div>
+                  <strong>Token Name:</strong> {newToken.name}
+                </div>
+                <div>
+                  <strong>Last Chars:</strong>{" "}
+                  <code className="text-xs bg-muted px-2 py-1 rounded">
+                    ...{newToken.lastChars}
+                  </code>
+                </div>
+                <div>
+                  <strong>Scopes:</strong> {newToken.scope.join(", ")}
+                </div>
               </div>
 
               {newToken.scope.includes("mcp") && (
                 <div className="rounded-lg bg-blue-50 dark:bg-blue-950 p-3 space-y-2 text-sm">
-                  <div><strong className="text-blue-700 dark:text-blue-200">🚀 Ready for MCP</strong></div>
+                  <div>
+                    <strong className="text-blue-700 dark:text-blue-200">🚀 Ready for MCP</strong>
+                  </div>
                   <p className="text-blue-700 dark:text-blue-200 text-xs">
                     Use this token to configure Claude, Cursor, VS Code, and other MCP clients.
                   </p>
                   <p className="text-xs text-blue-600 dark:text-blue-300">
-                    See <a href="https://docnineai.com/docs/mcp" target="_blank" rel="noopener noreferrer" className="underline">MCP Setup Guide</a> for configuration steps.
+                    See{" "}
+                    <a
+                      href="https://docnineai.com/docs/mcp"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline"
+                    >
+                      MCP Setup Guide
+                    </a>{" "}
+                    for configuration steps.
                   </p>
                 </div>
               )}
@@ -405,5 +438,5 @@ export function APITokensCard() {
         </Dialog>
       )}
     </>
-  )
+  );
 }

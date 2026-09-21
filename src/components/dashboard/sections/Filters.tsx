@@ -1,8 +1,8 @@
-import { Search } from "@/components/icons"
-import { Input } from "@/components/ui/input"
-import { Select } from "@/components/ui/select"
-import { DashboardFiltersProps } from "@/types/DashboardTypes"
-import { ProjectStatus } from "@/types/ProjectTypes"
+import { Search } from "@/components/icons";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { DashboardFiltersProps } from "@/types/DashboardTypes";
+import { ProjectStatus } from "@/types/ProjectTypes";
 
 export function DashboardFilters({
   searchQuery,
@@ -46,5 +46,5 @@ export function DashboardFilters({
         </Select>
       </div>
     </div>
-  )
+  );
 }

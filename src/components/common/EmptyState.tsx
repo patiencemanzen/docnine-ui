@@ -1,7 +1,7 @@
-import { Plus, Search } from "@/components/icons"
-import { Button } from "@/components/ui/button"
-import { Link } from "react-router-dom"
-import { EmptyStateProps } from "@/types/StateTypes"
+import { Plus, Search } from "@/components/icons";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import { EmptyStateProps } from "@/types/StateTypes";
 
 export function EmptyState({
   icon: Icon = Search,
@@ -13,13 +13,15 @@ export function EmptyState({
   className,
 }: EmptyStateProps) {
   return (
-    <div className={`flex flex-col items-center justify-center py-24 text-center border border-dashed border-border rounded-xl bg-card/50 ${className ?? ""}`}>
+    <div
+      className={`flex flex-col items-center justify-center py-24 text-center border border-dashed border-border rounded-xl bg-card/50 ${className ?? ""}`}
+    >
       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted mb-4">
         <Icon className="h-6 w-6 text-muted-foreground" />
       </div>
       <h3 className="text-lg font-semibold">{title}</h3>
       <p className="text-sm text-muted-foreground max-w-sm mt-1">{description}</p>
-      {(actionLabel && (actionHref || onAction)) && (
+      {actionLabel && (actionHref || onAction) && (
         <div className="mt-6">
           {actionHref ? (
             <Button asChild variant="outline">
@@ -35,5 +37,5 @@ export function EmptyState({
         </div>
       )}
     </div>
-  )
+  );
 }

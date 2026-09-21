@@ -1,33 +1,35 @@
-/**
- * doc-status.tsx : Shared UI components for the Documentation Progress Tracker.
- *
- * Exports:
- *  - DOC_STATUS_CONFIG  : display config for each DocStatus value
- *  - DocStatusBadge     : compact badge for use in lists / cards
- *  - DocStatusDot       : tiny coloured dot indicator (for tight spaces)
- *  - DocStatusPanel     : full-featured panel for the documentation sidebar
- */
-import { useState, useRef, useEffect } from "react"
-import { formatDistanceToNow } from "date-fns"
-import { ChevronDown, User, Calendar, AlertCircle, History, PenLine, Eye, RotateCcw, CheckCircle2, Globe, AlertTriangle, Archive } from "@/components/icons"
-import { cn } from "@/lib/utils"
-import { useDocTrackerStore } from "@/store/doc-tracker"
-import { DocSectionTrack, DocStatus } from "@/types/DocStatusTypes"
-import { DOC_STATUS_CONFIG, DOC_STATUS_ORDER } from "@/configs/DocStatusConfig"
-
-// ── DocStatusBadge ────────────────────────────────────────────────────────────
+import { useState, useRef, useEffect } from "react";
+import { formatDistanceToNow } from "date-fns";
+import {
+  ChevronDown,
+  User,
+  Calendar,
+  AlertCircle,
+  History,
+  PenLine,
+  Eye,
+  RotateCcw,
+  CheckCircle2,
+  Globe,
+  AlertTriangle,
+  Archive,
+} from "@/components/icons";
+import { cn } from "@/lib/utils";
+import { useDocTrackerStore } from "@/store/doc-tracker";
+import { DocSectionTrack, DocStatus } from "@/types/DocStatusTypes";
+import { DOC_STATUS_CONFIG, DOC_STATUS_ORDER } from "@/configs/DocStatusConfig";
 
 interface DocStatusBadgeProps {
-  status: DocStatus
-  className?: string
-  /** Smaller variant for chips / cards */
-  compact?: boolean
+  status: DocStatus;
+  className?: string;
+
+  compact?: boolean;
 }
 
 export function DocStatusBadge({ status, className, compact }: DocStatusBadgeProps) {
-  const cfg = DOC_STATUS_CONFIG[status]
-  if (!cfg) return null
-  const Icon = cfg.icon
+  const cfg = DOC_STATUS_CONFIG[status];
+  if (!cfg) return null;
+  const Icon = cfg.icon;
   return (
     <span
       className={cn(
@@ -40,48 +42,42 @@ export function DocStatusBadge({ status, className, compact }: DocStatusBadgePro
       <Icon className={cn(compact ? "h-2.5 w-2.5" : "h-3 w-3", "shrink-0")} />
       {cfg.label}
     </span>
-  )
+  );
 }
 
-// ── DocStatusDot ──────────────────────────────────────────────────────────────
-
-/** Tiny dot indicator : only shown when status is not 'draft' */
 export function DocStatusDot({ status, className }: { status: DocStatus; className?: string }) {
-  if (status === "draft") return null
-  const cfg = DOC_STATUS_CONFIG[status]
+  if (status === "draft") return null;
+  const cfg = DOC_STATUS_CONFIG[status];
   return (
     <span
       className={cn("h-1.5 w-1.5 rounded-full shrink-0", cfg.dotClass, className)}
       title={cfg.label}
       aria-label={cfg.label}
     />
-  )
+  );
 }
 
-// ── DocStatusSelector (dropdown) ──────────────────────────────────────────────
-
 interface DocStatusSelectorProps {
-  current: DocStatus
-  onSelect: (status: DocStatus) => void
-  className?: string
+  current: DocStatus;
+  onSelect: (status: DocStatus) => void;
+  className?: string;
 }
 
 export function DocStatusSelector({ current, onSelect, className }: DocStatusSelectorProps) {
-  const [open, setOpen] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
 
-  // Close on outside click
   useEffect(() => {
-    if (!open) return
+    if (!open) return;
     const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
-    }
-    document.addEventListener("mousedown", handler)
-    return () => document.removeEventListener("mousedown", handler)
-  }, [open])
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
 
-  const cfg = DOC_STATUS_CONFIG[current]
-  const CfgIcon = cfg.icon
+  const cfg = DOC_STATUS_CONFIG[current];
+  const CfgIcon = cfg.icon;
 
   return (
     <div ref={ref} className={cn("relative", className)}>
@@ -101,13 +97,16 @@ export function DocStatusSelector({ current, onSelect, className }: DocStatusSel
       {open && (
         <div className="absolute left-0 top-full mt-1 z-50 w-48 rounded-lg border border-border bg-popover shadow-md overflow-hidden">
           {DOC_STATUS_ORDER.map((s) => {
-            const c = DOC_STATUS_CONFIG[s]
-            const SIcon = c.icon
+            const c = DOC_STATUS_CONFIG[s];
+            const SIcon = c.icon;
             return (
               <button
                 key={s}
                 type="button"
-                onClick={() => { onSelect(s); setOpen(false) }}
+                onClick={() => {
+                  onSelect(s);
+                  setOpen(false);
+                }}
                 className={cn(
                   "w-full flex items-center gap-2 px-3 py-2 transition-colors hover:bg-muted text-left",
                   s === current && "bg-muted font-medium",
@@ -116,57 +115,56 @@ export function DocStatusSelector({ current, onSelect, className }: DocStatusSel
                 <SIcon className={cn("h-3.5 w-3.5 shrink-0", c.iconClass)} />
                 <span>{c.label}</span>
               </button>
-            )
+            );
           })}
         </div>
       )}
     </div>
-  )
+  );
 }
-
-// ── DocStatusPanel ────────────────────────────────────────────────────────────
 
 interface DocStatusPanelProps {
-  projectId: string
-  /** sectionKey, e.g. "readme", "apiReference" */
-  section: string
-  /** Human-readable section name for the panel header */
-  sectionLabel: string
-  /** Username or email to attribute status changes to */
-  currentUser?: string
+  projectId: string;
+
+  section: string;
+
+  sectionLabel: string;
+
+  currentUser?: string;
 }
 
-export function DocStatusPanel({ projectId, section, sectionLabel, currentUser }: DocStatusPanelProps) {
-  const { getEntry, setStatus, setAssignee, setDueDate, isOverdue } = useDocTrackerStore()
-  const entry: DocSectionTrack = getEntry(projectId, section) ?? { status: "draft", log: [] }
-  const [showLog, setShowLog] = useState(false)
-  const [editAssignee, setEditAssignee] = useState(false)
-  const [assigneeInput, setAssigneeInput] = useState(entry.assignee ?? "")
+export function DocStatusPanel({
+  projectId,
+  section,
+  sectionLabel,
+  currentUser,
+}: DocStatusPanelProps) {
+  const { getEntry, setStatus, setAssignee, setDueDate, isOverdue } = useDocTrackerStore();
+  const entry: DocSectionTrack = getEntry(projectId, section) ?? { status: "draft", log: [] };
+  const [showLog, setShowLog] = useState(false);
+  const [editAssignee, setEditAssignee] = useState(false);
+  const [assigneeInput, setAssigneeInput] = useState(entry.assignee ?? "");
 
-  // Keep local input in sync if store changes externally
   useEffect(() => {
-    setAssigneeInput(getEntry(projectId, section)?.assignee ?? "")
-  }, [projectId, section]) // eslint-disable-line react-hooks/exhaustive-deps
+    setAssigneeInput(getEntry(projectId, section)?.assignee ?? "");
+  }, [projectId, section]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const overdue = isOverdue(projectId, section)
+  const overdue = isOverdue(projectId, section);
 
   return (
     <div className="border-t border-border">
       <div className="p-3 space-y-3">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             {sectionLabel} Status
           </span>
         </div>
 
-        {/* Status selector */}
         <DocStatusSelector
           current={entry.status}
           onSelect={(s) => setStatus(projectId, section, s, currentUser)}
         />
 
-        {/* Overdue warning */}
         {overdue && (
           <div className="flex items-center gap-1.5 text-[10px] text-red-600 dark:text-red-400">
             <AlertCircle className="h-3 w-3 shrink-0" />
@@ -174,16 +172,15 @@ export function DocStatusPanel({ projectId, section, sectionLabel, currentUser }
           </div>
         )}
 
-        {/* Assignee */}
         <div className="flex items-center gap-1.5 min-w-0">
           <User className="h-3 w-3 text-muted-foreground shrink-0" />
           {editAssignee ? (
             <form
               className="flex-1 flex gap-1"
               onSubmit={(e) => {
-                e.preventDefault()
-                setAssignee(projectId, section, assigneeInput.trim() || undefined)
-                setEditAssignee(false)
+                e.preventDefault();
+                setAssignee(projectId, section, assigneeInput.trim() || undefined);
+                setEditAssignee(false);
               }}
             >
               <input
@@ -193,8 +190,8 @@ export function DocStatusPanel({ projectId, section, sectionLabel, currentUser }
                 value={assigneeInput}
                 onChange={(e) => setAssigneeInput(e.target.value)}
                 onBlur={() => {
-                  setAssignee(projectId, section, assigneeInput.trim() || undefined)
-                  setEditAssignee(false)
+                  setAssignee(projectId, section, assigneeInput.trim() || undefined);
+                  setEditAssignee(false);
                 }}
               />
             </form>
@@ -209,7 +206,6 @@ export function DocStatusPanel({ projectId, section, sectionLabel, currentUser }
           )}
         </div>
 
-        {/* Due date */}
         <div className="flex items-center gap-1.5">
           <Calendar className="h-3 w-3 text-muted-foreground shrink-0" />
           <input
@@ -223,7 +219,6 @@ export function DocStatusPanel({ projectId, section, sectionLabel, currentUser }
           />
         </div>
 
-        {/* Audit log toggle */}
         {entry.log.length > 0 && (
           <div>
             <button
@@ -238,10 +233,15 @@ export function DocStatusPanel({ projectId, section, sectionLabel, currentUser }
             {showLog && (
               <div className="mt-2 space-y-1 max-h-40 overflow-y-auto">
                 {entry.log.slice(0, 10).map((l, i) => {
-                  const cfg = DOC_STATUS_CONFIG[l.status]
+                  const cfg = DOC_STATUS_CONFIG[l.status];
                   return (
-                    <div key={i} className="flex items-start gap-1.5 text-[10px] text-muted-foreground">
-                      <span className={cn("h-1.5 w-1.5 rounded-full shrink-0 mt-1", cfg.dotClass)} />
+                    <div
+                      key={i}
+                      className="flex items-start gap-1.5 text-[10px] text-muted-foreground"
+                    >
+                      <span
+                        className={cn("h-1.5 w-1.5 rounded-full shrink-0 mt-1", cfg.dotClass)}
+                      />
                       <div className="min-w-0">
                         <span className="font-medium text-foreground/80">{cfg.label}</span>
                         {l.changedBy && <span> · {l.changedBy}</span>}
@@ -250,7 +250,7 @@ export function DocStatusPanel({ projectId, section, sectionLabel, currentUser }
                         </div>
                       </div>
                     </div>
-                  )
+                  );
                 })}
               </div>
             )}
@@ -258,5 +258,5 @@ export function DocStatusPanel({ projectId, section, sectionLabel, currentUser }
         )}
       </div>
     </div>
-  )
+  );
 }

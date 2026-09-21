@@ -1,3 +1,3 @@
-export { DocumentationsSearch } from "./DocumentationsSearch"
-export { DocStatusFilter } from "./DocStatusFilter"
-export { DocumentationsLoadingSkeleton } from "./DocumentationsLoadingSkeleton"
+export { DocumentationsSearch } from "./DocumentationsSearch";
+export { DocStatusFilter } from "./DocStatusFilter";
+export { DocumentationsLoadingSkeleton } from "./DocumentationsLoadingSkeleton";

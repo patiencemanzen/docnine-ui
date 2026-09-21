@@ -21,9 +21,7 @@ export function ApplicationLogo({
   forceTheme?: LogoTheme;
 }) {
   const { theme } = useTheme();
-  const [resolved, setResolved] = useState<LogoTheme>(() =>
-    forceTheme ?? resolveTheme(theme),
-  );
+  const [resolved, setResolved] = useState<LogoTheme>(() => forceTheme ?? resolveTheme(theme));
 
   useEffect(() => {
     if (forceTheme) {

@@ -32,12 +32,8 @@ function cancelWithBeacon(sessionId: string) {
       body: payload,
       keepalive: true,
       credentials: "include",
-    }).catch(() => {
-      
-    });
-  } catch {
-    
-  }
+    }).catch(() => {});
+  } catch {}
 }
 
 export function CliAuthPage() {
@@ -97,9 +93,7 @@ export function CliAuthPage() {
 
     try {
       await authApi.cliCancel(sessionId);
-    } catch {
-      
-    }
+    } catch {}
 
     setState("cancelled");
     setMessage("CLI login cancelled.");
@@ -129,15 +123,15 @@ export function CliAuthPage() {
         <Card className="w-full max-w-lg">
           <CardHeader>
             <CardTitle>Sign In Required</CardTitle>
-            <CardDescription>
-              Sign in to approve this CLI login request.
-            </CardDescription>
+            <CardDescription>Sign in to approve this CLI login request.</CardDescription>
           </CardHeader>
           <CardFooter className="flex gap-3">
             <Button asChild>
               <Link to={loginRedirect}>Sign In</Link>
             </Button>
-            <Button variant="outline" onClick={handleCancel}>Cancel Request</Button>
+            <Button variant="outline" onClick={handleCancel}>
+              Cancel Request
+            </Button>
           </CardFooter>
         </Card>
       </div>
@@ -149,9 +143,7 @@ export function CliAuthPage() {
       <Card className="w-full max-w-lg">
         <CardHeader>
           <CardTitle>Authorize Docnine CLI</CardTitle>
-          <CardDescription>
-            Approve this request to sign your terminal session in.
-          </CardDescription>
+          <CardDescription>Approve this request to sign your terminal session in.</CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -169,7 +161,9 @@ export function CliAuthPage() {
           )}
 
           {state !== "approved" ? (
-            <Button variant="outline" onClick={handleCancel}>Cancel</Button>
+            <Button variant="outline" onClick={handleCancel}>
+              Cancel
+            </Button>
           ) : null}
         </CardFooter>
       </Card>

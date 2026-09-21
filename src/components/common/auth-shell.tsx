@@ -1,12 +1,12 @@
-import { cn } from "@/lib/utils"
-import { ApplicationLogo } from "./application-logo"
-import { AuroraBackdrop } from "@/components/landing/hero/AuroraBackdrop"
+import { cn } from "@/lib/utils";
+import { ApplicationLogo } from "./application-logo";
+import { AuroraBackdrop } from "@/components/landing/hero/AuroraBackdrop";
 
 interface AuthShellProps {
-  children: React.ReactNode
-  className?: string
-  headline?: string
-  subcopy?: string
+  children: React.ReactNode;
+  className?: string;
+  headline?: string;
+  subcopy?: string;
 }
 
 export function AuthShell({
@@ -17,7 +17,6 @@ export function AuthShell({
 }: AuthShellProps) {
   return (
     <div className="flex h-screen overflow-hidden">
-      {/* Aurora column,always a dark island */}
       <div className="relative hidden overflow-hidden border-r border-white/10 lg:flex lg:w-[45%] flex-col p-10 text-white">
         <AuroraBackdrop variant="fill" />
 
@@ -34,13 +33,11 @@ export function AuthShell({
           </div>
 
           <p className="relative z-10 shrink-0 select-none text-xs text-white/50">
-            © {new Date().getFullYear()} Docnine, Seablings Technology. All
-            rights reserved.
+            © {new Date().getFullYear()} Docnine, Seablings Technology. All rights reserved.
           </p>
         </div>
       </div>
 
-      {/* Form column,Mainline guest tokens so auth matches landing theme */}
       <div
         className={cn(
           "guest-landing flex flex-1 flex-col items-center justify-center overflow-y-auto bg-background px-6 py-12 text-foreground sm:px-10",
@@ -58,5 +55,5 @@ export function AuthShell({
         </p>
       </div>
     </div>
-  )
+  );
 }

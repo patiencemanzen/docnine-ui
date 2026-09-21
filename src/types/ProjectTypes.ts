@@ -1,17 +1,10 @@
-/**
- * Type definitions for New Project Modal
- * Centralized type exports for consistency across all sub-components
- */
-
 import * as z from "zod";
 
-// ── Step Types ────────────────────────────────────────────────────────────
 export type NativeStep = "source" | "manual" | "zip" | "from-scratch";
 export type ProviderStep = "github" | "gitlab" | "bitbucket" | "azure";
 export type Step = NativeStep | ProviderStep;
 export type ProviderKey = "github" | "gitlab" | "bitbucket" | "azure";
 
-// ── Form Schema Types ─────────────────────────────────────────────────────
 export const manualProjectSchema = z.object({
   repoUrl: z
     .string()
@@ -37,7 +30,6 @@ export const fromScratchSchema = z.object({
 export type ManualProjectFormValues = z.infer<typeof manualProjectSchema>;
 export type FromScratchFormValues = z.infer<typeof fromScratchSchema>;
 
-// ── Provider Types ────────────────────────────────────────────────────────
 export interface ProviderConfig {
   label: string;
   description: string;
@@ -48,7 +40,6 @@ export type ProviderStatusRecord = Record<ProviderKey, boolean>;
 export type ProviderUsernamesRecord = Record<ProviderKey, string>;
 export type ProviderCheckingRecord = Record<ProviderKey, boolean>;
 
-// ── Repository Types ─────────────────────────────────────────────────────
 export interface NormalizedRepo {
   id?: string;
   uuid?: string;
@@ -59,7 +50,6 @@ export interface NormalizedRepo {
   web_url?: string;
 }
 
-// ── Props Types ───────────────────────────────────────────────────────────
 export interface NewProjectModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -129,7 +119,6 @@ export interface ProviderRepoSelectorProps {
   onGithubOrgChange?: (org: string | null) => void;
 }
 
-// ── State Types ───────────────────────────────────────────────────────────
 export interface ModalState {
   step: Step;
   isConnecting: boolean;
@@ -176,12 +165,7 @@ export interface CreateTabModalProps {
   isLoading?: boolean;
 }
 
-export type ApiProjectStatus =
-  | "queued"
-  | "running"
-  | "done"
-  | "error"
-  | "archived";
+export type ApiProjectStatus = "queued" | "running" | "done" | "error" | "archived";
 
 export interface ApiProjectEditedSection {
   section: string;
@@ -205,7 +189,7 @@ export interface ApiProjectStats {
   relationships: number;
   components: number;
   lastSyncedAt?: string | null;
-  lastSyncDuration?: number | null; // milliseconds
+  lastSyncDuration?: number | null;
 }
 
 export interface ApiProjectSecurity {
@@ -278,23 +262,23 @@ export interface ProjectsListResponse {
 export type ProjectStatus = "analyzing" | "completed" | "failed" | "archived";
 
 export interface Project {
-  id: string; // = ApiProject._id
-  name: string; // = repoName
+  id: string;
+  name: string;
   description?: string;
   repoUrl: string;
   repoOwner: string;
   status: ProjectStatus;
-  apiStatus: ApiProjectStatus; // raw status from API, needed for PATCH /archive
+  apiStatus: ApiProjectStatus;
   createdAt: string;
   updatedAt: string;
-  shareRole: "owner" | "editor" | "viewer"; // access level
-  // Documentation fields (populated after a successful pipeline run)
+  shareRole: "owner" | "editor" | "viewer";
+
   readme?: string;
   apiReference?: string;
   schemaDocs?: string;
   internalDocs?: string;
   securityReport?: string;
-  // Incremental sync state
+
   lastSyncedCommit?: string | null;
   lastSyncedAt?: string | null;
   provider?: string;
@@ -308,12 +292,10 @@ export interface ProjectState {
   isLoading: boolean;
   error: string | null;
 
-  // Shared-with-me
   sharedProjects: Project[];
   sharedLoading: boolean;
   sharedError: string | null;
 
-  /** Fetch (or refresh) the project list. */
   fetchProjects: (params?: {
     page?: number;
     limit?: number;
@@ -322,22 +304,16 @@ export interface ProjectState {
     search?: string;
   }) => Promise<void>;
 
-  /** Create a new project and start the pipeline. Returns the created project. */
   createProject: (repoUrl: string) => Promise<Project & { streamUrl: string }>;
 
-  /** Hard-delete a project. */
   deleteProject: (id: string) => Promise<void>;
 
-  /** Archive a project. */
   archiveProject: (id: string) => Promise<void>;
 
-  /** Re-run the pipeline for a done/error project. Returns the updated project. */
   retryProject: (id: string) => Promise<Project & { streamUrl: string }>;
 
-  /** Fetch a single project by ID (used by detail pages). */
   getProject: (id: string) => Promise<Project>;
 
-  /** Fetch a single project by ID without updating the cache (used by SSE handler). */
   getProjectData: (id: string) => Promise<{
     project: ApiProject;
     editedSections: any;
@@ -346,9 +322,7 @@ export interface ProjectState {
     shareRole: "owner" | "editor" | "viewer";
   }>;
 
-  /** Update a project in the local cache (e.g. after SSE stream completes). */
   updateLocalProject: (id: string, changes: Partial<Project>) => void;
 
-  /** Fetch all projects shared with the current user. */
   fetchSharedProjects: () => Promise<void>;
 }

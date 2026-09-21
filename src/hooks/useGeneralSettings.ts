@@ -2,9 +2,7 @@ import { useCallback, useState, useEffect } from "react";
 import { authApi } from "@/lib/api";
 
 export function useGeneralSettings() {
-  const [user, setUser] = useState<{ name?: string; email?: string } | null>(
-    null,
-  );
+  const [user, setUser] = useState<{ name?: string; email?: string } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const loadUserInfo = useCallback(async () => {

@@ -3,7 +3,6 @@ import { DocTab, TabDef } from "@/types/DocumentationTypes";
 import { CustomTab } from "@/types/ProjectTypes";
 import { FileCode } from "@/components/icons";
 
-// ── Build full tab list from native + custom tabs ──────────────────
 export function buildTabList(customTabs: CustomTab[] = []): TabDef[] {
   const customDefs: TabDef[] = (customTabs ?? [])
     .sort((a, b) => a.order - b.order)
@@ -15,9 +14,5 @@ export function buildTabList(customTabs: CustomTab[] = []): TabDef[] {
       isCustom: true,
       customTab: ct,
     }));
-  return [
-    ...NATIVE_TABS.slice(0, -1),
-    ...customDefs,
-    NATIVE_TABS[NATIVE_TABS.length - 1],
-  ]; // Other Docs always last
+  return [...NATIVE_TABS.slice(0, -1), ...customDefs, NATIVE_TABS[NATIVE_TABS.length - 1]];
 }

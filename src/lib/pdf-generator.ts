@@ -1,18 +1,7 @@
-/**
- * PDF Export Generator
- * Creates beautifully formatted PDF documents with all documentation sections
- */
-
 import { PDFExportOptions } from "@/types/PdfTypes";
 import { ExportDocumentData } from "@/types/ExportTypes";
 
-/**
- * Generate structured HTML for PDF export that preserves formatting
- */
-export function generatePDFHTML(
-  data: ExportDocumentData,
-  options: PDFExportOptions = {},
-): string {
+export function generatePDFHTML(data: ExportDocumentData, options: PDFExportOptions = {}): string {
   const {
     includeTableOfContents = true,
     includeTimestamp = true,
@@ -22,7 +11,6 @@ export function generatePDFHTML(
 
   const tabs = data.tabs;
 
-  // CSS Styling for PDF
   const styles = `
     <style>
       * {
@@ -297,7 +285,6 @@ export function generatePDFHTML(
     </style>
   `;
 
-  // Generate HTML content
   let html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -310,7 +297,6 @@ export function generatePDFHTML(
   <div class="pdf-container">
 `;
 
-  // Cover Page
   html += `
     <div class="cover-page">
       <div class="cover-title">${escapeHtml(data.projectName)}</div>
@@ -323,7 +309,6 @@ export function generatePDFHTML(
     </div>
 `;
 
-  // Table of Contents
   if (includeTableOfContents && tabs.length > 0) {
     html += `
     <div class="toc-page">
@@ -342,7 +327,6 @@ export function generatePDFHTML(
 `;
   }
 
-  // Sections
   tabs.forEach((tab, idx) => {
     html += `
     <div class="section">
@@ -358,7 +342,6 @@ export function generatePDFHTML(
 `;
   });
 
-  // Footer
   if (headerFooter) {
     html += `
     <div class="footer">
@@ -375,46 +358,31 @@ export function generatePDFHTML(
   return html;
 }
 
-/**
- * Convert markdown to HTML for PDF embedding
- */
 function markdownToHtml(markdown: string): string {
   let html = escapeHtml(markdown);
 
-  // Headers
   html = html.replace(/^### (.+)$/gm, "<h3>$1</h3>");
   html = html.replace(/^## (.+)$/gm, "<h2>$1</h2>");
   html = html.replace(/^# (.+)$/gm, "<h1>$1</h1>");
 
-  // Bold
   html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
   html = html.replace(/__(.+?)__/g, "<strong>$1</strong>");
 
-  // Italic
   html = html.replace(/\*(.+?)\*/g, "<em>$1</em>");
   html = html.replace(/_(.+?)_/g, "<em>$1</em>");
 
-  // Code blocks
-  html = html.replace(
-    /```(?:\w+)?\n([\s\S]*?)\n```/g,
-    "<pre><code>$1</code></pre>",
-  );
+  html = html.replace(/```(?:\w+)?\n([\s\S]*?)\n```/g, "<pre><code>$1</code></pre>");
 
-  // Inline code
   html = html.replace(/`(.+?)`/g, "<code>$1</code>");
 
-  // Links
   html = html.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>');
 
-  // Lists
   html = html.replace(/^\* (.+)$/gm, "<li>$1</li>");
   html = html.replace(/^- (.+)$/gm, "<li>$1</li>");
   html = html.replace(/(<li>.*<\/li>)/s, "<ul>$1</ul>");
 
-  // Blockquotes
   html = html.replace(/^> (.+)$/gm, "<blockquote>$1</blockquote>");
 
-  // Paragraphs
   html = html.replace(/\n\n/g, "</p><p>");
   if (!html.startsWith("<p>")) html = "<p>" + html;
   if (!html.endsWith("</p>")) html = html + "</p>";
@@ -422,9 +390,6 @@ function markdownToHtml(markdown: string): string {
   return html;
 }
 
-/**
- * Escape HTML special characters
- */
 function escapeHtml(text: string): string {
   const map: Record<string, string> = {
     "&": "&amp;",
@@ -436,9 +401,6 @@ function escapeHtml(text: string): string {
   return text.replace(/[&<>"']/g, (m) => map[m]);
 }
 
-/**
- * Generate blob for PDF file (requires backend or html2pdf library)
- */
 export async function generatePDFBlob(
   data: ExportDocumentData,
   options?: PDFExportOptions,

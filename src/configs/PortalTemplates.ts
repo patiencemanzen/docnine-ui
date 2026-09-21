@@ -1,29 +1,24 @@
-﻿import type { PortalBranding, PortalTemplateId } from "@/types/PortalTypes"
+﻿import type { PortalBranding, PortalTemplateId } from "@/types/PortalTypes";
 
-export type PortalLayoutId = "docs-sidebar" | "top-nav" | "hero-docs" | "dense-rail"
+export type PortalLayoutId = "docs-sidebar" | "top-nav" | "hero-docs" | "dense-rail";
 
 export type PortalAudience =
-  | "general"
-  | "developers"
-  | "companies"
-  | "enterprise"
-  | "startups"
-  | "product"
+  "general" | "developers" | "companies" | "enterprise" | "startups" | "product";
 
 export interface PortalTemplate {
-  id: PortalTemplateId
-  label: string
-  description: string
-  audience: PortalAudience
-  layout: PortalLayoutId
+  id: PortalTemplateId;
+  label: string;
+  description: string;
+  audience: PortalAudience;
+  layout: PortalLayoutId;
   preview: {
-    header: string
-    sidebar: string
-    accent: string
-    surface: string
-  }
-  branding: Pick<PortalBranding, "primaryColor" | "bgColor" | "accentColor">
-  forceDark?: boolean
+    header: string;
+    sidebar: string;
+    accent: string;
+    surface: string;
+  };
+  branding: Pick<PortalBranding, "primaryColor" | "bgColor" | "accentColor">;
+  forceDark?: boolean;
 }
 
 export const PORTAL_AUDIENCE_LABELS: Record<PortalAudience, string> = {
@@ -33,7 +28,7 @@ export const PORTAL_AUDIENCE_LABELS: Record<PortalAudience, string> = {
   enterprise: "Enterprise",
   startups: "Startups",
   product: "Product",
-}
+};
 
 export const PORTAL_TEMPLATES: PortalTemplate[] = [
   {
@@ -218,21 +213,21 @@ export const PORTAL_TEMPLATES: PortalTemplate[] = [
       accentColor: "#f59e0b",
     },
   },
-]
+];
 
-export const DEFAULT_PORTAL_TEMPLATE_ID: PortalTemplateId = "classic"
+export const DEFAULT_PORTAL_TEMPLATE_ID: PortalTemplateId = "classic";
 
 export function getPortalTemplate(id?: string | null): PortalTemplate {
   return (
     PORTAL_TEMPLATES.find((t) => t.id === id) ??
     PORTAL_TEMPLATES.find((t) => t.id === DEFAULT_PORTAL_TEMPLATE_ID)!
-  )
+  );
 }
 
 export function usesLeftSidebar(layout: PortalLayoutId) {
-  return layout === "docs-sidebar" || layout === "dense-rail"
+  return layout === "docs-sidebar" || layout === "dense-rail";
 }
 
 export function usesTopNav(layout: PortalLayoutId) {
-  return layout === "top-nav" || layout === "hero-docs"
+  return layout === "top-nav" || layout === "hero-docs";
 }

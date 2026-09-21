@@ -1,8 +1,8 @@
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
 
-import { ArrowRight } from "@/components/icons"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { ArrowRight } from "@/components/icons";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const steps = [
   {
@@ -23,26 +23,19 @@ const steps = [
     description:
       "Push updates regenerate docs. Publish a portal, invite teammates, or export when you need a handoff.",
   },
-]
+];
 
 export function Testimonials({ className }: { className?: string }) {
   return (
     <section className={cn("overflow-hidden py-[calc(48px+8vh)]", className)}>
       <div className="mx-auto max-w-5xl px-6">
         <div className="max-w-xl space-y-4">
-          <h2
-            data-animate
-            className="text-3xl font-bold tracking-tight sm:text-4xl"
-          >
+          <h2 data-animate className="text-3xl font-bold tracking-tight sm:text-4xl">
             How Docnine works
           </h2>
-          <p
-            data-animate
-            data-delay="1"
-            className="leading-relaxed text-muted-foreground"
-          >
-            Built for engineering teams who want living docs — generated from
-            code, kept in sync, and shared through portals people actually open.
+          <p data-animate data-delay="1" className="leading-relaxed text-muted-foreground">
+            Built for engineering teams who want living docs — generated from code, kept in sync,
+            and shared through portals people actually open.
           </p>
           <div data-animate data-delay="2">
             <Button
@@ -68,9 +61,7 @@ export function Testimonials({ className }: { className?: string }) {
               <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                 {item.step}
               </p>
-              <h3 className="mt-3 text-lg font-bold tracking-tight">
-                {item.title}
-              </h3>
+              <h3 className="mt-3 text-lg font-bold tracking-tight">{item.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                 {item.description}
               </p>
@@ -79,5 +70,5 @@ export function Testimonials({ className }: { className?: string }) {
         </ol>
       </div>
     </section>
-  )
+  );
 }

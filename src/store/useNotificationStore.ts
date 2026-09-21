@@ -11,7 +11,7 @@ interface NotificationState {
   isLoading: boolean;
   isLoadingMore: boolean;
   error: string | null;
-  // Actions
+
   fetchNotifications: (reset?: boolean) => Promise<void>;
   fetchMore: () => Promise<void>;
   fetchUnreadCount: () => Promise<void>;
@@ -66,7 +66,6 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
         unreadCount: data.unreadCount,
       });
     } catch {
-      // Silently fail : existing notifications remain visible
     } finally {
       set({ isLoadingMore: false });
     }
@@ -76,33 +75,25 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     try {
       const data = await notificationsApi.unreadCount();
       set({ unreadCount: data.count });
-    } catch {
-      // Non-critical : badge just won't update
-    }
+    } catch {}
   },
 
   markAsRead: async (id: string) => {
-    // Optimistic update
     set((state) => ({
-      notifications: state.notifications.map((n) =>
-        n._id === id ? { ...n, isRead: true } : n
-      ),
+      notifications: state.notifications.map((n) => (n._id === id ? { ...n, isRead: true } : n)),
       unreadCount: Math.max(
         0,
-        state.unreadCount -
-          (state.notifications.find((n) => n._id === id && !n.isRead) ? 1 : 0)
+        state.unreadCount - (state.notifications.find((n) => n._id === id && !n.isRead) ? 1 : 0),
       ),
     }));
     try {
       await notificationsApi.markAsRead(id);
     } catch {
-      // Revert on failure
       get().fetchNotifications();
     }
   },
 
   markAllAsRead: async () => {
-    // Optimistic update
     set((state) => ({
       notifications: state.notifications.map((n) => ({ ...n, isRead: true })),
       unreadCount: 0,
@@ -115,16 +106,12 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
   },
 
   archive: async (id: string) => {
-    // Optimistic removal from feed
     set((state) => {
       const target = state.notifications.find((n) => n._id === id);
       return {
         notifications: state.notifications.filter((n) => n._id !== id),
         total: Math.max(0, state.total - 1),
-        unreadCount: Math.max(
-          0,
-          state.unreadCount - (target && !target.isRead ? 1 : 0)
-        ),
+        unreadCount: Math.max(0, state.unreadCount - (target && !target.isRead ? 1 : 0)),
       };
     });
     try {
@@ -139,10 +126,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     set((state) => ({
       notifications: state.notifications.filter((n) => n._id !== id),
       total: Math.max(0, state.total - 1),
-      unreadCount: Math.max(
-        0,
-        state.unreadCount - (target && !target.isRead ? 1 : 0)
-      ),
+      unreadCount: Math.max(0, state.unreadCount - (target && !target.isRead ? 1 : 0)),
     }));
     try {
       await notificationsApi.delete(id);

@@ -32,8 +32,8 @@ export interface ApiSpecResponse {
 }
 
 export interface ApiSpecEndpoint {
-  id: string; // "GET /users/{id}"
-  method: string; // uppercase
+  id: string;
+  method: string;
   path: string;
   summary: string;
   description: string;

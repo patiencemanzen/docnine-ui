@@ -8,7 +8,7 @@ export interface Message {
 
 export interface AIChatPanelProps {
   project: ApiProject;
-  activeSection: string; // e.g. "apiReference"
+  activeSection: string;
   activeSectionContent: string;
   onClose: () => void;
 }

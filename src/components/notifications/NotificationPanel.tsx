@@ -51,7 +51,6 @@ export function NotificationPanel({ onClose: _onClose }: NotificationPanelProps)
 
   return (
     <div className="absolute right-0 mt-2 w-95 rounded-lg border border-border bg-background shadow-lg z-50 flex flex-col overflow-hidden">
-      {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <div className="flex items-center gap-2">
           <Bell className="h-4 w-4 text-muted-foreground" />
@@ -72,7 +71,6 @@ export function NotificationPanel({ onClose: _onClose }: NotificationPanelProps)
         )}
       </div>
 
-      {/* Filter tabs */}
       <div className="flex items-center border-b border-border px-4 gap-4">
         {TABS.map((tab) => (
           <button
@@ -82,7 +80,7 @@ export function NotificationPanel({ onClose: _onClose }: NotificationPanelProps)
               "py-2 text-xs font-medium border-b-2 transition-colors",
               filter === tab.key
                 ? "border-primary text-primary"
-                : "border-transparent text-muted-foreground hover:text-foreground"
+                : "border-transparent text-muted-foreground hover:text-foreground",
             )}
           >
             {tab.label}
@@ -90,7 +88,6 @@ export function NotificationPanel({ onClose: _onClose }: NotificationPanelProps)
         ))}
       </div>
 
-      {/* List */}
       <div className="overflow-y-auto max-h-100 divide-y divide-border/60">
         {isLoading ? (
           <div className="flex flex-col gap-3 p-4">
@@ -121,7 +118,6 @@ export function NotificationPanel({ onClose: _onClose }: NotificationPanelProps)
         )}
       </div>
 
-      {/* Footer - load more */}
       {hasMore && !isLoading && (
         <div className="border-t border-border p-2 flex justify-center">
           <button

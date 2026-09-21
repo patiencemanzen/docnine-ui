@@ -1,7 +1,7 @@
-import { Button } from "../ui/button"
-import { Link } from "react-router-dom"
-import { ArrowRight } from "@/components/icons"
-import { PremiumGreenBackdrop } from "@/components/ui/premium-green-backdrop"
+import { Button } from "../ui/button";
+import { Link } from "react-router-dom";
+import { ArrowRight } from "@/components/icons";
+import { PremiumGreenBackdrop } from "@/components/ui/premium-green-backdrop";
 
 export function CTA() {
   return (
@@ -9,9 +9,7 @@ export function CTA() {
       <PremiumGreenBackdrop grain="subtle" />
 
       <div className="container relative z-10 mx-auto max-w-3xl text-center">
-        <h2 className="text-section text-foreground">
-          Ready to make docs easier for your team?
-        </h2>
+        <h2 className="text-section text-foreground">Ready to make docs easier for your team?</h2>
         <p className="mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
           Start from a free account, or talk with us if you want Docnine rolled out across your
           organization.
@@ -35,5 +33,5 @@ export function CTA() {
         </div>
       </div>
     </section>
-  )
+  );
 }

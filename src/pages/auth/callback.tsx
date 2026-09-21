@@ -1,11 +1,10 @@
-
-import { useEffect, useState } from "react"
-import { useSearchParams, useNavigate, Link } from "react-router-dom"
-import { XCircle } from "@/components/icons"
-import { useAuthStore } from "@/store/auth"
-import { authApi, setAccessToken } from "@/lib/api"
-import BackgroundGrid from "@/components/ui/background-grid"
-import Loader1 from "@/components/ui/loader1"
+import { useEffect, useState } from "react";
+import { useSearchParams, useNavigate, Link } from "react-router-dom";
+import { XCircle } from "@/components/icons";
+import { useAuthStore } from "@/store/auth";
+import { authApi, setAccessToken } from "@/lib/api";
+import BackgroundGrid from "@/components/ui/background-grid";
+import Loader1 from "@/components/ui/loader1";
 
 const ERROR_MESSAGES: Record<string, string> = {
   access_denied: "You cancelled the sign-in. No changes were made.",
@@ -15,42 +14,46 @@ const ERROR_MESSAGES: Record<string, string> = {
   GOOGLE_CODE_INVALID: "The Google authorisation code expired. Please try again.",
   GOOGLE_NO_EMAIL: "No verified email found on your Google account.",
   GOOGLE_LOGIN_NOT_CONFIGURED: "Google login is not configured. Contact support.",
-  OAUTH_UNVERIFIED_ACCOUNT: "An account with this email already exists. Verify your email, then sign in with your password.",
+  OAUTH_UNVERIFIED_ACCOUNT:
+    "An account with this email already exists. Verify your email, then sign in with your password.",
   OAUTH_EMAIL_CONFLICT: "This email is already associated with a different account.",
   OAUTH_ERROR: "An error occurred during sign-in. Please try again.",
-}
+};
 
 export function AuthCallbackPage() {
-  const [searchParams] = useSearchParams()
-  const navigate = useNavigate()
-  const setTokens = useAuthStore((s) => s.setTokens)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const setTokens = useAuthStore((s) => s.setTokens);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    const error = searchParams.get("error")
+    const error = searchParams.get("error");
 
     if (error) {
-      setErrorMessage(ERROR_MESSAGES[error] ?? ERROR_MESSAGES.OAUTH_ERROR)
-      return
+      setErrorMessage(ERROR_MESSAGES[error] ?? ERROR_MESSAGES.OAUTH_ERROR);
+      return;
     }
 
-    authApi.refresh().then((data) => {
-      if (!data?.accessToken || !data.user) {
-        setErrorMessage("No access token received. Please try signing in again.")
-        return
-      }
-      setAccessToken(data.accessToken)
-      setTokens(data.user, data.accessToken)
-      navigate("/home", { replace: true })
-    }).catch(() => {
-      setErrorMessage("Failed to load your account. Please try signing in again.")
-    })
-  }, [])
+    authApi
+      .refresh()
+      .then((data) => {
+        if (!data?.accessToken || !data.user) {
+          setErrorMessage("No access token received. Please try signing in again.");
+          return;
+        }
+        setAccessToken(data.accessToken);
+        setTokens(data.user, data.accessToken);
+        navigate("/home", { replace: true });
+      })
+      .catch(() => {
+        setErrorMessage("Failed to load your account. Please try signing in again.");
+      });
+  }, []);
 
   return (
     <div className="relative min-h-screen bg-background text-foreground flex flex-col items-center justify-center overflow-hidden font-sans">
       <BackgroundGrid />
-      
+
       <div className="absolute top-[40%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-[40%] h-[30%] rounded-full bg-primary/20 blur-[100px] pointer-events-none z-0" />
 
       <div className="relative z-10 text-center space-y-4">
@@ -59,10 +62,7 @@ export function AuthCallbackPage() {
             <XCircle className="h-12 w-12 text-destructive mx-auto" />
             <h1 className="text-xl font-semibold">Sign-in failed</h1>
             <p className="text-sm text-muted-foreground max-w-sm">{errorMessage}</p>
-            <Link
-              to="/login"
-              className="inline-block mt-2 text-sm text-primary hover:underline"
-            >
+            <Link to="/login" className="inline-block mt-2 text-sm text-primary hover:underline">
               Back to sign in
             </Link>
           </>
@@ -74,5 +74,5 @@ export function AuthCallbackPage() {
         )}
       </div>
     </div>
-  )
+  );
 }

@@ -1,8 +1,3 @@
-/**
- * Hook: GitHub Organizations Management
- * Handles loading and managing GitHub organizations
- */
-
 import { useState, useCallback } from "react";
 import { githubApi } from "@/lib/api";
 import { GitHubOrg } from "@/types/GithubTypes";
@@ -12,7 +7,7 @@ export function useGithubOrgs() {
   const [githubOrgsLoading, setGithubOrgsLoading] = useState(false);
 
   const loadGithubOrgs = useCallback(async () => {
-    if (githubOrgs.length > 0) return; // Already loaded
+    if (githubOrgs.length > 0) return;
 
     setGithubOrgsLoading(true);
     try {

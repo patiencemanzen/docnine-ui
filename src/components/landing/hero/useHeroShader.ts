@@ -1,4 +1,4 @@
-import { useEffect, type RefObject } from "react"
+import { useEffect, type RefObject } from "react";
 
 const VERT_SRC = [
   "#version 300 es",
@@ -10,7 +10,7 @@ const VERT_SRC = [
   "  v_uv = a_texCoord;",
   "  gl_Position = vec4(a_position, 0.0, 1.0);",
   "}",
-].join("\n")
+].join("\n");
 
 const FRAG_SRC = [
   "#version 300 es",
@@ -146,146 +146,162 @@ const FRAG_SRC = [
   "  col = toSrgb(col);",
   "  fragColor = vec4(col, 1.0);",
   "}",
-].join("\n")
+].join("\n");
 
-/** Auroalis WebGL2 aurora shader,exact palette and uniforms from hero-shader.js */
 export function useHeroShader(canvasRef: RefObject<HTMLCanvasElement | null>) {
   useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
     const gl = canvas.getContext("webgl2", {
       antialias: false,
       premultipliedAlpha: false,
-    })
+    });
     if (!gl) {
-      canvas.style.display = "none"
-      return
+      canvas.style.display = "none";
+      return;
     }
 
     function compile(type: number, src: string) {
-      const sh = gl!.createShader(type)
-      if (!sh) return null
-      gl!.shaderSource(sh, src)
-      gl!.compileShader(sh)
+      const sh = gl!.createShader(type);
+      if (!sh) return null;
+      gl!.shaderSource(sh, src);
+      gl!.compileShader(sh);
       if (!gl!.getShaderParameter(sh, gl!.COMPILE_STATUS)) {
-        console.error("hero-shader: compile error", gl!.getShaderInfoLog(sh))
-        return null
+        console.error("hero-shader: compile error", gl!.getShaderInfoLog(sh));
+        return null;
       }
-      return sh
+      return sh;
     }
 
-    const vs = compile(gl.VERTEX_SHADER, VERT_SRC)
-    const fs = compile(gl.FRAGMENT_SHADER, FRAG_SRC)
+    const vs = compile(gl.VERTEX_SHADER, VERT_SRC);
+    const fs = compile(gl.FRAGMENT_SHADER, FRAG_SRC);
     if (!vs || !fs) {
-      canvas.style.display = "none"
-      return
+      canvas.style.display = "none";
+      return;
     }
 
-    const prog = gl.createProgram()
+    const prog = gl.createProgram();
     if (!prog) {
-      canvas.style.display = "none"
-      return
+      canvas.style.display = "none";
+      return;
     }
-    gl.attachShader(prog, vs)
-    gl.attachShader(prog, fs)
-    gl.linkProgram(prog)
+    gl.attachShader(prog, vs);
+    gl.attachShader(prog, fs);
+    gl.linkProgram(prog);
     if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-      console.error("hero-shader: link error", gl.getProgramInfoLog(prog))
-      canvas.style.display = "none"
-      return
+      console.error("hero-shader: link error", gl.getProgramInfoLog(prog));
+      canvas.style.display = "none";
+      return;
     }
-    gl.useProgram(prog)
+    gl.useProgram(prog);
 
-    const quadBuf = gl.createBuffer()
-    gl.bindBuffer(gl.ARRAY_BUFFER, quadBuf)
+    const quadBuf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, quadBuf);
     gl.bufferData(
       gl.ARRAY_BUFFER,
       new Float32Array([-1, -1, 0, 0, 1, -1, 1, 0, -1, 1, 0, 1, 1, 1, 1, 1]),
       gl.STATIC_DRAW,
-    )
+    );
 
-    const aPos = gl.getAttribLocation(prog, "a_position")
-    const aUV = gl.getAttribLocation(prog, "a_texCoord")
-    gl.enableVertexAttribArray(aPos)
-    gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 16, 0)
-    gl.enableVertexAttribArray(aUV)
-    gl.vertexAttribPointer(aUV, 2, gl.FLOAT, false, 16, 8)
+    const aPos = gl.getAttribLocation(prog, "a_position");
+    const aUV = gl.getAttribLocation(prog, "a_texCoord");
+    gl.enableVertexAttribArray(aPos);
+    gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 16, 0);
+    gl.enableVertexAttribArray(aUV);
+    gl.vertexAttribPointer(aUV, 2, gl.FLOAT, false, 16, 8);
 
-    const loc = (name: string) => gl.getUniformLocation(prog, name)
+    const loc = (name: string) => gl.getUniformLocation(prog, name);
 
     const palette = new Float32Array([
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      10 / 255, 26 / 255, 74 / 255,
-      30 / 255, 58 / 255, 138 / 255,
-      107 / 255, 46 / 255, 199 / 255,
-      84 / 255, 204 / 255, 116 / 255,
-    ])
-    gl.uniform3fv(loc("u_colors"), palette)
-    gl.uniform1i(loc("u_colorsLength"), 8)
-    gl.uniform1f(loc("u_seed"), 23.0)
-    gl.uniform1f(loc("u_speed"), 0.32)
-    gl.uniform1f(loc("u_scale"), 0.85)
-    gl.uniform1f(loc("u_turbAmp"), 1.0)
-    gl.uniform1f(loc("u_turbFreq"), 0.18)
-    gl.uniform1f(loc("u_waveFreq"), 2.4)
-    // Slightly stronger film-grain than the template default so the
-    // aurora reads with the same noisy texture on high-DPI displays.
-    gl.uniform1f(loc("u_dither"), 0.28)
-    gl.uniform1f(loc("u_contrast"), 1.15)
-    gl.uniform1f(loc("u_exposure"), 1.0)
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      10 / 255,
+      26 / 255,
+      74 / 255,
+      30 / 255,
+      58 / 255,
+      138 / 255,
+      107 / 255,
+      46 / 255,
+      199 / 255,
+      84 / 255,
+      204 / 255,
+      116 / 255,
+    ]);
+    gl.uniform3fv(loc("u_colors"), palette);
+    gl.uniform1i(loc("u_colorsLength"), 8);
+    gl.uniform1f(loc("u_seed"), 23.0);
+    gl.uniform1f(loc("u_speed"), 0.32);
+    gl.uniform1f(loc("u_scale"), 0.85);
+    gl.uniform1f(loc("u_turbAmp"), 1.0);
+    gl.uniform1f(loc("u_turbFreq"), 0.18);
+    gl.uniform1f(loc("u_waveFreq"), 2.4);
 
-    const u_time = loc("u_time")
-    const u_resolution = loc("u_resolution")
-    const u_pixelRatio = loc("u_pixelRatio")
+    gl.uniform1f(loc("u_dither"), 0.28);
+    gl.uniform1f(loc("u_contrast"), 1.15);
+    gl.uniform1f(loc("u_exposure"), 1.0);
+
+    const u_time = loc("u_time");
+    const u_resolution = loc("u_resolution");
+    const u_pixelRatio = loc("u_pixelRatio");
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2)
-      const cssW = canvas.clientWidth || canvas.parentElement?.clientWidth || 1
-      const cssH = canvas.clientHeight || canvas.parentElement?.clientHeight || 1
-      const w = Math.max(1, Math.floor(cssW * dpr))
-      const h = Math.max(1, Math.floor(cssH * dpr))
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const cssW = canvas.clientWidth || canvas.parentElement?.clientWidth || 1;
+      const cssH = canvas.clientHeight || canvas.parentElement?.clientHeight || 1;
+      const w = Math.max(1, Math.floor(cssW * dpr));
+      const h = Math.max(1, Math.floor(cssH * dpr));
       if (canvas.width !== w || canvas.height !== h) {
-        canvas.width = w
-        canvas.height = h
+        canvas.width = w;
+        canvas.height = h;
       }
-      gl.viewport(0, 0, w, h)
-      gl.uniform2f(u_resolution, w, h)
-      gl.uniform1f(u_pixelRatio, dpr)
-    }
-    resize()
-    window.addEventListener("resize", resize)
+      gl.viewport(0, 0, w, h);
+      gl.uniform2f(u_resolution, w, h);
+      gl.uniform1f(u_pixelRatio, dpr);
+    };
+    resize();
+    window.addEventListener("resize", resize);
 
-    const reduced =
-      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false
+    const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
 
-    const start = performance.now()
-    let rafId = 0
+    const start = performance.now();
+    let rafId = 0;
     const frame = (now: number) => {
-      gl.uniform1f(u_time, (now - start) / 1000)
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
-      if (!reduced) rafId = requestAnimationFrame(frame)
-    }
-    rafId = requestAnimationFrame(frame)
+      gl.uniform1f(u_time, (now - start) / 1000);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      if (!reduced) rafId = requestAnimationFrame(frame);
+    };
+    rafId = requestAnimationFrame(frame);
 
     const onVis = () => {
       if (document.hidden) {
-        cancelAnimationFrame(rafId)
-        rafId = 0
+        cancelAnimationFrame(rafId);
+        rafId = 0;
       } else if (!rafId && !reduced) {
-        rafId = requestAnimationFrame(frame)
+        rafId = requestAnimationFrame(frame);
       }
-    }
-    document.addEventListener("visibilitychange", onVis)
+    };
+    document.addEventListener("visibilitychange", onVis);
 
     return () => {
-      cancelAnimationFrame(rafId)
-      window.removeEventListener("resize", resize)
-      document.removeEventListener("visibilitychange", onVis)
-      gl.deleteProgram(prog)
-      gl.deleteShader(vs)
-      gl.deleteShader(fs)
-      if (quadBuf) gl.deleteBuffer(quadBuf)
-    }
-  }, [canvasRef])
+      cancelAnimationFrame(rafId);
+      window.removeEventListener("resize", resize);
+      document.removeEventListener("visibilitychange", onVis);
+      gl.deleteProgram(prog);
+      gl.deleteShader(vs);
+      gl.deleteShader(fs);
+      if (quadBuf) gl.deleteBuffer(quadBuf);
+    };
+  }, [canvasRef]);
 }

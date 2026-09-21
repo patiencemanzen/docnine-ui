@@ -7,11 +7,11 @@ import {
   Pricing,
   ResourceAllocation,
   Testimonials,
-} from "@/components/landing"
-import { useGradientExpand } from "@/hooks/landing/useGradientExpand"
+} from "@/components/landing";
+import { useGradientExpand } from "@/hooks/landing/useGradientExpand";
 
 export function HomePage() {
-  useGradientExpand(["pricing-gradient-wrap"])
+  useGradientExpand(["pricing-gradient-wrap"]);
 
   return (
     <div className="relative">
@@ -27,5 +27,5 @@ export function HomePage() {
       <Pricing />
       <FAQ />
     </div>
-  )
+  );
 }

@@ -1,9 +1,3 @@
-/**
- * projects.ts : Project Zustand store backed by real backend APIs.
- *
- * The backend uses its own status terminology (queued/running/done/error/archived).
- * We map those to the UI status terms (analyzing/completed/failed/archived).
- */
 import { create } from "zustand";
 import { projectsApi, sharingApi } from "@/lib/api";
 import {
@@ -15,7 +9,6 @@ import {
 } from "@/types/ProjectTypes";
 import { ApiSharedProject } from "@/types/ProjectShareTypes";
 
-// ── Status mapping ────────────────────────────────────────────────────────────
 export function mapApiStatus(apiStatus: ApiProjectStatus): ProjectStatus {
   switch (apiStatus) {
     case "queued":
@@ -31,7 +24,6 @@ export function mapApiStatus(apiStatus: ApiProjectStatus): ProjectStatus {
   }
 }
 
-/** Convert an API project to the UI model. */
 export function fromApiProject(
   p: ApiProject,
   shareRole: "owner" | "editor" | "viewer" = "owner",
@@ -58,7 +50,6 @@ export function fromApiProject(
   };
 }
 
-/** Convert a shared-project API response to the UI model. */
 export function fromSharedApiProject(p: ApiSharedProject): Project {
   return {
     id: p._id,
@@ -73,7 +64,6 @@ export function fromSharedApiProject(p: ApiSharedProject): Project {
   };
 }
 
-// ── Store ─────────────────────────────────────────────────────────────────────
 export const useProjectStore = create<ProjectState>((set, get) => ({
   projects: [],
   total: 0,
@@ -107,7 +97,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
   createProject: async (repoUrl) => {
     const data = await projectsApi.create(repoUrl);
     const project = fromApiProject(data.project);
-    // Optimistically add to local list
+
     set((state) => ({
       projects: [project, ...state.projects],
       total: state.total + 1,
@@ -144,7 +134,6 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
     const data = await projectsApi.get(id);
     const project = fromApiProject(data.project, data.shareRole ?? "owner");
 
-    // Update cache
     set((state) => {
       const exists = state.projects.some((p) => p.id === id);
 
@@ -179,9 +168,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
 
   updateLocalProject: (id, changes) => {
     set((state) => ({
-      projects: state.projects.map((p) =>
-        p.id === id ? { ...p, ...changes } : p,
-      ),
+      projects: state.projects.map((p) => (p.id === id ? { ...p, ...changes } : p)),
     }));
   },
 

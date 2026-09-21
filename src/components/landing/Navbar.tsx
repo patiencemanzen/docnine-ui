@@ -1,30 +1,30 @@
-import { useState } from "react"
-import { Link, useLocation } from "react-router-dom"
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
-import { Github } from "@/components/icons"
-import { ApplicationLogo } from "@/components/common/application-logo"
-import { Button } from "@/components/ui/button"
+import { Github } from "@/components/icons";
+import { ApplicationLogo } from "@/components/common/application-logo";
+import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuList,
-} from "@/components/ui/navigation-menu"
-import { useNavbarShrink } from "@/hooks/landing/useNavbarShrink"
-import { cn } from "@/lib/utils"
+} from "@/components/ui/navigation-menu";
+import { useNavbarShrink } from "@/hooks/landing/useNavbarShrink";
+import { cn } from "@/lib/utils";
 
-const GITHUB_URL = "https://github.com/docnineai"
+const GITHUB_URL = "https://github.com/docnineai";
 
 const ITEMS = [
   { label: "Pricing", href: "/pricing" },
   { label: "Docs", href: "/docs" },
   { label: "Contact", href: "/contact" },
-]
+];
 
 export function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const { pathname } = useLocation()
-  const shrunk = useNavbarShrink(20)
-  const overAurora = pathname === "/" && !shrunk
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { pathname } = useLocation();
+  const shrunk = useNavbarShrink(20);
+  const overAurora = pathname === "/" && !shrunk;
 
   return (
     <section
@@ -112,9 +112,7 @@ export function Navbar() {
       <div
         className={cn(
           "fixed inset-x-0 top-[calc(100%+1rem)] flex flex-col rounded-2xl border border-border/80 bg-background/95 p-6 shadow-none backdrop-blur-md transition-all duration-300 ease-in-out lg:hidden",
-          isMenuOpen
-            ? "visible translate-y-0 opacity-100"
-            : "invisible -translate-y-4 opacity-0",
+          isMenuOpen ? "visible translate-y-0 opacity-100" : "invisible -translate-y-4 opacity-0",
         )}
       >
         <nav className="flex flex-1 flex-col divide-y divide-border">
@@ -146,5 +144,5 @@ export function Navbar() {
         </nav>
       </div>
     </section>
-  )
+  );
 }

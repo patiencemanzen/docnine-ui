@@ -28,8 +28,8 @@ export interface BillingPlan {
   name: string;
   tagline: string;
   prices: {
-    monthly: number; // dollars
-    annual: number; // dollars per month
+    monthly: number;
+    annual: number;
     annualTotal: number | null;
     savingsPercent: number;
   };
@@ -38,12 +38,7 @@ export interface BillingPlan {
 }
 
 export type SubscriptionStatus =
-  | "free"
-  | "trialing"
-  | "active"
-  | "past_due"
-  | "cancelled"
-  | "paused";
+  "free" | "trialing" | "active" | "past_due" | "cancelled" | "paused";
 
 export interface SubscriptionData {
   plan: string;
@@ -77,7 +72,7 @@ export type InvoiceStatus = "pending" | "paid" | "failed" | "refunded" | "void";
 export interface InvoiceData {
   _id: string;
   invoiceNumber: string;
-  amount: number; // cents
+  amount: number;
   currency: string;
   description: string;
   status: InvoiceStatus;
@@ -93,7 +88,7 @@ export interface PaymentMethodData {
   type: "card" | "mobile_money" | "bank_transfer";
   isDefault: boolean;
   displayLabel: string;
-  /** ISO currency code the token was issued in (e.g. NGN, KES, USD) */
+
   currency: string;
   card?: {
     last4: string;
@@ -111,7 +106,7 @@ export interface PaymentMethodData {
 
 export interface PlanBadgeProps {
   className?: string;
-  /** Show trial countdown or dunning warning inline. Defaults to true. */
+
   showStatus?: boolean;
 }
 
@@ -123,11 +118,11 @@ export interface PlansModalProps {
 export interface UpgradeModalProps {
   open: boolean;
   onClose: () => void;
-  /** Human-readable name of the feature being blocked, e.g. "GitHub Sync" */
+
   featureName: string;
-  /** Minimum plan ID required, e.g. "pro" */
+
   requiredPlan: string;
-  /** Optional description override shown under the title */
+
   description?: string;
 }
 
@@ -138,12 +133,11 @@ export interface SubscriptionState {
   loading: boolean;
   error: string | null;
 
-  // Load subscription + usage for the authenticated user
   load: () => Promise<void>;
-  // Load available plans (public : no auth)
+
   loadPlans: () => Promise<void>;
-  // Reset on logout
+
   reset: () => void;
-  // Refresh subscription after a plan change
+
   refresh: () => Promise<void>;
 }
