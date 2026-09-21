@@ -52,7 +52,7 @@ export interface TabDef {
   key: DocTab;
   label: string;
   icon: React.ElementType;
-  field?: string; // Only for native tabs : maps to API project field
+  field?: string;
   isNative: boolean;
   isCustom?: boolean;
   customTab?: CustomTab;

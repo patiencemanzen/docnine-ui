@@ -30,8 +30,6 @@ import { useSubscriptionStore, effectivePlan } from "@/store/subscription"
 import { useNotificationStore } from "@/store/useNotificationStore"
 import { cn } from "@/lib/utils"
 
-
-
 function getGreeting() {
     const h = new Date().getHours()
     if (h < 12) return "Good morning"
@@ -89,8 +87,6 @@ function UsageMeter({ label, used, limit }: { label: string; used: number; limit
     )
 }
 
-
-
 function StatCard({
     label,
     value,
@@ -138,8 +134,6 @@ function StatCard({
     )
 }
 
-
-
 function QuickAction({
     href,
     icon: Icon,
@@ -170,8 +164,6 @@ function QuickAction({
     )
 }
 
-
-
 function NotifItem({ notif }: { notif: any }) {
     return (
         <div className={cn(
@@ -192,8 +184,6 @@ function NotifItem({ notif }: { notif: any }) {
         </div>
     )
 }
-
-
 
 export function HomePage() {
     const navigate = useNavigate()
@@ -236,7 +226,6 @@ export function HomePage() {
     return (
         <div className="space-y-8 pb-6">
 
-            {}
             <div className="flex items-start justify-between gap-4">
                 <div>
                     <p className="text-[13px] text-muted-foreground">{today}</p>
@@ -257,7 +246,6 @@ export function HomePage() {
                 </Button>
             </div>
 
-            {}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatCard
                     label="Total Projects"
@@ -293,10 +281,8 @@ export function HomePage() {
                 />
             </div>
 
-            {}
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
 
-                {}
                 <div className="xl:col-span-2 space-y-4">
                     <div className="flex items-center justify-between">
                         <h2 className="text-[15px] font-semibold">Recent Projects</h2>
@@ -346,12 +332,10 @@ export function HomePage() {
                                         to={`/projects/${project.id}`}
                                         className="group flex items-center gap-4 rounded-xl border border-border/60 bg-card px-4 py-3.5 hover:border-primary/40 hover:bg-primary/5 transition-all duration-150"
                                     >
-                                        {}
                                         <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
                                             <GitBranch className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                                         </div>
 
-                                        {}
                                         <div className="flex-1 min-w-0">
                                             <p className="text-[13px] font-semibold text-foreground truncate">{project.name}</p>
                                             <p className="text-[12px] text-muted-foreground truncate">
@@ -359,7 +343,6 @@ export function HomePage() {
                                             </p>
                                         </div>
 
-                                        {}
                                         <div className="hidden sm:flex items-center gap-1.5 shrink-0">
                                             {project.readme && (
                                                 <span title="README" className="flex h-6 w-6 items-center justify-center rounded bg-muted text-muted-foreground">
@@ -378,7 +361,6 @@ export function HomePage() {
                                             )}
                                         </div>
 
-                                        {}
                                         <div className="flex flex-col items-end gap-1 shrink-0">
                                             <div className="flex items-center gap-1.5">
                                                 <StatusIcon className={cn("h-3 w-3", sc.className)} />
@@ -395,10 +377,8 @@ export function HomePage() {
                     )}
                 </div>
 
-                {}
                 <div className="space-y-5">
 
-                    {}
                     <div>
                         <h2 className="text-[15px] font-semibold mb-3">Quick Actions</h2>
                         <div className="space-y-2">
@@ -430,7 +410,6 @@ export function HomePage() {
                         </div>
                     </div>
 
-                    {}
                     <Card className="border-border/60">
                         <CardHeader className="pb-3 pt-4 px-4">
                             <div className="flex items-center justify-between">
@@ -474,7 +453,6 @@ export function HomePage() {
                         </CardContent>
                     </Card>
 
-                    {}
                     <Card className="border-border/60">
                         <CardHeader className="pb-0 pt-4 px-4">
                             <div className="flex items-center justify-between">

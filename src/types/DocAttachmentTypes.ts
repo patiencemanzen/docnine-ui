@@ -5,7 +5,7 @@ export interface ApiAttachment {
   uploaderName: string;
   fileName: string;
   mimeType: string;
-  size: number; // bytes
+  size: number;
   description: string;
   createdAt: string;
   updatedAt: string;

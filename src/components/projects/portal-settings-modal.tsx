@@ -18,7 +18,6 @@ import { portalApi } from "@/lib/api"
 
 const FRONTEND_ORIGIN = import.meta.env.VITE_APP_URL || window.location.origin
 
-// ── Helpers ────────────────────────────────────────────────────────────────
 function buildPortalUrl(slug: string): string {
     return `${FRONTEND_ORIGIN}/docs/${slug}`
 }
@@ -27,7 +26,6 @@ function getEffectiveVisibility(sections: PortalSectionConfig[], key: PortalSect
     return sections.find((s) => s.sectionKey === key)?.visibility ?? "public"
 }
 
-// ── Component ─────────────────────────────────────────────────────────────
 export function PortalSettingsModal({
     isOpen,
     onClose,
@@ -45,7 +43,6 @@ export function PortalSettingsModal({
     const [error, setError] = useState<string | null>(null)
     const [saveSuccess, setSaveSuccess] = useState(false)
 
-    // Draft state : uncommitted edits
     const [draftSections, setDraftSections] = useState<PortalSectionConfig[]>([])
     const [draftBranding, setDraftBranding] = useState<PortalBranding>({})
     const [draftSeo, setDraftSeo] = useState<{ seoTitle: string; seoDescription: string }>({
@@ -59,7 +56,6 @@ export function PortalSettingsModal({
     const [showPassword, setShowPassword] = useState(false)
     const [passwordChanged, setPasswordChanged] = useState(false)
 
-    // ── Load portal settings ──────────────────────────────────────
     const loadPortal = useCallback(async () => {
         if (!projectId) return
         setLoading(true)
@@ -100,7 +96,6 @@ export function PortalSettingsModal({
         }
     }, [isOpen, initialPortal, loadPortal])
 
-    // ── Section visibility setter ──────────────────────────────────
     function setSectionVisibility(key: PortalSectionKey | string, vis: PortalSectionVisibility) {
         setDraftSections((prev) => {
             const existing = prev.find((s) => s.sectionKey === key)
@@ -109,21 +104,19 @@ export function PortalSettingsModal({
         })
     }
 
-    // ── Get all publishable sections (native + custom tabs) ──────
     const getAllPublishableSections = () => {
         const sections: Array<{ key: string; label: string; isCustom: boolean }> = []
-        // Add native sections
+
         PORTAL_SECTION_KEYS.forEach((key) => {
             sections.push({ key, label: PORTAL_SECTION_LABELS[key], isCustom: false })
         })
-        // Add custom tabs
+
         customTabs.forEach((tab) => {
             sections.push({ key: `custom_${tab._id}`, label: tab.name, isCustom: true })
         })
         return sections
     }
 
-    // ── Save settings ──────────────────────────────────────────────
     async function handleSave() {
         setSaving(true)
         setError(null)
@@ -153,7 +146,6 @@ export function PortalSettingsModal({
         }
     }
 
-    // ── Toggle publish ─────────────────────────────────────────────
     async function handleTogglePublish() {
         setPublishing(true)
         setError(null)
@@ -168,7 +160,6 @@ export function PortalSettingsModal({
         }
     }
 
-    // ── Copy URL ───────────────────────────────────────────────────
     function handleCopy() {
         if (!portal?.slug) return
         navigator.clipboard.writeText(buildPortalUrl(portal.slug))
@@ -176,11 +167,9 @@ export function PortalSettingsModal({
         setTimeout(() => setCopied(false), 2000)
     }
 
-    // ── Render ─────────────────────────────────────────────────────
     return (
         <Dialog open={isOpen} onOpenChange={(o) => !o && onClose()}>
             <DialogContent className="max-w-2xl w-full p-0 gap-0">
-                {/* Header */}
                 <div className="flex items-center justify-between border-b border-border px-6 py-4">
                     <DialogHeader className="space-y-0">
                         <DialogTitle className="flex items-center gap-2 text-base">
@@ -189,7 +178,6 @@ export function PortalSettingsModal({
                         </DialogTitle>
                     </DialogHeader>
 
-                    {/* Publish toggle */}
                     <div className="flex items-center gap-3">
                         {portal?.isPublished && portal.slug && (
                             <a
@@ -221,7 +209,6 @@ export function PortalSettingsModal({
                     </div>
                 </div>
 
-                {/* Published URL banner */}
                 {portal?.isPublished && portal.slug && (
                     <div className="flex items-center gap-2 px-6 py-2.5 bg-primary/5 border-b border-border">
                         <Globe2 className="h-3.5 w-3.5 text-primary shrink-0" />
@@ -236,7 +223,6 @@ export function PortalSettingsModal({
                     </div>
                 )}
 
-                {/* Loading / error */}
                 {loading && (
                     <div className="flex items-center justify-center py-16">
                         <Loader1 className="h-6 w-6  text-muted-foreground" />
@@ -245,7 +231,6 @@ export function PortalSettingsModal({
 
                 {!loading && (
                     <>
-                        {/* Tabs */}
                         <div className="flex gap-0 border-b border-border px-6 overflow-x-auto">
                             {TAB_IDS.map((tab) => (
                                 <button
@@ -263,13 +248,10 @@ export function PortalSettingsModal({
                             ))}
                         </div>
 
-                        {/* Tab content */}
                         <div className="px-6 py-5 space-y-5 overflow-y-auto max-h-[55vh]">
 
-                            {/* ── General tab ── */}
                             {activeTab === "general" && (
                                 <div className="space-y-5">
-                                    {/* Access mode */}
                                     <div className="space-y-2">
                                         <Label className="text-sm font-medium">Access</Label>
                                         <div className="grid grid-cols-2 gap-2">
@@ -298,7 +280,6 @@ export function PortalSettingsModal({
                                         </div>
                                     </div>
 
-                                    {/* Password field */}
                                     {draftAccessMode === "password" && (
                                         <div className="space-y-1.5">
                                             <Label htmlFor="portal-password" className="text-sm font-medium">Portal Password</Label>
@@ -322,7 +303,6 @@ export function PortalSettingsModal({
                                         </div>
                                     )}
 
-                                    {/* SEO */}
                                     <div className="space-y-1.5">
                                         <Label className="text-sm font-medium">SEO Title <span className="font-normal text-muted-foreground">(optional)</span></Label>
                                         <Input
@@ -342,7 +322,6 @@ export function PortalSettingsModal({
                                 </div>
                             )}
 
-                            {/* ── Sections tab ── */}
                             {activeTab === "sections" && (
                                 <div className="space-y-3">
                                     <p className="text-xs text-muted-foreground">
@@ -356,7 +335,6 @@ export function PortalSettingsModal({
                                                     <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
                                                     <span className="text-sm font-medium truncate">{label}</span>
                                                 </div>
-                                                {/* Visibility selector */}
                                                 <div className="relative group/vis shrink-0">
                                                     <button
                                                         type="button"
@@ -515,7 +493,6 @@ export function PortalSettingsModal({
                                 </div>
                             )}
 
-                            {/* ── Branding tab ── */}
                             {activeTab === "branding" && (
                                 <div className="space-y-4">
                                     <p className="text-xs text-muted-foreground">
@@ -588,7 +565,6 @@ export function PortalSettingsModal({
                                 </div>
                             )}
 
-                            {/* ── Domain tab ── */}
                             {activeTab === "domain" && (
                                 <div className="space-y-4">
                                     <div className="space-y-1.5">
@@ -644,7 +620,6 @@ export function PortalSettingsModal({
                     </>
                 )}
 
-                {/* Footer */}
                 {!loading && (
                     <div className="flex items-center justify-between border-t border-border px-6 py-4">
                         <div className="text-xs text-muted-foreground">

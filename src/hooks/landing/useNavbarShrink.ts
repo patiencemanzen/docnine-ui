@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 
-/** Cocoon navbar shrink when scrollY > 20 */
 export function useNavbarShrink(threshold = 20) {
   const [shrunk, setShrunk] = useState(false)
 

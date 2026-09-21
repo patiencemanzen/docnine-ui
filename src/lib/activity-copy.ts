@@ -1,7 +1,3 @@
-/**
- * Shared activity-log copy for the account page and project overview.
- */
-
 import type { ActivityLog } from "@/types/activity-log"
 
 const SECTION_LABELS: Record<string, string> = {

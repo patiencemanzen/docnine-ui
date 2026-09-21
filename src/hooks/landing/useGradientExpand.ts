@@ -1,9 +1,5 @@
 import { useEffect } from "react"
 
-/**
- * Cocoon gradient wrap expand: max-width 1152 → 100vw, border-radius 16 → 0
- * while the element enters from the bottom of the viewport.
- */
 export function useGradientExpand(ids: readonly string[]) {
   const key = ids.join("|")
 

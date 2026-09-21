@@ -30,9 +30,9 @@ export interface SessionState {
 export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
-  initialized: boolean; // Has the silent-refresh check completed?
+  initialized: boolean;
 
   setTokens: (user: User, token: string) => void;
   clearAuth: () => void;
-  initAuth: () => Promise<void>; // Called once on app mount
+  initAuth: () => Promise<void>;
 }

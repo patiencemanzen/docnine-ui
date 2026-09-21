@@ -1,5 +1,3 @@
-/* Guest landing: Mainline design tokens + Cocoon animations + Auroalis hero glass */
-
 @font-face {
   font-family: "DM Sans";
   src: url("/fonts/dm-sans/DMSans-Regular.ttf") format("truetype");
@@ -60,9 +58,8 @@
   }
 }
 
-/* Scoped Mainline cream tokens,only inside .guest-landing */
 .guest-landing {
-  /* Soft warm page (not pure white) so aurora fade + shells feel continuous */
+  
   --background: oklch(0.985 0.008 86);
   --foreground: oklch(0.18 0.01 86);
   --card: oklch(1 0 0);
@@ -81,7 +78,7 @@
   --border: oklch(0.9 0.015 86);
   --input: oklch(0.9 0.015 86);
   --ring: oklch(0.55 0.04 86);
-  /* Elevated content shell behind Logos / Features */
+  
   --guest-surface: color-mix(in oklab, var(--muted) 72%, var(--primary) 28%);
   --guest-surface-edge: color-mix(in oklab, var(--background) 85%, transparent);
   --radius: 8px;
@@ -105,7 +102,7 @@
   --card-foreground: oklch(0.97 0.01 86);
   --popover: oklch(0.205 0.014 86);
   --popover-foreground: oklch(0.97 0.01 86);
-  /* Keep cream accent in dark,not near-white */
+  
   --primary: oklch(0.86 0.045 86);
   --primary-foreground: oklch(0.2 0.02 86);
   --secondary: oklch(0.24 0.014 86);
@@ -135,7 +132,6 @@
   font-weight: var(--text-weight);
 }
 
-/* Auroalis hero glass */
 .hero-glass-panel {
   position: absolute;
   inset: 0;
@@ -161,14 +157,12 @@
   .hero-glass-panel { max-width: calc(1200px + 400px); }
 }
 
-/* Auth side panel: glass fills the whole panel, no column inset */
 .hero-glass-panel--fill {
   max-width: none;
   border-left: none;
   border-right: none;
 }
 
-/* Soft blur band used at the bottom of the landing hero */
 .hero-section-fade {
   position: absolute;
   inset-inline: 0;
@@ -192,7 +186,6 @@
   .hero-section-fade { height: 9rem; }
 }
 
-/* Auroalis SVG-noise grain,keeps the aurora from looking plasticky */
 .hero-grain {
   position: absolute;
   inset: 0;
@@ -205,7 +198,6 @@
   background-size: 200px 200px;
 }
 
-/* Cocoon scroll animations */
 [data-animate] {
   opacity: 0;
   transform: translateY(20px);
@@ -266,7 +258,6 @@ html:not(.js) [data-animate] {
   animation: timeline-pulse 2s ease-in-out infinite;
 }
 
-/* Self-hosted pricing backdrop — warm dunes tones matching guest dark theme */
 .landing-pricing-bg {
   background:
     radial-gradient(120% 80% at 20% 10%, rgba(196, 140, 78, 0.35) 0%, transparent 55%),

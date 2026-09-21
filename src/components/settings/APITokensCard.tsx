@@ -1,8 +1,3 @@
-/**
- * API Tokens Management Component
- * Allows users to generate, list, and revoke API tokens for MCP, CLI, etc.
- */
-
 import { useState, useEffect, useCallback } from "react"
 import { authApi } from "@/lib/api"
 import { Button } from "@/components/ui/button"
@@ -104,7 +99,6 @@ export function APITokensCard() {
       setCreateForm({ name: "", description: "", scope: ["api"], expiresAt: "" })
       setShowCreateDialog(false)
 
-      // Refresh list
       await loadTokens()
     } catch (err: any) {
       setFeedback({
@@ -161,7 +155,6 @@ export function APITokensCard() {
         </CardHeader>
 
         <CardContent className="space-y-6">
-          {/* Stats ─────────────────────────────────────────────────────── */}
           {stats && !isLoading && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <div className="rounded-2xl bg-muted p-3">
@@ -183,7 +176,6 @@ export function APITokensCard() {
             </div>
           )}
 
-          {/* Token List ────────────────────────────────────────────────── */}
           {isLoading ? (
             <div className="space-y-3">
               <Skeleton className="h-16 w-full" />
@@ -261,7 +253,6 @@ export function APITokensCard() {
         </CardContent>
       </Card>
 
-      {/* Create Token Dialog ────────────────────────────────────────── */}
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
         <DialogContent>
           <DialogHeader>
@@ -348,7 +339,6 @@ export function APITokensCard() {
         </DialogContent>
       </Dialog>
 
-      {/* New Token Display Dialog ──────────────────────────────────── */}
       {newToken && (
         <Dialog open={showNewToken} onOpenChange={setShowNewToken}>
           <DialogContent className="max-w-lg">

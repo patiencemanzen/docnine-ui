@@ -38,13 +38,11 @@ export function ProjectSettingsPage() {
     const [error, setError] = useState<string | null>(null)
     const [activeTab, setActiveTab] = useState("general")
 
-
     const [upgradeModal, setUpgradeModal] = useState<{ open: boolean; feature: string; plan: string; description?: string }>({
         open: false,
         feature: "",
         plan: "pro",
     })
-
 
     const [webhookStatus, setWebhookStatus] = useState<{
         hasSecret: boolean
@@ -69,7 +67,6 @@ export function ProjectSettingsPage() {
             setActiveTab("integrations")
         }
     }, [slackStatus])
-
 
     useEffect(() => {
         if (activeTab !== "integrations" || webhookStatus || webhookStatusLoading) return

@@ -1,8 +1,3 @@
-/**
- * Hook: Provider Status Management
- * Handles checking provider connection status on modal open
- */
-
 import { useState, useEffect } from "react"
 import { githubApi, gitlabApi, bitbucketApi, azureApi } from "@/lib/api"
 import type { ProviderKey, ProviderStatusRecord, ProviderUsernamesRecord, ProviderCheckingRecord } from "@/types/ProjectTypes"

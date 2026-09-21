@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { DocSidebarProps } from "@/types/DocumentationTypes"
 
-
 export function DocSidebar({
   sections,
   activeTab,

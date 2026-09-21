@@ -1,8 +1,3 @@
-/**
- * Hook: useConfirm
- * Provides a programmatic API to show confirmation dialogs
- */
-
 import { useState, useCallback } from "react";
 
 export interface UseConfirmOptions {

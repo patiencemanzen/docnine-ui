@@ -14,10 +14,6 @@ import { formatDistanceToNow } from "date-fns"
 import Loader1 from "../ui/loader1"
 import { ApiShare, SharePanelProps } from "@/types/ProjectShareTypes"
 
-// ─────────────────────────────────────────────────────────────
-// Helpers
-// ─────────────────────────────────────────────────────────────
-
 function RoleBadge({ role }: { role: "owner" | "editor" | "viewer" }) {
   if (role === "owner")
     return (
@@ -46,32 +42,25 @@ function StatusBadge({ status }: { status: "pending" | "accepted" | "revoked" })
   return <span className="text-xs text-muted-foreground">Revoked</span>
 }
 
-// ─────────────────────────────────────────────────────────────
-// Main component
-// ─────────────────────────────────────────────────────────────
 export function SharePanel({ open, onOpenChange, projectId, projectName, isOwner }: SharePanelProps) {
   const [shares, setShares] = useState<ApiShare[]>([])
   const [isLoadingShares, setIsLoadingShares] = useState(false)
   const [loadError, setLoadError] = useState<string | null>(null)
   const { confirm, state, handleConfirm, handleCancel } = useConfirm()
 
-  // Subscription gates
   const { subscription } = useSubscriptionStore()
   const canShareEdit = hasFeature(subscription, "shareEdit")
   const maxShares: number | null = subscription?.features?.maxShares ?? null
   const [upgradeOpen, setUpgradeOpen] = useState(false)
   const [upgradeFeature, setUpgradeFeature] = useState<{ name: string; plan: string; description?: string }>({ name: "", plan: "pro" })
 
-  // Invite form state
   const [inviteEmail, setInviteEmail] = useState("")
   const [inviteRole, setInviteRole] = useState<"viewer" | "editor">("viewer")
   const [isInviting, setIsInviting] = useState(false)
   const [inviteResult, setInviteResult] = useState<{ type: "success" | "error"; message: string } | null>(null)
 
-  // Per-row action loading state
   const [rowAction, setRowAction] = useState<{ id: string; action: string } | null>(null)
 
-  // ── Fetch access list ──────────────────────────────────────
   const loadShares = useCallback(async () => {
     if (!isOwner) return
     setIsLoadingShares(true)
@@ -95,7 +84,6 @@ export function SharePanel({ open, onOpenChange, projectId, projectName, isOwner
     }
   }, [open, loadShares])
 
-  // ── Invite ─────────────────────────────────────────────────
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault()
     const email = inviteEmail.trim()
@@ -105,14 +93,12 @@ export function SharePanel({ open, onOpenChange, projectId, projectName, isOwner
       return
     }
 
-    // Guard: max shares limit
     if (maxShares !== null && shares.length >= maxShares) {
       setUpgradeFeature({ name: "More Collaborators", plan: "pro", description: `Your plan allows up to ${maxShares} collaborator${maxShares === 1 ? "" : "s"}. Upgrade to invite unlimited team members.` })
       setUpgradeOpen(true)
       return
     }
 
-    // Guard: editor role requires pro
     if (inviteRole === "editor" && !canShareEdit) {
       setUpgradeFeature({ name: "Editor Access", plan: "pro", description: "Upgrade to Pro to invite collaborators with editor access." })
       setUpgradeOpen(true)
@@ -138,7 +124,6 @@ export function SharePanel({ open, onOpenChange, projectId, projectName, isOwner
     }
   }
 
-  // ── Role change ────────────────────────────────────────────
   const handleRoleChange = async (shareId: string, newRole: "viewer" | "editor") => {
     if (newRole === "editor" && !canShareEdit) {
       setUpgradeFeature({ name: "Editor Access", plan: "pro", description: "Upgrade to Pro to grant editor access to collaborators." })
@@ -161,7 +146,6 @@ export function SharePanel({ open, onOpenChange, projectId, projectName, isOwner
     }
   }
 
-  // ── Revoke ─────────────────────────────────────────────────
   const handleRevokeAccess = async (shareId: string, email: string) => {
     const confirmed = await confirm({
       title: "Revoke Access",
@@ -186,7 +170,6 @@ export function SharePanel({ open, onOpenChange, projectId, projectName, isOwner
     }
   }
 
-  // ── Resend ─────────────────────────────────────────────────
   const handleResendInvite = async (shareId: string) => {
     setRowAction({ id: shareId, action: "resend" })
     try {
@@ -210,7 +193,6 @@ export function SharePanel({ open, onOpenChange, projectId, projectName, isOwner
     }
   }
 
-  // ── Cancel invite ──────────────────────────────────────────
   const handleCancelInvite = async (shareId: string, email: string) => {
     const confirmed = await confirm({
       title: "Cancel Invite",
@@ -240,7 +222,6 @@ export function SharePanel({ open, onOpenChange, projectId, projectName, isOwner
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-xl w-full max-h-[90vh] flex flex-col">
-        {/* Header */}
         <DialogHeader className="shrink-0">
           <div className="flex items-center justify-between">
             <DialogTitle className="flex items-center gap-2">
@@ -263,7 +244,6 @@ export function SharePanel({ open, onOpenChange, projectId, projectName, isOwner
           </DialogDescription>
         </DialogHeader>
 
-        {/* Invite form (owner only) */}
         {isOwner && (
           <form
             onSubmit={handleInvite}
@@ -314,7 +294,6 @@ export function SharePanel({ open, onOpenChange, projectId, projectName, isOwner
           </form>
         )}
 
-        {/* Invite result banner */}
         {inviteResult && (
           <div
             className={`shrink-0 flex items-center gap-2 rounded-md px-3 py-2 text-sm ${inviteResult.type === "success"
@@ -331,7 +310,6 @@ export function SharePanel({ open, onOpenChange, projectId, projectName, isOwner
           </div>
         )}
 
-        {/* Access list */}
         <div className="flex-1 overflow-y-auto min-h-0 space-y-1">
           {isLoadingShares ? (
             <div className="flex items-center justify-center py-8">
@@ -364,7 +342,6 @@ export function SharePanel({ open, onOpenChange, projectId, projectName, isOwner
                     key={share._id}
                     className="flex items-center justify-between gap-3 rounded-lg px-3 py-2.5 hover:bg-muted/50 transition-colors"
                   >
-                    {/* Avatar + info */}
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-sm font-semibold uppercase">
                         {displayName[0]}
@@ -387,11 +364,9 @@ export function SharePanel({ open, onOpenChange, projectId, projectName, isOwner
                       </div>
                     </div>
 
-                    {/* Actions */}
                     <div className="flex items-center gap-2 shrink-0">
                       {isOwner ? (
                         <>
-                          {/* Role selector */}
                           <Select
                             value={share.role}
                             onChange={(e) =>
@@ -404,7 +379,6 @@ export function SharePanel({ open, onOpenChange, projectId, projectName, isOwner
                             <option value="editor">Editor</option>
                           </Select>
 
-                          {/* Pending-only: resend + cancel */}
                           {share.status === "pending" && (
                             <Button
                               variant="ghost"
@@ -422,7 +396,6 @@ export function SharePanel({ open, onOpenChange, projectId, projectName, isOwner
                             </Button>
                           )}
 
-                          {/* Revoke / cancel */}
                           <Button
                             variant="ghost"
                             size="icon"
@@ -453,7 +426,6 @@ export function SharePanel({ open, onOpenChange, projectId, projectName, isOwner
           )}
         </div>
 
-        {/* Footer note */}
         <div className="shrink-0 border-t border-border pt-3 text-xs text-muted-foreground">
           <p>
             <strong>Viewer</strong> : can read documentation and attachments.{" "}

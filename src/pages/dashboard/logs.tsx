@@ -36,7 +36,6 @@ import { useAuthStore } from "@/store/auth"
 import { cn } from "@/lib/utils"
 import TopBar from "@/components/projects/top-bar"
 
-
 const CATEGORY_ICON: Record<string, React.ReactNode> = {
   auth: <UserIcon className="h-3.5 w-3.5" />,
   project: <FolderGit2 className="h-3.5 w-3.5" />,
@@ -69,7 +68,6 @@ const CATEGORY_COLOR: Record<string, string> = {
   system: "bg-rose-500/10 text-rose-600 dark:text-rose-400",
 }
 
-
 const SEVERITY_BADGE: Record<string, { label: string; cls: string } | undefined> = {
   warning: { label: "Warning", cls: "bg-yellow-500/10 text-yellow-600 border border-yellow-500/20" },
   error: { label: "Error", cls: "bg-red-500/10 text-red-600 border border-red-500/20" },
@@ -81,7 +79,6 @@ const SEVERITY_ROW: Record<string, string> = {
   error: "border-l-2 border-red-500/40",
   critical: "border-l-2 border-rose-700/60 bg-rose-500/5",
 }
-
 
 function Initials({ name }: { name: string }) {
   const parts = (name || "?").trim().split(/\s+/)
@@ -95,7 +92,6 @@ function Initials({ name }: { name: string }) {
   )
 }
 
-
 function dateGroup(d: Date): string {
   if (isToday(d)) return "Today"
   if (isYesterday(d)) return "Yesterday"
@@ -104,7 +100,6 @@ function dateGroup(d: Date): string {
 }
 
 const GROUP_ORDER = ["Today", "Yesterday", "This Week", "Earlier"]
-
 
 function MetadataPanel({ metadata }: { metadata: Record<string, unknown> }) {
   const entries = Object.entries(metadata).filter(([, v]) => v !== undefined && v !== null)
@@ -120,7 +115,6 @@ function MetadataPanel({ metadata }: { metadata: Record<string, unknown> }) {
     </div>
   )
 }
-
 
 function LogEntry({ log, viewerUserId }: { log: ActivityLog; viewerUserId?: string }) {
   const [expanded, setExpanded] = useState(false)
@@ -172,7 +166,6 @@ function LogEntry({ log, viewerUserId }: { log: ActivityLog; viewerUserId?: stri
         )}
       </div>
 
-      {}
       <time
         dateTime={log.createdAt}
         title={absTime}
@@ -184,10 +177,8 @@ function LogEntry({ log, viewerUserId }: { log: ActivityLog; viewerUserId?: stri
   )
 }
 
-
 const CATEGORIES = ["auth", "project", "pipeline", "doc", "security", "apispec", "attachment", "sharing", "portal", "export", "integration", "subscription", "system"] as const
 const SEVERITIES = ["info", "success", "warning", "error", "critical"] as const
-
 
 export function LogsPage() {
   const viewerUserId = useAuthStore((s) => s.user?.id)
@@ -261,7 +252,6 @@ export function LogsPage() {
       </TopBar>
 
       <div className="space-y-5">
-        {}
         <div className="flex flex-wrap gap-3 items-end">
           <div className="flex flex-col gap-1 min-w-35">
             <Label className="text-xs text-muted-foreground">Category</Label>
@@ -323,14 +313,12 @@ export function LogsPage() {
           )}
         </div>
 
-        {}
         {!loading && total > 0 && (
           <p className="text-xs text-muted-foreground">
             Showing {logs.length} of {total} events
           </p>
         )}
 
-        {}
         {error && (
           <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
             <AlertTriangle className="h-4 w-4 shrink-0" />
@@ -338,7 +326,6 @@ export function LogsPage() {
           </div>
         )}
 
-        {}
         {loading && (
           <div className="space-y-0 border border-border rounded-xl overflow-hidden divide-y divide-border/50">
             {Array.from({ length: 8 }).map((_, i) => (
@@ -354,7 +341,6 @@ export function LogsPage() {
           </div>
         )}
 
-        {}
         {!loading && !error && logs.length === 0 && (
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <div className="rounded-full bg-muted p-5 mb-5">
@@ -369,7 +355,6 @@ export function LogsPage() {
           </div>
         )}
 
-        {}
         {!loading && logs.length > 0 && (
           <div className="space-y-6">
             {GROUP_ORDER.filter((g) => grouped[g]?.length).map((group) => (
@@ -385,7 +370,6 @@ export function LogsPage() {
               </div>
             ))}
 
-            {}
             {hasMore && (
               <div className="flex justify-center pt-2">
                 <Button

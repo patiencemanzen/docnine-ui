@@ -1,5 +1,3 @@
-
-
 import { useState, useEffect, useMemo, useRef, useCallback } from "react"
 import { useParams, Link } from "react-router-dom"
 import {
@@ -15,7 +13,6 @@ import { publicPortalApi } from "@/lib/api"
 import { applySeo } from "@/lib/seo"
 import { PORTAL_SECTION_KEYS, PORTAL_SECTION_LABELS } from "@/configs/PortalConfig"
 import { DEFAULT_PORTAL_TEMPLATE_ID, getPortalTemplate, usesLeftSidebar, usesTopNav } from "@/configs/PortalTemplates"
-
 
 interface TocEntry {
     id: string
@@ -58,7 +55,6 @@ function usePortalThemeLock(scheme: "light" | "dark") {
     }, [scheme])
 }
 
-
 function slugifyHeading(text: string): string {
     return text
         .toLowerCase()
@@ -67,7 +63,6 @@ function slugifyHeading(text: string): string {
         .replace(/-+/g, "-")
         .trim() || "section"
 }
-
 
 function extractToc(markdown: string): TocEntry[] {
     const lines = markdown.split("\n")
@@ -86,7 +81,6 @@ function extractToc(markdown: string): TocEntry[] {
     return toc
 }
 
-
 function buildExcerpt(text: string, query: string, radius = 120): string {
     const idx = text.toLowerCase().indexOf(query.toLowerCase())
     if (idx === -1) return text.slice(0, 200)
@@ -94,7 +88,6 @@ function buildExcerpt(text: string, query: string, radius = 120): string {
     const end = Math.min(text.length, idx + radius)
     return (start > 0 ? "…" : "") + text.slice(start, end) + (end < text.length ? "…" : "")
 }
-
 
 function PasswordGate({
     slug,
@@ -163,7 +156,6 @@ function PasswordGate({
         </div>
     )
 }
-
 
 export function PublicPortalPage() {
     const { slug } = useParams<{ slug: string }>()
@@ -569,7 +561,6 @@ export function PublicPortalPage() {
                 </div>
             </header>
 
-            {}
             {searchQuery.trim() && (
                 <div className="fixed inset-0 z-20 flex items-start justify-center pt-20 px-4 bg-background/80 backdrop-blur-sm">
                     <div className="w-full max-w-2xl rounded-xl border border-border bg-background shadow-2xl overflow-hidden">
@@ -612,7 +603,6 @@ export function PublicPortalPage() {
                 </div>
             )}
 
-            {}
             <div
                 className={cn(
                     "flex flex-1 mx-auto w-full",
@@ -732,7 +722,6 @@ export function PublicPortalPage() {
                         )}
                     </article>
 
-                    {}
                     {toc.length > 0 && showLeftSidebar && (
                         <aside className="hidden xl:block w-56 shrink-0 sticky top-14 h-[calc(100svh-3.5rem)] overflow-y-auto py-8 pr-6">
                             <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-3">On this page</p>
@@ -763,7 +752,6 @@ export function PublicPortalPage() {
 
             </div>
 
-            {}
             {(branding.footerText || (branding.footerLinks && branding.footerLinks.length > 0)) && (
                 <footer className="border-t border-border py-6 px-6 text-center">
                     {branding.footerLinks && branding.footerLinks.length > 0 && (
@@ -787,7 +775,6 @@ export function PublicPortalPage() {
                 </footer>
             )}
 
-            {}
             {showBackToTop && (
                 <button
                     onClick={() => contentRef.current?.scrollTo({ top: 0, behavior: "smooth" })}

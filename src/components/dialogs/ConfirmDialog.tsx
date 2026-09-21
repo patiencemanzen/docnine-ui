@@ -1,7 +1,3 @@
-/**
- * ConfirmDialog Component
- */
-
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import type React from "react"
@@ -40,7 +36,6 @@ export function ConfirmDialog({
         onCancel()
     }
 
-    // Close on Escape key
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === "Escape") {
             handleCancel()

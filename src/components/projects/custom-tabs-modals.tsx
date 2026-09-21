@@ -7,9 +7,6 @@ import Loader1 from "@/components/ui/loader1"
 import { Textarea } from "../ui/textarea"
 import { CreateTabModalProps } from "@/types/ProjectTypes"
 
-// ─────────────────────────────────────────────────────────────────────────────
-// CREATE TAB MODAL
-// ─────────────────────────────────────────────────────────────────────────────
 export function CreateTabModal({ isOpen, onClose, onCreate, isLoading = false }: CreateTabModalProps) {
     const [name, setName] = useState("")
     const [description, setDescription] = useState("")
@@ -84,10 +81,6 @@ export function CreateTabModal({ isOpen, onClose, onCreate, isLoading = false }:
     )
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// RENAME TAB MODAL
-// ─────────────────────────────────────────────────────────────────────────────
-
 interface RenameTabModalProps {
     isOpen: boolean
     onClose: () => void
@@ -159,10 +152,6 @@ export function RenameTabModal({ isOpen, onClose, currentName, onRename, isLoadi
         </Dialog>
     )
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// DELETE TAB MODAL
-// ─────────────────────────────────────────────────────────────────────────────
 
 interface DeleteTabModalProps {
     isOpen: boolean

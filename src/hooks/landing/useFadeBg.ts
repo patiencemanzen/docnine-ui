@@ -1,6 +1,5 @@
 import { useEffect } from "react"
 
-/** Cocoon [data-fade-bg]: nested bg opacity 0.05 → 1 as card scrolls into view */
 export function useFadeBg() {
   useEffect(() => {
     const boxes = Array.from(

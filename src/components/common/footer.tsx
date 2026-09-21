@@ -16,7 +16,6 @@ export function Footer() {
                             Clear, up-to-date documentation for teams who ship fast.
                         </p>
 
-                        {/* Email Subscribe */}
                         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 max-w-sm">
                             <input
                                 type="email"

@@ -37,7 +37,6 @@ import { DocStatus } from "@/types/DocStatusTypes"
 import { DOC_STATUS_ORDER } from "@/configs/DocStatusConfig"
 import { ApiProject } from "@/types/ProjectTypes"
 
-
 function gradeColour(grade?: string) {
     switch (grade) {
         case "A": return "text-green-600 dark:text-green-400"
@@ -49,7 +48,6 @@ function gradeColour(grade?: string) {
     }
 }
 
-
 const DOC_SECTIONS = [
     { key: "readme", label: "README", icon: BookOpen },
     { key: "apiReference", label: "API Ref", icon: FileCode2 },
@@ -57,7 +55,6 @@ const DOC_SECTIONS = [
     { key: "internalDocs", label: "Internal", icon: FileCode },
     { key: "securityReport", label: "Security", icon: ShieldAlert },
 ] as const
-
 
 function DocProjectCard({ project }: { project: ApiProject }) {
     const name = project.meta?.name || project.repoName
@@ -102,12 +99,10 @@ function DocProjectCard({ project }: { project: ApiProject }) {
                         </span>
                     )}
                 </div>
-                {}
                 {dominantStatus && (
                     <DocStatusBadge status={dominantStatus} compact />
                 )}
 
-                {}
                 <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
                     {language && (
                         <span className="flex items-center gap-1">
@@ -129,7 +124,6 @@ function DocProjectCard({ project }: { project: ApiProject }) {
             </CardHeader>
 
             <CardContent className="flex-1 space-y-4 pb-3">
-                {}
                 {stats && (
                     <div className="grid grid-cols-3 gap-2 text-center">
                         {[
@@ -147,7 +141,6 @@ function DocProjectCard({ project }: { project: ApiProject }) {
                     </div>
                 )}
 
-                {}
                 {security?.counts && Object.values(security.counts).some(Boolean) && (
                     <div className="flex items-center gap-2 text-xs">
                         <ShieldAlert className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
@@ -169,7 +162,6 @@ function DocProjectCard({ project }: { project: ApiProject }) {
                     </div>
                 )}
 
-                {}
                 {techStack.length > 0 && (
                     <div className="flex flex-wrap gap-1">
                         {techStack.map((t) => (
@@ -203,7 +195,6 @@ function DocProjectCard({ project }: { project: ApiProject }) {
     )
 }
 
-
 function EmptyState() {
     return (
         <div className="flex flex-col items-center justify-center py-24 text-center">
@@ -223,7 +214,6 @@ function EmptyState() {
         </div>
     )
 }
-
 
 export function DocumentationsPage() {
     const [completedProjects, setCompletedProjects] = useState<ApiProject[]>([])
@@ -300,7 +290,6 @@ export function DocumentationsPage() {
 
     return (
         <div>
-            {}
             <TopBar title="Documentation" description="All documented projects across your account.">
                 <Button variant="outline" size="sm" onClick={loadProjects} className="gap-2 shrink-0 rounded-2xl">
                     <RefreshCw className="h-4 w-4" />
@@ -308,9 +297,7 @@ export function DocumentationsPage() {
                 </Button>
             </TopBar>
 
-            {}
             <div className="space-y-6">
-                {}
                 {!isLoading && completedProjects.length > 0 && (
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         {[
@@ -333,7 +320,6 @@ export function DocumentationsPage() {
                 )}
 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    {}
                     {!isLoading && completedProjects.length > 0 && (
                         <div className="relative w-full sm:max-w-sm">
                             <Search className="absolute left-2.5 top-3 h-4 w-4 text-muted-foreground" />
@@ -346,7 +332,6 @@ export function DocumentationsPage() {
                         </div>
                     )}
 
-                    {}
                     {!isLoading && completedProjects.length > 0 && (
                         <div className="flex flex-wrap gap-2 items-center">
                             <button
@@ -382,7 +367,6 @@ export function DocumentationsPage() {
                     )}
                 </div>
 
-                {}
                 {error && (
                     <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
                         <AlertTriangle className="h-4 w-4 shrink-0" />
@@ -390,7 +374,6 @@ export function DocumentationsPage() {
                     </div>
                 )}
 
-                {}
                 {isLoading && (
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {Array.from({ length: 6 }).map((_, i) => (
@@ -408,10 +391,8 @@ export function DocumentationsPage() {
                     </div>
                 )}
 
-                {}
                 {!isLoading && !error && completedProjects.length === 0 && <EmptyState />}
 
-                {}
                 {!isLoading && filteredCompleted.length > 0 && (
                     <section>
                         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -420,7 +401,6 @@ export function DocumentationsPage() {
                             ))}
                         </div>
 
-                        {}
                         <Pagination
                             currentPage={currentPage}
                             totalPages={totalPages}
@@ -438,7 +418,6 @@ export function DocumentationsPage() {
                     </section>
                 )}
 
-                {}
                 {!isLoading && inProgressProjects.length > 0 && (
                     <section>
                         <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">

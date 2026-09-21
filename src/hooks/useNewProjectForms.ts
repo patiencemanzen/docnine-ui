@@ -1,8 +1,3 @@
-/**
- * Hook: New Project Forms Management
- * Centralizes form initialization and handling
- */
-
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { manualProjectSchema, fromScratchSchema } from "@/types/ProjectTypes"

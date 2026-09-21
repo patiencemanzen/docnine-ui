@@ -29,10 +29,6 @@ import { ActivityLog } from "@/types/activity-log"
 import { CATEGORY_LABELS, formatActivityLabel } from "@/lib/activity-copy"
 import { EditPlanDialog, EditUserDialog, PlanEditTarget } from "@/pages/admin/admin-dialogs"
 
-
-
-
-
 const PLAN_COLORS: Record<string, string> = {
   free: "bg-muted text-muted-foreground",
   starter: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
@@ -90,10 +86,6 @@ function Pagination({
   )
 }
 
-
-
-
-
 function StatCard({
   title,
   value,
@@ -122,10 +114,6 @@ function StatCard({
     </Card>
   )
 }
-
-
-
-
 
 function DeleteButton({ onConfirm, loading }: { onConfirm: () => void; loading?: boolean }) {
   const [confirm, setConfirm] = useState(false)
@@ -163,10 +151,6 @@ function DeleteButton({ onConfirm, loading }: { onConfirm: () => void; loading?:
   )
 }
 
-
-
-
-
 type Tab = "overview" | "users" | "projects" | "subscriptions" | "activity"
 
 const TABS: { id: Tab; label: string; Icon: React.ElementType }[] = [
@@ -180,10 +164,6 @@ const TABS: { id: Tab; label: string; Icon: React.ElementType }[] = [
 function ownerId(userId: AdminSubscription["userId"]): string | null {
   return userId && typeof userId === "object" ? userId._id : null
 }
-
-
-
-
 
 export function SuperAdminPage() {
   const { user } = useAuthStore()
@@ -387,7 +367,6 @@ export function SuperAdminPage() {
 
   return (
     <div className="space-y-6">
-      {}
       <div className="flex gap-1 border-b border-border overflow-x-auto">
         {TABS.map(({ id, label, Icon }) => (
           <button
@@ -404,7 +383,6 @@ export function SuperAdminPage() {
         ))}
       </div>
 
-      {}
       {activeTab === "overview" && (
         <div className="space-y-6">
           {statsError && (
@@ -414,7 +392,6 @@ export function SuperAdminPage() {
             </div>
           )}
 
-          {}
           {statsLoading ? (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {Array.from({ length: 4 }).map((_, i) => (
@@ -461,7 +438,6 @@ export function SuperAdminPage() {
                 />
               </div>
 
-              {}
               <Card className="shadow-none">
                 <CardHeader>
                   <CardTitle className="text-base">Users by Plan</CardTitle>
@@ -495,7 +471,6 @@ export function SuperAdminPage() {
         </div>
       )}
 
-      {}
       {activeTab === "users" && (
         <div className="space-y-4">
           <div className="flex items-center gap-3">
@@ -626,7 +601,6 @@ export function SuperAdminPage() {
         </div>
       )}
 
-      {}
       {activeTab === "projects" && (
         <div className="space-y-4">
           <div className="flex items-center gap-3">
@@ -712,7 +686,6 @@ export function SuperAdminPage() {
         </div>
       )}
 
-      {}
       {activeTab === "subscriptions" && (
         <div className="space-y-4">
           <div className="flex items-center gap-3">

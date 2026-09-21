@@ -1,7 +1,3 @@
-/**
- * Component: Manual Repository URL Form Step
- */
-
 import { AlertCircle } from "@/components/icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -28,13 +24,11 @@ export function ManualUrlForm({
         try {
             await onSubmit(values)
         } catch {
-            // Error handling is done in parent
+
         }
     }
 
-    /**
-     * Parse error to provide helpful suggestions
-     */
+    
     const getErrorSuggestion = (err: string): string | null => {
         if (err.includes("PROJECT_LIMIT")) {
             return "💡 Tip: Upgrade your plan to create more projects or archive unused ones."

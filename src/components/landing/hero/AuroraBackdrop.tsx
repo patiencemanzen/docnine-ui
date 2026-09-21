@@ -3,12 +3,11 @@ import { cn } from "@/lib/utils"
 import { useHeroShader } from "./useHeroShader"
 
 type AuroraBackdropProps = {
-  /** `column` = landing glass column; `fill` = full panel (auth side) */
+  
   variant?: "column" | "fill"
   className?: string
 }
 
-/** Auroalis WebGL aurora + glass + grain,reusable backdrop (no content). */
 export function AuroraBackdrop({
   variant = "fill",
   className,

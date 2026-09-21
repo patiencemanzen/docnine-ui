@@ -1,8 +1,3 @@
-/**
- * Component: Source Selector Step
- * Displays provider options and other import methods
- */
-
 import { CheckCircle2, UploadCloudIcon, Plus, LinkIcon, CloudIcon } from "@/components/icons"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -22,7 +17,6 @@ export function SourceSelector({
 
     return (
         <div className="grid gap-4 py-4">
-            {/* Provider buttons */}
             <div className="grid grid-cols-3 gap-3">
                 {providers.map((provider) => {
                     const config = PROVIDER_CONFIG[provider]
@@ -50,7 +44,6 @@ export function SourceSelector({
                 })}
             </div>
 
-            {/* Azure + ZIP + From Scratch row */}
             <div className="grid grid-cols-3 gap-3">
                 <button
                     onClick={() => onSelectProvider("azure")}
@@ -87,7 +80,6 @@ export function SourceSelector({
                 </button>
             </div>
 
-            {/* Manual URL option */}
             <button
                 onClick={onSelectManual}
                 className="w-full flex items-center gap-2 rounded-lg border border-border p-3 text-left text-sm transition-colors hover:bg-muted/50 text-muted-foreground hover:text-foreground"

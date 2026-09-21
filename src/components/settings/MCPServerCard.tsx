@@ -1,9 +1,3 @@
-/**
- * MCP Server Card Component
- * Displays MCP server configuration for the current project
- * Shows the URL and instructions for connecting in Claude, Cursor, VS Code, etc.
- */
-
 import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"

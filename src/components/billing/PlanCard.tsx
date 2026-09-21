@@ -15,7 +15,6 @@ function FeatureLine({ label }: { label: string }) {
     )
 }
 
-// ── Plan card ────────────────────────────────────────────────────────────────
 function PlanCard({
     plan,
     annual,
@@ -55,9 +54,7 @@ function PlanCard({
                 </div>
             )}
 
-            {/* Header */}
             <div className="mb-4 flex items-center gap-2">
-                {/* <Icon className={cn("h-5 w-5", accent)} /> */}
                 <span className="font-semibold">{plan.name}</span>
             </div>
 
@@ -65,7 +62,6 @@ function PlanCard({
                 {plan.tagline}
             </p>
 
-            {/* Price */}
             <div className="mb-6">
                 {plan.prices.monthly === 0 ? (
                     <span className="text-3xl font-bold">Free</span>
@@ -87,7 +83,6 @@ function PlanCard({
                 )}
             </div>
 
-            {/* CTA */}
             <Button
                 className={cn("w-full mb-6", btn)}
                 variant={plan.id === "free" ? "outline" : "default"}
@@ -108,7 +103,6 @@ function PlanCard({
                 )}
             </Button>
 
-            {/* Features */}
             <ul className="space-y-2.5 text-sm">
                 {plan.limits.projects !== null && (
                     <FeatureLine label={`${plan.limits.projects} projects`} />

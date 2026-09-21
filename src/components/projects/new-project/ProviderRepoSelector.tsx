@@ -1,7 +1,3 @@
-/**
- * Component: Provider Repository Selector Step
- */
-
 import { Search, AlertCircle } from "@/components/icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -34,7 +30,6 @@ export function ProviderRepoSelector({
 }: ProviderRepoSelectorProps) {
     const config = PROVIDER_CONFIG[provider]
 
-    // Show connecting message when OAuth is in progress
     if (isConnecting && repos.length === 0) {
         return (
             <div className="grid gap-4 py-8">
@@ -54,7 +49,6 @@ export function ProviderRepoSelector({
     return (
         <div className="grid gap-4 py-4">
 
-            {/* GitHub org picker */}
             {provider === "github" && onGithubOrgChange && (
                 <OrgAccountPicker
                     username={username}
@@ -65,7 +59,6 @@ export function ProviderRepoSelector({
                 />
             )}
 
-            {/* Repository search */}
             <div className="relative">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -77,7 +70,6 @@ export function ProviderRepoSelector({
                 />
             </div>
 
-            {/* Repository list */}
             <div className="max-h-62.5 overflow-y-auto rounded-md border border-border">
                 <RepoList
                     repos={filteredRepos}
@@ -89,7 +81,6 @@ export function ProviderRepoSelector({
                 />
             </div>
 
-            {/* Footer actions */}
             <DialogFooter className="mt-4">
                 <Button type="button" variant="ghost" onClick={onBack} disabled={isConnecting}>
                     Back

@@ -12,7 +12,6 @@ import Loader1 from "../ui/loader1"
 import { ApiProject } from "@/types/ProjectTypes"
 import { AIChatPanelProps, Message } from "@/types/AIChatTypes"
 
-// ── Suggested prompts from real project data ──────────────────────────────────
 function buildSuggestedPrompts(project: ApiProject): string[] {
   const prompts: string[] = []
   if ((project.stats?.endpoints ?? 0) > 0) {
@@ -35,13 +34,10 @@ function buildSuggestedPrompts(project: ApiProject): string[] {
   return prompts.slice(0, 4)
 }
 
-// ── localStorage helpers ─────────────────────────────────────────────────────
 function storageKey(projectId: string, sessionId: string) {
   return `docnine-chat:${projectId}:${sessionId}`
 }
 
-// ── Markdown renderers for chat messages ──────────────────────────────────────
-// Code blocks use the same CodeBlock as DocRenderer; inline code uses a compact style.
 const chatComponents: Components = {
   pre({ children }) {
     const child = children as any
@@ -68,7 +64,6 @@ const chatComponents: Components = {
   },
 }
 
-// ── Main component ────────────────────────────────────────────────────────────
 export function AIChatPanel({
   project,
   activeSection,
@@ -79,7 +74,6 @@ export function AIChatPanel({
   const sessionId = project.chatSessionId ?? null
   const localKey = sessionId ? storageKey(projectId, sessionId) : null
 
-  // Restore persisted messages from localStorage
   const [messages, setMessages] = useState<Message[]>(() => {
     if (!localKey) return []
     try {
@@ -100,17 +94,15 @@ export function AIChatPanel({
 
   const suggestedPrompts = buildSuggestedPrompts(project)
 
-  // Persist messages whenever they change
   useEffect(() => {
     if (!localKey || messages.length === 0) return
     try {
       localStorage.setItem(localKey, JSON.stringify(messages))
     } catch {
-      // quota exceeded : ignore
+
     }
   }, [messages, localKey])
 
-  // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages, streamingContent])
@@ -189,7 +181,7 @@ export function AIChatPanel({
     try {
       await chatApi.reset(projectId)
     } catch {
-      // ignore : history cleared locally regardless
+
     }
   }
 
@@ -197,7 +189,6 @@ export function AIChatPanel({
 
   return (
     <Card className="flex flex-col h-full border-0 rounded-none shadow-none">
-      {/* Header */}
       <CardHeader className="py-3 px-4 border-b border-border flex flex-row items-center justify-between shrink-0">
         <div className="flex items-center gap-2 min-w-0">
           <Bot className="h-5 w-5 text-primary shrink-0" />
@@ -226,17 +217,14 @@ export function AIChatPanel({
         </div>
       </CardHeader>
 
-      {/* Body */}
       <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {/* No pipeline warning */}
           {!sessionId && (
             <div className="rounded-md bg-primary/10 border border-primary/20 p-3 text-xs text-primary dark:text-primary leading-relaxed">
               Run the documentation pipeline on this project to enable AI chat.
             </div>
           )}
 
-          {/* Empty state : suggested prompts */}
           {isEmpty && sessionId && (
             <div className="space-y-3">
               <p className="text-xs text-muted-foreground text-center pt-2">
@@ -258,7 +246,6 @@ export function AIChatPanel({
             </div>
           )}
 
-          {/* Message list */}
           {messages.map((msg) => (
             <div
               key={msg.id}
@@ -295,7 +282,6 @@ export function AIChatPanel({
             </div>
           ))}
 
-          {/* Streaming response */}
           {isStreaming && (
             <div className="flex gap-2.5 justify-start">
               <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary mt-0.5">
@@ -315,7 +301,6 @@ export function AIChatPanel({
             </div>
           )}
 
-          {/* Error */}
           {error && (
             <div className="rounded-md bg-destructive/10 border border-destructive/20 px-3 py-2 text-xs text-destructive">
               {error}
@@ -325,7 +310,6 @@ export function AIChatPanel({
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input area */}
         <div className="p-3 border-t border-border shrink-0">
           <form
             onSubmit={(e) => {

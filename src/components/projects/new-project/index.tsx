@@ -1,12 +1,3 @@
-/**
- * New Project Modal (Refactored)
- * 
- * Orchestrates the project creation flow with clean separation of concerns:
- * - Hook-based state management (modal, providers, repos, forms)
- * - Service-based business logic (OAuth, project creation, ZIP validation)
- * - Component-based UI steps (source, manual, zip, from-scratch, provider repos)
- */
-
 import * as React from "react"
 import { useNavigate } from "react-router-dom"
 import {
@@ -49,18 +40,11 @@ import { ZipUploadStep } from "./ZipUploadStep"
 import { FromScratchForm } from "./FromScratchForm"
 import { ProviderRepoSelector } from "./ProviderRepoSelector"
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Main Component
-// ─────────────────────────────────────────────────────────────────────────────
-
 export function NewProjectModal({ open, onOpenChange }: NewProjectModalProps) {
     const navigate = useNavigate()
     const { createProject } = useProjectStore()
     const { user, isAuthenticated } = useAuthStore()
 
-    // ── State Management (Hooks) ───────────────────────────────────────────
-
-    // Provider connection status
     const {
         providerStatus,
         setProviderStatus,
@@ -69,7 +53,6 @@ export function NewProjectModal({ open, onOpenChange }: NewProjectModalProps) {
         checkingStatus,
     } = useProviderStatus(open, isAuthenticated)
 
-    // Repository management
     const {
         reposState,
         loadRepos,
@@ -80,14 +63,12 @@ export function NewProjectModal({ open, onOpenChange }: NewProjectModalProps) {
         apiError: reposApiError,
     } = useProviderRepos()
 
-    // GitHub organizations
     const {
         githubOrgs,
         githubOrgsLoading,
         loadGithubOrgs,
     } = useGithubOrgs()
 
-    // Modal navigation and state
     const handleReset = () => {
         manualForm.reset()
         fromScratchForm.reset()
@@ -105,24 +86,19 @@ export function NewProjectModal({ open, onOpenChange }: NewProjectModalProps) {
         handleClose: closeModal,
     } = useModalState(open, handleReset)
 
-    // Forms
     const {
         manualForm,
         fromScratchForm,
         resetAllForms,
     } = useNewProjectForms()
 
-    // ZIP file management
     const [zipFile, setZipFile] = React.useState<File | null>(null)
     const [zipValidating, setZipValidating] = React.useState(false)
     const [zipError, setZipError] = React.useState<string | null>(null)
 
-    // GitHub organization selection
     const [githubSelectedOrg, setGithubSelectedOrg] = React.useState<string | null>(
         readSavedOrg(),
     )
-
-    // ── Dialog Close Handler ───────────────────────────────────────────────
 
     const handleModalClose = (isOpen: boolean) => {
         if (!isOpen) {
@@ -131,27 +107,22 @@ export function NewProjectModal({ open, onOpenChange }: NewProjectModalProps) {
         }
     }
 
-    // ── Provider OAuth Flow ────────────────────────────────────────────────
-
     const handleEnterProvider = async (provider: ProviderKey) => {
-        // Set step first
+
         setStep(provider)
         setApiError(null)
         resetRepos()
 
-        // Check if already connected
         if (providerStatus[provider]) {
-            // Load GitHub orgs if needed
+
             if (provider === "github" && githubOrgs.length === 0) {
                 loadGithubOrgs()
             }
 
-            // Already connected - load repos immediately
             await loadRepos(provider, 1, provider === "github" ? githubSelectedOrg : undefined)
             return
         }
 
-        // Not connected yet - open OAuth window
         setIsConnecting(true)
 
         try {
@@ -171,12 +142,10 @@ export function NewProjectModal({ open, onOpenChange }: NewProjectModalProps) {
                             setProviderUsernames((prev) => ({ ...prev, [provider]: user }))
                         }
 
-                        // Load GitHub orgs if needed
                         if (provider === "github" && githubOrgs.length === 0) {
                             loadGithubOrgs()
                         }
 
-                        // Reload repos after successful connection
                         await loadRepos(
                             provider,
                             1,
@@ -193,8 +162,6 @@ export function NewProjectModal({ open, onOpenChange }: NewProjectModalProps) {
             setIsConnecting(false)
         }
     }
-
-    // ── Form Submission Handlers ───────────────────────────────────────────
 
     const handleSubmitManual = async (values: ManualProjectFormValues) => {
         setApiError(null)
@@ -260,8 +227,6 @@ export function NewProjectModal({ open, onOpenChange }: NewProjectModalProps) {
         }
     }
 
-    // ── ZIP File Handler ───────────────────────────────────────────────────
-
     const handleZipFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (!file) {
@@ -284,7 +249,6 @@ export function NewProjectModal({ open, onOpenChange }: NewProjectModalProps) {
         setZipFile(file)
         setZipError(null)
 
-        // Validate ZIP
         setZipValidating(true)
         try {
             const result = await ProjectCreationService.validateZip(file)
@@ -300,8 +264,6 @@ export function NewProjectModal({ open, onOpenChange }: NewProjectModalProps) {
         }
     }
 
-    // ── GitHub Organization Change ────────────────────────────────────────
-
     const handleGithubOrgChange = async (org: string | null) => {
         setGithubSelectedOrg(org)
         saveOrg(org)
@@ -309,9 +271,6 @@ export function NewProjectModal({ open, onOpenChange }: NewProjectModalProps) {
         await loadRepos("github", 1, org)
     }
 
-    // ── Render ─────────────────────────────────────────────────────────────
-
-    // Get dialog title and description based on current step
     const getDialogTitle = (): string => {
         switch (modalState.step) {
             case "source":
@@ -365,7 +324,6 @@ export function NewProjectModal({ open, onOpenChange }: NewProjectModalProps) {
                     <DialogDescription>{getDialogDescription()}</DialogDescription>
                 </DialogHeader>
 
-                {/* Error banner */}
                 {(modalState.apiError || reposApiError) && (
                     <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive flex items-center gap-2">
                         <AlertCircle className="h-4 w-4 shrink-0" />
@@ -373,7 +331,6 @@ export function NewProjectModal({ open, onOpenChange }: NewProjectModalProps) {
                     </div>
                 )}
 
-                {/* Source selection step */}
                 {modalState.step === "source" && (
                     <SourceSelector
                         providerStatus={providerStatus}
@@ -386,7 +343,6 @@ export function NewProjectModal({ open, onOpenChange }: NewProjectModalProps) {
                     />
                 )}
 
-                {/* Manual URL form step */}
                 {modalState.step === "manual" && (
                     <ManualUrlForm
                         onBack={goBack}
@@ -396,7 +352,6 @@ export function NewProjectModal({ open, onOpenChange }: NewProjectModalProps) {
                     />
                 )}
 
-                {/* ZIP upload step */}
                 {modalState.step === "zip" && (
                     <ZipUploadStep
                         onBack={goBack}
@@ -409,7 +364,6 @@ export function NewProjectModal({ open, onOpenChange }: NewProjectModalProps) {
                     />
                 )}
 
-                {/* From scratch step */}
                 {modalState.step === "from-scratch" && (
                     <FromScratchForm
                         onBack={goBack}
@@ -419,7 +373,6 @@ export function NewProjectModal({ open, onOpenChange }: NewProjectModalProps) {
                     />
                 )}
 
-                {/* Provider repository selector step */}
                 {isProviderStep && (
                     <ProviderRepoSelector
                         provider={modalState.step as ProviderKey}

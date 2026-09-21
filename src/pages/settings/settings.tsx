@@ -43,7 +43,6 @@ import { APITokensCard } from "@/components/settings/APITokensCard"
 import { GoogleDocsStatusData, NotionStatusData } from "@/types/OauthIntergrationTypes"
 import { GitHubStatus } from "@/types/GithubTypes"
 
-
 const TABS = [
     { id: "general", label: "General", icon: User },
     { id: "integrations", label: "Integrations", icon: Puzzle },
@@ -52,7 +51,6 @@ const TABS = [
 ] as const;
 
 type TabId = typeof TABS[number]["id"];
-
 
 function GitHubCard() {
     const [status, setStatus] = useState<GitHubStatus | null>(null)
@@ -249,7 +247,6 @@ function GitHubCard() {
     )
 }
 
-
 function WebhookCard() {
     const [webhookSettings, setWebhookSettings] = useState<{
         webhookUrl: string
@@ -368,7 +365,6 @@ function WebhookCard() {
             </CardHeader>
 
             <CardContent className="space-y-5">
-                {}
                 {feedback && (
                     <div
                         className={`rounded-lg border px-4 py-3 text-sm ${feedback.type === "success"
@@ -387,7 +383,6 @@ function WebhookCard() {
                     </div>
                 ) : webhookSettings ? (
                     <>
-                        {}
                         {webhookSettings.lastWebhookAt && (
                             <div className="flex items-center justify-between rounded-lg border border-border bg-muted/30 px-4 py-3">
                                 <div>
@@ -410,7 +405,6 @@ function WebhookCard() {
                             </div>
                         )}
 
-                        {}
                         <div className="space-y-2">
                             <p className="text-sm font-medium">Webhook endpoint URL</p>
                             <div className="flex items-center gap-2">
@@ -421,7 +415,6 @@ function WebhookCard() {
                             </div>
                         </div>
 
-                        {}
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
                                 <p className="text-sm font-medium">Webhook Secret</p>
@@ -467,7 +460,6 @@ function WebhookCard() {
                             </div>
                         </div>
 
-                        {}
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
                                 <p className="text-sm font-medium">GitHub Actions workflow</p>
@@ -495,7 +487,6 @@ function WebhookCard() {
         </Card>
     )
 }
-
 
 function GoogleDocsCard({ initialStatus }: { initialStatus?: "connected" | "error" }) {
     const [status, setStatus] = useState<GoogleDocsStatusData | null>(null)
@@ -662,7 +653,6 @@ function GoogleDocsCard({ initialStatus }: { initialStatus?: "connected" | "erro
         </>
     )
 }
-
 
 function NotionCard() {
     const [status, setStatus] = useState<NotionStatusData | null>(null)
@@ -891,7 +881,6 @@ function NotionCard() {
     )
 }
 
-
 function GitLabCard() {
     const [status, setStatus] = useState<any>(null)
     const [isLoading, setIsLoading] = useState(true)
@@ -1065,7 +1054,6 @@ function GitLabCard() {
         </Card>
     )
 }
-
 
 function BitbucketCard() {
     const [status, setStatus] = useState<any>(null)
@@ -1241,7 +1229,6 @@ function BitbucketCard() {
     )
 }
 
-
 function AzureDevOpsCard() {
     const [status, setStatus] = useState<any>(null)
     const [isLoading, setIsLoading] = useState(true)
@@ -1413,7 +1400,6 @@ function AzureDevOpsCard() {
     )
 }
 
-
 export function SettingsPage() {
     const [searchParams, setSearchParams] = useSearchParams()
     const googleDocsStatus = searchParams.get("googleDocs") as "connected" | "error" | null
@@ -1442,7 +1428,6 @@ export function SettingsPage() {
     return (
         <div className="flex justify-center py-7 px-4">
             <div className={cn("w-full space-y-6", "max-w-3xl")}>
-                {}
                 <div>
                     <h1 className="text-2xl sm:text-3xl font-bold tracking-tight flex items-center gap-3">
                         <Settings className="h-6 w-6 sm:h-7 sm:w-7" />
@@ -1453,7 +1438,6 @@ export function SettingsPage() {
                     </p>
                 </div>
 
-                {}
                 <div className="flex gap-1 border-b border-border pb-0 overflow-x-auto">
                     {TABS.map(({ id, label, icon: Icon }) => (
                         <button
@@ -1473,7 +1457,6 @@ export function SettingsPage() {
                     ))}
                 </div>
 
-                {}
                 {activeTab === "general" ? (
                     <GeneralSettingsCard />
                 ) : activeTab === "api-tokens" ? (

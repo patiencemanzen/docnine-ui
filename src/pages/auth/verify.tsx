@@ -7,7 +7,6 @@ import Loader1 from "@/components/ui/loader1"
 import { ApiException } from "@/types/ApiTypes"
 import { AuthShell } from "@/components/common/auth-shell"
 
-
 export function VerifyPage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()

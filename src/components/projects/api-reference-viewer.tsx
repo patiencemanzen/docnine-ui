@@ -12,7 +12,6 @@ import { ApiSpec, ApiSpecEndpoint, ApiSpecParameter } from "@/types/ApiSpecTypes
 import { apiSpecApi } from "@/lib/api"
 import { METHOD_COLORS } from "@/configs/TryConsoleConfig"
 
-// ── Method badge ───────────────────────────────────────────────────────────
 function MethodBadge({ method, className }: { method: string; className?: string }) {
     return (
         <span className={cn(
@@ -24,8 +23,6 @@ function MethodBadge({ method, className }: { method: string; className?: string
         </span>
     )
 }
-
-// ── Schema display ─────────────────────────────────────────────────────────
 
 interface SchemaProps { schema: Record<string, unknown>; depth?: number }
 
@@ -110,8 +107,6 @@ function SchemaDisplay({ schema, depth = 0 }: SchemaProps) {
     )
 }
 
-// ── Parameters table ───────────────────────────────────────────────────────
-
 function ParamsTable({ params, title }: { params: ApiSpecParameter[]; title: string }) {
     if (!params.length) return null
     return (
@@ -149,8 +144,6 @@ function ParamsTable({ params, title }: { params: ApiSpecParameter[]; title: str
     )
 }
 
-// ── Endpoint detail ────────────────────────────────────────────────────────
-
 interface EndpointDetailProps {
     endpoint: ApiSpecEndpoint
     spec: ApiSpec
@@ -178,7 +171,7 @@ function EndpointDetail({ endpoint, spec, projectId, canEdit, onNoteUpdated, onT
             onNoteUpdated(noteDraft)
             setNoteEditing(false)
         } catch {
-            // silently fail : user can retry
+
         } finally {
             setNoteSaving(false)
         }
@@ -202,7 +195,6 @@ function EndpointDetail({ endpoint, spec, projectId, canEdit, onNoteUpdated, onT
 
     return (
         <div className="space-y-6 p-6 pb-12">
-            {/* Title bar */}
             <div className="flex items-start gap-3">
                 <MethodBadge method={endpoint.method} className="mt-0.5 text-sm px-2 py-1" />
                 <div className="flex-1 min-w-0">
@@ -229,7 +221,6 @@ function EndpointDetail({ endpoint, spec, projectId, canEdit, onNoteUpdated, onT
                 </Button>
             </div>
 
-            {/* Custom note */}
             <div className="rounded-lg border border-dashed border-border bg-muted/20 p-3">
                 <div className="flex items-center gap-1.5 mb-1">
                     <Info className="h-3.5 w-3.5 text-muted-foreground" />
@@ -269,13 +260,11 @@ function EndpointDetail({ endpoint, spec, projectId, canEdit, onNoteUpdated, onT
                 )}
             </div>
 
-            {/* Parameters */}
             <ParamsTable params={pathParams} title="Path parameters" />
             <ParamsTable params={queryParams} title="Query parameters" />
             <ParamsTable params={headerParams} title="Header parameters" />
             <ParamsTable params={cookieParams} title="Cookie parameters" />
 
-            {/* Request body */}
             {endpoint.requestBody && (
                 <div>
                     <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -306,7 +295,6 @@ function EndpointDetail({ endpoint, spec, projectId, canEdit, onNoteUpdated, onT
                 </div>
             )}
 
-            {/* Responses */}
             {Object.keys(endpoint.responses).length > 0 && (
                 <div>
                     <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Responses</h4>
@@ -348,8 +336,6 @@ function EndpointDetail({ endpoint, spec, projectId, canEdit, onNoteUpdated, onT
         </div>
     )
 }
-
-// ── Tag group in sidebar ───────────────────────────────────────────────────
 
 function TagGroup({
     name, description, endpoints, selectedId, onSelect,
@@ -398,8 +384,6 @@ function TagGroup({
     )
 }
 
-// ── ApiReferenceViewer (main export) ──────────────────────────────────────
-
 interface ViewerProps {
     spec: ApiSpec
     projectId: string
@@ -416,7 +400,6 @@ export function ApiReferenceViewer({ spec, projectId, canEdit, onReimport, onSyn
     const [tryItOpen, setTryItOpen] = useState(false)
     const [specState, setSpecState] = useState(spec)
 
-    // Group endpoints by tags
     const grouped = useMemo(() => {
         const eps = specState.endpoints.filter((ep) => {
             if (!search.trim()) return true
@@ -438,7 +421,6 @@ export function ApiReferenceViewer({ spec, projectId, canEdit, onReimport, onSyn
             }
         }
 
-        // Sort: spec tag order, then alphabetical, then "Untagged" last
         const specTagOrder = specState.tags.map((t) => t.name)
         return [...map.entries()].sort(([a], [b]) => {
             const ai = specTagOrder.indexOf(a)
@@ -467,7 +449,6 @@ export function ApiReferenceViewer({ spec, projectId, canEdit, onReimport, onSyn
 
     return (
         <div className="flex flex-col h-full overflow-hidden">
-            {/* Info bar */}
             <div className="shrink-0 flex items-center gap-2 border-b border-border px-4 py-2.5 bg-muted/10 flex-wrap">
                 <div className="flex items-center gap-2 flex-1 min-w-0">
                     <span className="font-semibold text-sm truncate">{specState.info.title}</span>
@@ -504,9 +485,7 @@ export function ApiReferenceViewer({ spec, projectId, canEdit, onReimport, onSyn
                 </div>
             </div>
 
-            {/* Body */}
             <div className="flex flex-1 overflow-hidden">
-                {/* Sidebar */}
                 <div className="w-60 border-r border-border flex flex-col shrink-0 overflow-hidden">
                     <div className="p-2 border-b border-border shrink-0">
                         <div className="relative">
@@ -540,10 +519,9 @@ export function ApiReferenceViewer({ spec, projectId, canEdit, onReimport, onSyn
                     </div>
                 </div>
 
-                {/* Main content */}
                 <div className="flex flex-1 flex-col overflow-hidden">
                     {!selectedEndpoint ? (
-                        /* Empty state */
+                        
                         <div className="flex flex-1 flex-col items-center justify-center gap-3 text-center p-8">
                             <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
                                 <Search className="h-5 w-5 text-muted-foreground" />
@@ -554,7 +532,7 @@ export function ApiReferenceViewer({ spec, projectId, canEdit, onReimport, onSyn
                             )}
                         </div>
                     ) : tryItOpen ? (
-                        /* Try It console */
+                        
                         <div className="flex flex-1 overflow-hidden">
                             <TryItConsole
                                 projectId={projectId}
@@ -564,7 +542,7 @@ export function ApiReferenceViewer({ spec, projectId, canEdit, onReimport, onSyn
                             />
                         </div>
                     ) : (
-                        /* Endpoint detail */
+                        
                         <div className="flex-1 overflow-y-auto">
                             <EndpointDetail
                                 endpoint={selectedEndpoint}

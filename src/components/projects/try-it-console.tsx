@@ -14,7 +14,6 @@ import { METHOD_COLORS } from "@/configs/TryConsoleConfig"
 
 interface KVPair { key: string; value: string }
 
-// ── HTTP method colours ────────────────────────────────────────────────────
 function statusColor(code: number) {
     if (code < 300) return "bg-green-500/10 text-green-600 dark:text-green-400"
     if (code < 400) return "bg-blue-500/10 text-blue-600 dark:text-blue-400"
@@ -22,7 +21,6 @@ function statusColor(code: number) {
     return "bg-red-500/10 text-red-600 dark:text-red-400"
 }
 
-// ── Key-value row ──────────────────────────────────────────────────────────
 function KVEditor({
     pairs,
     onChange,
@@ -68,8 +66,6 @@ function KVEditor({
     )
 }
 
-// ── Section accordion ──────────────────────────────────────────────────────
-
 function Section({ title, children, defaultOpen = true }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
     const [open, setOpen] = useState(defaultOpen)
     return (
@@ -86,34 +82,28 @@ function Section({ title, children, defaultOpen = true }: { title: string; child
     )
 }
 
-// ── TryItConsole ───────────────────────────────────────────────────────────
 export function TryItConsole({ projectId, endpoint, spec, onClose }: TryConsoleProps) {
     const baseServer = spec.servers?.[0]?.url ?? ""
 
-    // Path param values
     const pathParams = endpoint.parameters.filter((p) => p.in === "path")
     const [pathValues, setPathValues] = useState<Record<string, string>>(
         Object.fromEntries(pathParams.map((p) => [p.name, ""])),
     )
 
-    // Query params
     const specQueryParams = endpoint.parameters.filter((p) => p.in === "query")
     const [queryPairs, setQueryPairs] = useState<KVPair[]>(
         specQueryParams.map((p) => ({ key: p.name, value: String(p.example ?? "") })),
     )
 
-    // Headers
     const [headerPairs, setHeaderPairs] = useState<KVPair[]>([
         { key: "Accept", value: "application/json" },
     ])
 
-    // Auth bearer token
     const [bearerToken, setBearerToken] = useState("")
 
-    // Body
     const needsBody = ["POST", "PUT", "PATCH"].includes(endpoint.method)
     const [bodyText, setBodyText] = useState(() => {
-        // Try to pre-fill with example from requestBody
+
         const content = endpoint.requestBody?.content
         if (content) {
             const ct = content["application/json"] ?? Object.values(content)[0]
@@ -127,13 +117,11 @@ export function TryItConsole({ projectId, endpoint, spec, onClose }: TryConsoleP
         return content ? Object.keys(content)[0] ?? "application/json" : "application/json"
     })
 
-    // Response
     const [result, setResult] = useState<TryItResult | null>(null)
     const [sending, setSending] = useState(false)
     const [sendError, setSendError] = useState<string | null>(null)
     const [showResponseHeaders, setShowResponseHeaders] = useState(false)
 
-    // Build resolved path
     const resolvedPath = endpoint.path.replace(/\{([^}]+)\}/g, (_, name) => {
         return pathValues[name] ?? `{${name}}`
     })
@@ -173,7 +161,6 @@ export function TryItConsole({ projectId, endpoint, spec, onClose }: TryConsoleP
 
     return (
         <div className="flex flex-col h-full overflow-hidden">
-            {/* Header */}
             <div className="flex items-center gap-2 border-b border-border px-4 py-3 shrink-0">
                 <span className={cn("rounded border px-1.5 py-0.5 text-[11px] font-bold font-mono", METHOD_COLORS[endpoint.method] ?? "bg-muted text-muted-foreground")}>
                     {endpoint.method}
@@ -187,10 +174,8 @@ export function TryItConsole({ projectId, endpoint, spec, onClose }: TryConsoleP
             </div>
 
             <div className="flex flex-1 overflow-hidden">
-                {/* Left: params */}
                 <div className="w-80 border-r border-border overflow-y-auto p-4 space-y-4 shrink-0 text-sm">
 
-                    {/* Path params */}
                     {pathParams.length > 0 && (
                         <Section title="Path params">
                             <div className="space-y-1.5">
@@ -209,17 +194,14 @@ export function TryItConsole({ projectId, endpoint, spec, onClose }: TryConsoleP
                         </Section>
                     )}
 
-                    {/* Query params */}
                     <Section title="Query params" defaultOpen={specQueryParams.length > 0}>
                         <KVEditor pairs={queryPairs} onChange={setQueryPairs} addLabel="Add param" />
                     </Section>
 
-                    {/* Headers */}
                     <Section title="Headers">
                         <KVEditor pairs={headerPairs} onChange={setHeaderPairs} addLabel="Add header" />
                     </Section>
 
-                    {/* Auth */}
                     <Section title="Auth">
                         <div className="space-y-1">
                             <label className="text-[11px] text-muted-foreground">Bearer token</label>
@@ -233,7 +215,6 @@ export function TryItConsole({ projectId, endpoint, spec, onClose }: TryConsoleP
                         </div>
                     </Section>
 
-                    {/* Body */}
                     {needsBody && (
                         <Section title="Request body">
                             {endpoint.requestBody && (
@@ -259,9 +240,7 @@ export function TryItConsole({ projectId, endpoint, spec, onClose }: TryConsoleP
                     )}
                 </div>
 
-                {/* Right: response */}
                 <div className="flex flex-1 flex-col overflow-hidden">
-                    {/* Send button bar */}
                     <div className="flex items-center gap-2 border-b border-border px-4 py-2.5 shrink-0">
                         <Button size="sm" onClick={handleSend} disabled={sending} className="gap-1.5">
                             {sending
@@ -278,7 +257,6 @@ export function TryItConsole({ projectId, endpoint, spec, onClose }: TryConsoleP
                         )}
                     </div>
 
-                    {/* Response body */}
                     <div className="flex-1 overflow-y-auto p-4">
                         {sendError && (
                             <div className="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
@@ -294,7 +272,6 @@ export function TryItConsole({ projectId, endpoint, spec, onClose }: TryConsoleP
 
                         {result && (
                             <div className="space-y-3">
-                                {/* Response headers collapsible */}
                                 <button
                                     onClick={() => setShowResponseHeaders((v) => !v)}
                                     className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground"
@@ -312,7 +289,6 @@ export function TryItConsole({ projectId, endpoint, spec, onClose }: TryConsoleP
                                     </div>
                                 )}
 
-                                {/* Response body */}
                                 <div className="rounded-md border border-border bg-muted/30 overflow-x-auto">
                                     <pre className="p-3 font-mono text-[11px] leading-relaxed whitespace-pre-wrap wrap-break-word">
                                         {tryPrettyJson(result.body)}
@@ -334,5 +310,4 @@ function tryPrettyJson(text: string): string {
         return text
     }
 }
-
 

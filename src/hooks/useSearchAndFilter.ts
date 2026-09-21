@@ -14,7 +14,6 @@ export function useSearchAndFilter(options: UseSearchAndFilterOptions = {}) {
   const [localQuery, setLocalQuery] = useState(query);
   const [debounced, setDebounced] = useState(query);
 
-  // Debounce search query
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebounced(localQuery);
@@ -22,7 +21,6 @@ export function useSearchAndFilter(options: UseSearchAndFilterOptions = {}) {
     return () => clearTimeout(timer);
   }, [localQuery, debounceMs]);
 
-  // Update URL param when debounced query changes
   useEffect(() => {
     setSearchParams(
       (prev) => {

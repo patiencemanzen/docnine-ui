@@ -13,7 +13,6 @@ export function useClientPagination({
 }: UseClientPaginationOptions) {
   const [currentPage, setCurrentPage] = useState(1)
 
-  // Reset to page 1 when items change
   useEffect(() => {
     if (resetOnChange) {
       setCurrentPage(1)
@@ -45,7 +44,7 @@ export function useClientPagination({
     currentPage,
     totalPages,
     paginatedItems,
-    startIdx: startIdx + 1, // 1-indexed for display
+    startIdx: startIdx + 1,
     endIdx,
     totalItems: items.length,
     goToPrevious,

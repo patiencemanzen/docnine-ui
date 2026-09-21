@@ -1,8 +1,3 @@
-/**
- * Hook: Provider Repositories Management
- * Handles fetching, pagination, and searching repositories across providers
- */
-
 import { useState, useCallback } from "react"
 import { githubApi, gitlabApi, bitbucketApi, azureApi } from "@/lib/api"
 import type { ProviderKey, NormalizedRepo, RepositoryState } from "@/types/ProjectTypes"
@@ -20,7 +15,6 @@ export function useProviderRepos() {
 
     const [apiError, setApiError] = useState<string | null>(null)
 
-    // Normalize repository data from different providers
     const normalizeRepo = (repo: any): NormalizedRepo => {
         return {
             id: repo.id,
@@ -28,7 +22,7 @@ export function useProviderRepos() {
             path_with_namespace: repo.path_with_namespace,
             full_name: repo.full_name || repo.path_with_namespace || repo.full_slug || repo.name,
             description: repo.description,
-            // GitHub uses html_url, GitLab uses web_url, Bitbucket uses links.html.href, Azure uses webUrl
+
             html_url: repo.html_url || repo.web_url || repo.links?.html?.href || repo.webUrl || "",
             web_url: repo.web_url || repo.webUrl,
         }
@@ -66,7 +60,7 @@ export function useProviderRepos() {
                 error_code: err?.code,
                 error_message: err?.message,
             });
-            // Don't show error if provider is not connected - this is expected
+
             if (err?.code !== "GITHUB_NOT_CONNECTED" && 
                 err?.code !== "GITLAB_NOT_CONNECTED" && 
                 err?.code !== "BITBUCKET_NOT_CONNECTED" &&

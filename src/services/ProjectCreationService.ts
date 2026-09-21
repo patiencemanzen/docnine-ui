@@ -1,8 +1,3 @@
-/**
- * Service: Project Creation
- * Unified project creation logic across different import methods
- */
-
 import { projectsApi } from "@/lib/api";
 import { ApiException } from "@/types/ApiTypes";
 import type {
@@ -17,9 +12,6 @@ export interface ProjectCreationResult {
   projectId: string;
 }
 
-/**
- * Map API error codes to user-friendly messages
- */
 const ERROR_MESSAGES: Record<string, string> = {
   DUPLICATE_PROJECT: "A pipeline is already running for this repository.",
   PROJECT_LIMIT_REACHED:
@@ -45,12 +37,10 @@ const ERROR_MESSAGES: Record<string, string> = {
 };
 
 export class ProjectCreationService {
-  /**
-   * Format API error into user-friendly message
-   */
+  
   static formatErrorMessage(err: unknown): string {
     if (err instanceof ApiException) {
-      // Use mapped message if available, otherwise use API message
+
       return (
         ERROR_MESSAGES[err.code] || err.message || "Failed to create project."
       );
@@ -63,9 +53,7 @@ export class ProjectCreationService {
     return "An unexpected error occurred.";
   }
 
-  /**
-   * Create project from manual repository URL
-   */
+  
   static async fromManualUrl(
     values: ManualProjectFormValues,
   ): Promise<ProjectCreationResult> {
@@ -81,9 +69,7 @@ export class ProjectCreationService {
     }
   }
 
-  /**
-   * Create project from provider (GitHub, GitLab, etc.)
-   */
+  
   static async fromProvider(
     repo: NormalizedRepo,
   ): Promise<ProjectCreationResult> {
@@ -108,9 +94,7 @@ export class ProjectCreationService {
     }
   }
 
-  /**
-   * Create project from ZIP file upload
-   */
+  
   static async fromZip(zipFile: File): Promise<ProjectCreationResult> {
     try {
       const result = await projectsApi.uploadZip(zipFile);
@@ -123,9 +107,7 @@ export class ProjectCreationService {
     }
   }
 
-  /**
-   * Create empty project from scratch
-   */
+  
   static async fromScratch(
     values: FromScratchFormValues,
   ): Promise<ProjectCreationResult> {
@@ -140,9 +122,7 @@ export class ProjectCreationService {
     }
   }
 
-  /**
-   * Validate ZIP file before upload
-   */
+  
   static async validateZip(
     zipFile: File,
   ): Promise<{ valid: boolean; message?: string }> {

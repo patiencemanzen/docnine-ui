@@ -12,13 +12,13 @@ const SIZE_MAP: Record<LoaderSize, string> = {
 }
 
 interface LoaderProps {
-  /** Preset size key or any valid CSS length. Default: "md" */
+  
   size?: LoaderSize | string
-  /** Any valid CSS color. Defaults to currentColor (inherits text color). */
+  
   color?: string
-  /** Animation duration. Default: "1.1s" */
+  
   speed?: string
-  /** Extra Tailwind / CSS classes (e.g. "text-primary"). */
+  
   className?: string
 }
 

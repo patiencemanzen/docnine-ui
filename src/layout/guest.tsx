@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils"
 import { Outlet, useLocation } from "react-router-dom"
 import { useEffect } from "react"
 
-/** Guest marketing pages stay dark for now; restore app theme on leave. */
 function useGuestDarkLock() {
   useEffect(() => {
     const root = document.documentElement

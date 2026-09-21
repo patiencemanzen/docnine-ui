@@ -15,6 +15,6 @@ export interface SeoConfig {
   locale?: string;
   structuredData?: Record<string, unknown> | Record<string, unknown>[];
   structuredDataId?: string;
-  /** Append " | Docnine" suffix. Default: true */
+  
   appendSiteName?: boolean;
 }

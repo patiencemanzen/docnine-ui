@@ -11,13 +11,13 @@ const SIZE_MAP: Record<LoaderSize, number> = {
 }
 
 interface LoaderProps {
-    /** Preset size or an explicit px number. Default: "md" */
+    
     size?: LoaderSize | number
-    /** Explicit color. Falls back to currentColor. Default: uses CSS var(--color-primary) */
+    
     color?: string
-    /** Additional Tailwind / CSS classes */
+    
     className?: string
-    /** Accessible label. Default: "Loading" */
+    
     label?: string
 }
 

@@ -23,7 +23,6 @@ export function DashboardPage() {
     const { subscription, usage } = useSubscriptionStore()
     const { confirm, state: confirmState, handleConfirm, handleCancel } = useConfirm()
 
-    // State management
     const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false)
     const [openModalToGithubStep, setOpenModalToGithubStep] = useState(false)
     const [githubNotice, setGithubNotice] = useState<GithubNotice | null>(null)
@@ -34,23 +33,19 @@ export function DashboardPage() {
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [pendingAction, setPendingAction] = useState<{ type: "delete" | "archive", id: string } | null>(null)
 
-    // Pagination
     const ITEMS_PER_PAGE = 6
     const { currentPage, totalPages: paginationTotalPages, goToPrevious, goToNext, setTotalPages } = usePagination({ initialPage: 1 })
 
-    // Search with URL param sync
     const { query: searchQuery, debouncedQuery: debouncedSearch, setQuery: setSearchQuery } = useSearchAndFilter()
 
-    // Update total pages when they change
     useEffect(() => {
         setTotalPages(totalPages)
     }, [totalPages, setTotalPages])
 
-    // Check if user is at project limit
     const isAtProjectLimit = () => {
         if (!subscription || !usage) return false
         const limit = subscription.limits.projects
-        if (limit === null) return false // unlimited
+        if (limit === null) return false
         return usage.projectCount >= limit
     }
 
@@ -62,7 +57,6 @@ export function DashboardPage() {
         setIsNewProjectModalOpen(true)
     }
 
-    // Fetch projects whenever filters change
     const doFetch = useCallback(() => {
         fetchProjects({
             page: currentPage,
@@ -73,13 +67,11 @@ export function DashboardPage() {
         })
     }, [currentPage, statusFilter, sortBy, debouncedSearch, fetchProjects])
 
-    // Fetch on mount and when filters change
     useEffect(() => {
         doFetch()
         fetchSharedProjects()
     }, [doFetch, fetchSharedProjects])
 
-    // Handle GitHub OAuth return
     useEffect(() => {
         const params = new URLSearchParams(window.location.search)
         const githubStatus = params.get("github")
@@ -100,7 +92,6 @@ export function DashboardPage() {
         }
     }, [])
 
-    // Handle project actions
     const handleDelete = async (id: string, e: React.MouseEvent) => {
         e.stopPropagation()
         setPendingAction({ type: "delete", id })
@@ -166,7 +157,6 @@ export function DashboardPage() {
                 </Button>
             </TopBar>
 
-            {/* Confirmation Dialog */}
             <ConfirmDialog
                 isOpen={confirmState.isOpen}
                 title={confirmState.title}
@@ -178,7 +168,6 @@ export function DashboardPage() {
                 onCancel={handleCancel}
             />
 
-            {/* Error message */}
             {errorMessage && (
                 <div className="mx-6 mt-4 rounded-lg border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm text-destructive">
                     <div className="flex items-start gap-3">
@@ -195,7 +184,6 @@ export function DashboardPage() {
             )}
 
             <div className="space-y-6">
-                {/* GitHub OAuth return banner */}
                 {githubNotice && (
                     <div
                         className={`flex items-center gap-3 rounded-lg border px-4 py-3 text-sm ${githubNotice.type === "success"
@@ -208,7 +196,6 @@ export function DashboardPage() {
                     </div>
                 )}
 
-                {/* Filters */}
                 <DashboardFilters
                     searchQuery={searchQuery}
                     onSearchChange={setSearchQuery}
@@ -218,10 +205,8 @@ export function DashboardPage() {
                     onSortChange={setSortBy}
                 />
 
-                {/* Error handling */}
                 {error && <ErrorBanner message={error} onRetry={doFetch} />}
 
-                {/* Empty state */}
                 {!isLoading && projects.length === 0 && !error && (
                     <EmptyState
                         title="No projects found"
@@ -235,7 +220,6 @@ export function DashboardPage() {
                     />
                 )}
 
-                {/* Projects grid */}
                 {projects.length > 0 && (
                     <>
                         <ProjectsGrid
@@ -249,7 +233,6 @@ export function DashboardPage() {
                             statusFilter={statusFilter}
                         />
 
-                        {/* Pagination */}
                         <Pagination
                             currentPage={currentPage}
                             totalPages={totalPages}
@@ -260,7 +243,6 @@ export function DashboardPage() {
                     </>
                 )}
 
-                {/* Modals */}
                 <NewProjectModal
                     open={isNewProjectModalOpen}
                     onOpenChange={(v) => {
@@ -277,7 +259,6 @@ export function DashboardPage() {
                     description={`You've reached the ${subscription?.limits.projects ?? 3} project limit on the ${subscription?.planName ?? "Free"} plan. Upgrade to create unlimited projects.`}
                 />
 
-                {/* Shared projects */}
                 <SharedProjects projects={sharedProjects} isLoading={sharedLoading} />
             </div>
         </div>

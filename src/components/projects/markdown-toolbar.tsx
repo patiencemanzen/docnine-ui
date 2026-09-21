@@ -18,7 +18,6 @@ export function MarkdownToolbar({ onInsert }: MarkdownToolbarProps) {
 
   return (
     <div className="flex items-center gap-1 p-2 border-b border-border bg-muted/30 flex-wrap">
-      {/* Text Formatting */}
       <Button
         variant="ghost"
         size="icon"
@@ -49,7 +48,6 @@ export function MarkdownToolbar({ onInsert }: MarkdownToolbarProps) {
 
       <div className="w-px h-4 bg-border mx-1" />
 
-      {/* Headings Dropdown */}
       <div ref={headingsRef} className="relative">
         <DropdownMenu open={headingsOpen} onOpenChange={setHeadingsOpen}>
           <DropdownMenuTrigger asChild>
@@ -85,7 +83,6 @@ export function MarkdownToolbar({ onInsert }: MarkdownToolbarProps) {
 
       <div className="w-px h-4 bg-border mx-1" />
 
-      {/* Lists */}
       <Button
         variant="ghost"
         size="icon"
@@ -107,7 +104,6 @@ export function MarkdownToolbar({ onInsert }: MarkdownToolbarProps) {
 
       <div className="w-px h-4 bg-border mx-1" />
 
-      {/* Code */}
       <Button
         variant="ghost"
         size="icon"
@@ -129,7 +125,6 @@ export function MarkdownToolbar({ onInsert }: MarkdownToolbarProps) {
 
       <div className="w-px h-4 bg-border mx-1" />
 
-      {/* Links & Media */}
       <Button
         variant="ghost"
         size="icon"
@@ -151,7 +146,6 @@ export function MarkdownToolbar({ onInsert }: MarkdownToolbarProps) {
 
       <div className="w-px h-4 bg-border mx-1" />
 
-      {/* More Options */}
       <div ref={moreRef} className="relative">
         <DropdownMenu open={moreOpen} onOpenChange={setMoreOpen}>
           <DropdownMenuTrigger asChild>

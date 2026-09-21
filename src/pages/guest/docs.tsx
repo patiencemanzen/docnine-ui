@@ -1,5 +1,3 @@
-
-
 import { useState, useEffect, useRef } from "react"
 import { Link } from "react-router-dom"
 import {
@@ -10,8 +8,6 @@ import {
 } from "@/components/icons"
 import { Background } from "@/components/landing"
 import { cn } from "@/lib/utils"
-
-
 
 interface DocSection {
     id: string
@@ -135,7 +131,6 @@ const SECTIONS: DocSection[] = [
     },
 ]
 
-
 function CodeBlock({ code, language = "yaml" }: { code: string; language?: string }) {
     const [copied, setCopied] = useState(false)
     return (
@@ -156,7 +151,6 @@ function CodeBlock({ code, language = "yaml" }: { code: string; language?: strin
     )
 }
 
-
 function Callout({ type = "info", children }: { type?: "info" | "warning" | "tip"; children: React.ReactNode }) {
     const styles = {
         info: { bg: "bg-muted/60 border-border", icon: <Info className="h-4 w-4 text-foreground shrink-0 mt-0.5" /> },
@@ -172,7 +166,6 @@ function Callout({ type = "info", children }: { type?: "info" | "warning" | "tip
     )
 }
 
-
 function Step({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
     return (
         <div className="flex gap-4 py-5 px-5 border-b border-border/50 last:border-0">
@@ -186,7 +179,6 @@ function Step({ n, title, children }: { n: number; title: string; children: Reac
         </div>
     )
 }
-
 
 function H2({ id, children }: { id: string; children: React.ReactNode }) {
     return (
@@ -209,7 +201,6 @@ function H3({ id, children }: { id: string; children: React.ReactNode }) {
         </h3>
     )
 }
-
 
 export function PlatformDocsPage() {
     const [activeSection, setActiveSection] = useState("what-is-docnine")

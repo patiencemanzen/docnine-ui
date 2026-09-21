@@ -1,29 +1,11 @@
-/**
- * DocRenderer.tsx : v2 (all bugs fixed)
- *
- * Bug fixes over v1:
- *  #1  remark-gfm: static import instead of require() : works in Vite ESM
- *  #2  Code blocks: pre renderer owns block code; code renderer is inline-only
- *  #3  li ordered/index: props don't exist in v8 : detected via CSS data-attr
- *  #4  Heading slugify: recursive text extraction handles bold/code children
- *  #5  Badge paragraph: mdast type:"image" check, not hast tagName:"img"
- *  #6  CopyButton: icon + text gap fixed
- *  #7  Tables: border-collapse + cell borders instead of divide-y
- *
- * Install: npm install react-markdown remark-gfm
- */
-
 import { useState, useCallback, Children, isValidElement } from "react"
 import ReactMarkdown, { Components } from "react-markdown"
-import remarkGfm from "remark-gfm"          // FIX #1: static import, not require()
+import remarkGfm from "remark-gfm"
 import { Check, Copy, ExternalLink } from "@/components/icons"
 import { cn } from "@/lib/utils"
 import { LANG_META } from "@/configs/DocRenderConfig"
 import { DocRendererProps } from "@/types/DocRenderTypes"
 
-// ─────────────────────────────────────────────────────────────────────────────
-// UTILITIES
-// ─────────────────────────────────────────────────────────────────────────────
 function extractText(node: React.ReactNode): string {
     if (typeof node === "string" || typeof node === "number") return String(node)
     if (Array.isArray(node)) return node.map(extractText).join("")
@@ -51,9 +33,6 @@ function isBadgeUrl(src?: string): boolean {
     )
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// COPY BUTTON 
-// ─────────────────────────────────────────────────────────────────────────────
 function CopyButton({ text }: { text: string }) {
     const [copied, setCopied] = useState(false)
 
@@ -61,7 +40,7 @@ function CopyButton({ text }: { text: string }) {
         try {
             await navigator.clipboard.writeText(text)
         } catch {
-            // fallback for browsers without clipboard API
+
             const el = document.createElement("textarea")
             el.value = text
             document.body.appendChild(el)
@@ -84,7 +63,6 @@ function CopyButton({ text }: { text: string }) {
                     : "bg-white/5 text-slate-400 border-white/10 hover:bg-white/10 hover:text-slate-200"
             )}
         >
-            {/* FIX #6: explicit gap-1.5 on the button + separate spans */}
             {copied
                 ? <><Check className="h-3 w-3 shrink-0" /><span>Copied!</span></>
                 : <><Copy className="h-3 w-3 shrink-0" /><span>Copy</span></>
@@ -93,15 +71,11 @@ function CopyButton({ text }: { text: string }) {
     )
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// CODE BLOCK COMPONENT  (FIX #2: lives outside `code` renderer)
-// ─────────────────────────────────────────────────────────────────────────────
 export function CodeBlock({ lang, code }: { lang: string; code: string }) {
     const meta = LANG_META[lang.toLowerCase()] ?? null
 
     return (
         <div className="my-6 rounded-xl overflow-hidden border border-white/[0.08] shadow-xl bg-[#0d1117]">
-            {/* toolbar */}
             <div className="flex items-center justify-between px-4 py-2.5 bg-white/[0.03] border-b border-white/[0.06]">
                 <div className="flex items-center gap-1.5">
                     <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
@@ -127,7 +101,6 @@ export function CodeBlock({ lang, code }: { lang: string; code: string }) {
                 <CopyButton text={code} />
             </div>
 
-            {/* code body */}
             <div className="overflow-x-auto">
                 <pre className="p-5 m-0 bg-transparent leading-none">
                     <code
@@ -142,9 +115,6 @@ export function CodeBlock({ lang, code }: { lang: string; code: string }) {
     )
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// RENDERERS
-// ─────────────────────────────────────────────────────────────────────────────
 const components: Components = {
     h1({ children }) {
         const slug = slugify(children)
@@ -199,10 +169,8 @@ const components: Components = {
         )
     },
 
-    // ── Paragraph  (FIX #5: mdast type:"image" not tagName:"img") ──────────────
-
     p({ children, node }) {
-        // mdast children: type is "image" or "link" wrapping an image
+
         const kids = (node as any)?.children ?? []
         const allBadges = kids.length > 0 && kids.every(
             (c: any) =>
@@ -214,8 +182,6 @@ const components: Components = {
         }
         return <p className="my-2 leading-[1.8] text-foreground/80 text-[0.9375rem]">{children}</p>
     },
-
-    // ── Links ──────────────────────────────────────────────────────────────────
 
     a({ href, children }) {
         const isExternal = !!href && (href.startsWith("http") || href.startsWith("//"))
@@ -233,8 +199,6 @@ const components: Components = {
             </a>
         )
     },
-
-    // ── Images ─────────────────────────────────────────────────────────────────
 
     img({ src, alt }) {
         if (isBadgeUrl(src)) {
@@ -255,7 +219,7 @@ const components: Components = {
     },
 
     pre({ children }) {
-        // children is usually: <code className="language-xxx">...</code>
+
         if (
             Children.count(children) === 1 &&
             isValidElement(children) &&
@@ -269,15 +233,12 @@ const components: Components = {
             return <CodeBlock lang={lang} code={code} />
         }
 
-        // fallback (rare)
         return (
             <pre className="my-3 overflow-x-auto rounded-lg bg-[#0d1117] border border-white/10 p-5">
                 {children}
             </pre>
         )
     },
-
-    // ── CODE  (FIX #2: inline only : block code never reaches here) ────────────
 
     code({ className, children }) {
         return (
@@ -364,7 +325,7 @@ const components: Components = {
     },
 
     li({ children, node }) {
-        // FIX #3: detect ordered via parent mdast node (node.parent.ordered)
+
         const isOrdered = (node as any)?.parent?.ordered === true
 
         if (isOrdered) {
@@ -379,9 +340,8 @@ const components: Components = {
                         style={{ content: "counter(doc-list)" }}
                         aria-hidden
                     >
-                        {/* static count : CSS counter handles the actual display */}
                         {(() => {
-                            // Get index from parent children list (mdast listItem nodes)
+
                             const siblings = (node as any)?.parent?.children ?? []
                             const idx = siblings.filter((c: any) => c.type === "listItem").indexOf(node)
                             return idx >= 0 ? idx + 1 : "•"
@@ -400,8 +360,6 @@ const components: Components = {
         )
     },
 
-    // ── Blockquote ─────────────────────────────────────────────────────────────
-
     blockquote({ children }) {
         return (
             <blockquote
@@ -413,8 +371,6 @@ const components: Components = {
             </blockquote>
         )
     },
-
-    // ── Horizontal rule ────────────────────────────────────────────────────────
 
     hr() {
         return (
@@ -430,8 +386,6 @@ const components: Components = {
         )
     },
 
-    // ── Inline ─────────────────────────────────────────────────────────────────
-
     strong({ children }) {
         return <strong className="font-semibold text-foreground">{children}</strong>
     },
@@ -445,16 +399,13 @@ const components: Components = {
     },
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// EXPORT
-// ─────────────────────────────────────────────────────────────────────────────
 export function DocRenderer({ content, className }: DocRendererProps) {
     if (!content?.trim()) return null
 
     return (
         <div className={cn("doc-renderer w-full max-w-none [&_*]:box-border", className)}>
             <ReactMarkdown
-                remarkPlugins={[remarkGfm]}   // FIX #1: always loaded, static import
+                remarkPlugins={[remarkGfm]}
                 components={components}
                 skipHtml={false}
             >

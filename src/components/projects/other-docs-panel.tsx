@@ -1,14 +1,3 @@
-/**
- * OtherDocsPanel : "Other Docs" tab content inside the documentation viewer.
- *
- * Features:
- *   • Upload supporting documents (any common file format, max 10 MB)
- *   • Display file list with icon, name, size, type, date, description
- *   • Inline PDF / image preview in a fullscreen overlay
- *   • Per-file description editing
- *   • Delete with confirmation
- *   • Graceful empty state and error handling
- */
 import { useState, useEffect, useRef, useCallback } from "react"
 import {
     Upload,
@@ -36,8 +25,6 @@ import { useSubscriptionStore, meetsMinPlan } from "@/store/subscription"
 import { UpgradeModal } from "@/components/billing/UpgradeModal"
 import Loader1 from "../ui/loader1"
 import { ApiAttachment } from "@/types/DocAttachmentTypes"
-
-// ── File type helpers ──────────────────────────────────────────────────────
 
 const EXT_ICON_MAP: Record<string, React.ElementType> = {
     pdf: FileText,
@@ -78,11 +65,8 @@ function isPreviewable(fileName: string): boolean {
     return PREVIEWABLE.has(ext)
 }
 
-// Allowed extensions (used for accept attribute + friendly display)
 const ACCEPTED_EXTENSIONS =
     ".pdf,.doc,.docx,.xls,.xlsx,.csv,.ppt,.pptx,.txt,.md,.png,.jpg,.jpeg,.gif,.webp,.svg"
-
-// ── Inline preview (fullscreen overlay) ───────────────────────────────────
 
 function PreviewOverlay({
     url,
@@ -98,7 +82,6 @@ function PreviewOverlay({
 
     return (
         <div className="fixed inset-0 z-50 bg-background/90 backdrop-blur-sm flex flex-col">
-            {/* Toolbar */}
             <div className="flex items-center justify-between px-6 py-3 border-b border-border bg-card shrink-0">
                 <div className="flex items-center gap-3 min-w-0">
                     <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
@@ -118,7 +101,6 @@ function PreviewOverlay({
                 </div>
             </div>
 
-            {/* Content */}
             <div className="flex-1 overflow-hidden p-4">
                 {isImage ? (
                     <div className="flex items-center justify-center h-full">
@@ -140,8 +122,6 @@ function PreviewOverlay({
     )
 }
 
-// ── Single attachment row ─────────────────────────────────────────────────
-
 function AttachmentRow({
     attachment,
     projectId,
@@ -162,10 +142,8 @@ function AttachmentRow({
     const [savingDesc, setSavingDesc] = useState(false)
     const [showMeta, setShowMeta] = useState(false)
 
-    // Authenticated download/preview URL
     const rawUrl = attachmentsApi.downloadUrl(projectId, attachment._id)
-    // We stream it through the API (which requires the Bearer token).
-    // For iframes/images we need an authenticated URL : we create a blob URL.
+
     const [blobUrl, setBlobUrl] = useState<string | null>(null)
     const blobRef = useRef<string | null>(null)
 
@@ -196,7 +174,7 @@ function AttachmentRow({
             setBlobUrl(url)
             setShowPreview(true)
         } catch {
-            // fall through : download button still works
+
         }
     }
 
@@ -208,7 +186,7 @@ function AttachmentRow({
             a.download = attachment.fileName
             a.click()
         } catch {
-            /* ignore */
+            
         }
     }
 
@@ -230,7 +208,7 @@ function AttachmentRow({
             onDescriptionSaved(attachment._id, res.attachment.description)
             setEditingDesc(false)
         } catch {
-            /* ignore */
+            
         } finally {
             setSavingDesc(false)
         }
@@ -241,12 +219,10 @@ function AttachmentRow({
     return (
         <>
             <div className="group flex items-start gap-3 p-3 rounded-lg border border-border bg-card hover:bg-muted/30 transition-colors">
-                {/* Icon */}
                 <div className="flex items-center justify-center w-10 h-10 rounded-md border border-border bg-muted/50 shrink-0 mt-0.5">
                     <Icon className="h-5 w-5 text-muted-foreground" />
                 </div>
 
-                {/* Main body */}
                 <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
@@ -270,7 +246,6 @@ function AttachmentRow({
                             </div>
                         </div>
 
-                        {/* Actions */}
                         <div className="flex items-center gap-1 shrink-0">
                             {isPreviewable(attachment.fileName) && (
                                 <button
@@ -323,14 +298,12 @@ function AttachmentRow({
                         </div>
                     </div>
 
-                    {/* Collapsible uploader info */}
                     {showMeta && (
                         <p className="text-xs text-muted-foreground mt-1">
                             Uploaded by <span className="text-foreground font-medium">{attachment.uploaderName}</span>
                         </p>
                     )}
 
-                    {/* Description row */}
                     {editingDesc ? (
                         <div className="flex items-center gap-2 mt-2">
                             <Input
@@ -373,8 +346,6 @@ function AttachmentRow({
         </>
     )
 }
-
-// ── Drop zone ─────────────────────────────────────────────────────────────
 
 function DropZone({ onFiles }: { onFiles: (files: File[]) => void }) {
     const [dragging, setDragging] = useState(false)
@@ -427,8 +398,6 @@ function DropZone({ onFiles }: { onFiles: (files: File[]) => void }) {
     )
 }
 
-// ── Main panel ────────────────────────────────────────────────────────────
-
 interface OtherDocsPanelProps {
     projectId: string
 }
@@ -439,10 +408,9 @@ export function OtherDocsPanel({ projectId }: OtherDocsPanelProps) {
     const [error, setError] = useState<string | null>(null)
     const [uploading, setUploading] = useState<{ file: File; progress: "pending" | "done" | "error" }[]>([])
 
-    // Subscription limits
     const { subscription } = useSubscriptionStore()
     const maxFileSizeMb = subscription?.limits?.maxFileSizeMb ?? 10
-    const maxAttachments = subscription?.limits?.attachmentsPerProject ?? null // null = unlimited
+    const maxAttachments = subscription?.limits?.attachmentsPerProject ?? null
     const [upgradeOpen, setUpgradeOpen] = useState(false)
     const [upgradeFeature, setUpgradeFeature] = useState<{ name: string; plan: string; description?: string }>({ name: "", plan: "starter" })
 
@@ -455,7 +423,6 @@ export function OtherDocsPanel({ projectId }: OtherDocsPanelProps) {
         cb()
     }
 
-    // Load attachments on mount
     useEffect(() => {
         let cancelled = false
         setLoading(true)
@@ -468,13 +435,13 @@ export function OtherDocsPanel({ projectId }: OtherDocsPanelProps) {
     }, [projectId])
 
     async function handleFiles(files: File[]) {
-        // Check per-plan attachment count limit
+
         if (maxAttachments !== null && attachments.length >= maxAttachments) {
             requirePlan(
                 "More Attachments",
                 "starter",
                 `Your plan allows up to ${maxAttachments} attachment${maxAttachments === 1 ? "" : "s"} per project. Upgrade to attach unlimited files.`,
-                () => { /* noop : modal will show */ },
+                () => {  },
             )
             return
         }
@@ -507,7 +474,6 @@ export function OtherDocsPanel({ projectId }: OtherDocsPanelProps) {
             }
         }
 
-        // Clear done entries after a brief moment
         setTimeout(() => {
             setUploading((prev) => prev.filter((u) => u.progress !== "done"))
         }, 1500)
@@ -525,7 +491,6 @@ export function OtherDocsPanel({ projectId }: OtherDocsPanelProps) {
 
     return (
         <div className="space-y-6">
-            {/* Header */}
             <div className="flex items-start justify-between gap-4 flex-wrap">
                 <div>
                     <h2 className="text-xl font-bold tracking-tight text-foreground mb-1">Other Docs</h2>
@@ -558,7 +523,6 @@ export function OtherDocsPanel({ projectId }: OtherDocsPanelProps) {
                 </label>
             </div>
 
-            {/* Error banner */}
             {error && (
                 <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
                     <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
@@ -569,7 +533,6 @@ export function OtherDocsPanel({ projectId }: OtherDocsPanelProps) {
                 </div>
             )}
 
-            {/* Upload progress items */}
             {uploading.length > 0 && (
                 <div className="space-y-2">
                     {uploading.map((u, i) => (
@@ -594,7 +557,6 @@ export function OtherDocsPanel({ projectId }: OtherDocsPanelProps) {
                 </div>
             )}
 
-            {/* Loading skeleton */}
             {loading && (
                 <div className="space-y-3">
                     {[1, 2, 3].map((i) => (
@@ -603,12 +565,10 @@ export function OtherDocsPanel({ projectId }: OtherDocsPanelProps) {
                 </div>
             )}
 
-            {/* Empty state */}
             {!loading && attachments.length === 0 && uploading.length === 0 && (
                 <DropZone onFiles={handleFiles} />
             )}
 
-            {/* File list */}
             {!loading && attachments.length > 0 && (
                 <div className="space-y-2">
                     {attachments.map((attachment) => (
@@ -621,7 +581,6 @@ export function OtherDocsPanel({ projectId }: OtherDocsPanelProps) {
                         />
                     ))}
 
-                    {/* Drop zone at the bottom when files already exist */}
                     {attachments.length <= 0 && <DropZone onFiles={handleFiles} />}
                 </div>
             )}

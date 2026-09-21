@@ -17,7 +17,6 @@ export function StatusChangeModal({
     const [note, setNote] = useState("")
     const [tagged, setTagged] = useState<string>("")
 
-    // reset fields each time the modal opens
     useEffect(() => {
         if (isOpen) {
             setNote("")
@@ -43,7 +42,6 @@ export function StatusChangeModal({
                 </DialogHeader>
 
                 <div className="space-y-4 py-2">
-                    {/* Note */}
                     <div className="space-y-1.5">
                         <label className="text-sm font-medium">
                             Message <span className="text-muted-foreground font-normal">(optional)</span>
@@ -58,7 +56,6 @@ export function StatusChangeModal({
                         />
                     </div>
 
-                    {/* Tag member : only for changes_requested */}
                     {isChangesRequested && (
                         <div className="space-y-1.5">
                             <label className="text-sm font-medium">

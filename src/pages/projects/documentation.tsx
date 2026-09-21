@@ -59,7 +59,6 @@ import { NATIVE_TABS, TAB_TO_SECTION } from "@/configs/DocumentationConfig"
 import { useConfirm } from "@/hooks"
 import { ConfirmDialog } from "@/components/dialogs/ConfirmDialog"
 
-
 export function DocumentationViewerPage() {
   const { id } = useParams<{ id: string }>()
   const { getProjectData } = useProjectStore()
@@ -826,15 +825,11 @@ export function DocumentationViewerPage() {
   
   return (
     <div>
-      {}
       <div className="relative z-20 bg-background/60 backdrop-blur-sm mx-auto">
-        {}
         <div className="flex items-center justify-between gap-3 flex-wrap">
-          {}
           <div className="flex items-center gap-4 min-w-0 flex-1">
             <h1 className="text-[22px] font-semibold tracking-tight shrink-0">Docs</h1>
 
-            {}
             <div className="relative w-full max-w-[260px]">
               <Input
                 ref={searchInputRef}
@@ -874,9 +869,7 @@ export function DocumentationViewerPage() {
             </div>
           </div>
 
-          {}
           <div className="flex items-center gap-2 flex-wrap shrink-0">
-            {}
             {exportMessage && (
               <span className={cn(
                 "inline-flex items-center gap-1 text-[12px] px-2.5 py-1 rounded-md border",
@@ -888,7 +881,6 @@ export function DocumentationViewerPage() {
               </span>
             )}
 
-          {}
           {activeTab !== "security" && activeTab !== "other_docs" && (
             isEditMode ? (
               <>
@@ -911,7 +903,6 @@ export function DocumentationViewerPage() {
             )
           )}
 
-          {}
           {isOwner && (
             <Button variant="outline" size="sm" onClick={() => setCreateTabModalOpen(true)}>
               <Plus className="h-4 w-4" />
@@ -919,7 +910,6 @@ export function DocumentationViewerPage() {
             </Button>
           )}
 
-          {}
           <Button
             variant={isChatOpen ? "default" : "outline"}
             size="sm"
@@ -933,7 +923,6 @@ export function DocumentationViewerPage() {
             <span className="hidden sm:inline ml-1.5">Ask AI</span>
           </Button>
 
-          {}
           {activeSectionName && id && (() => {
             const currentStatus = getDocEntry(id, activeSectionName)?.status ?? "draft"
             const cfg = DOC_STATUS_CONFIG[currentStatus]
@@ -989,7 +978,6 @@ export function DocumentationViewerPage() {
             )
           })()}
 
-          {}
           {isOwner && id && (
             <Button
               variant={portal?.isPublished ? "default" : "outline"}
@@ -1003,7 +991,6 @@ export function DocumentationViewerPage() {
             </Button>
           )}
 
-          {}
           <div className="relative" ref={moreDropdownRef}>
             <Button
               variant="outline"
@@ -1019,7 +1006,6 @@ export function DocumentationViewerPage() {
 
             {moreDropdownOpen && (
               <div className="absolute right-0 top-9 z-50 flex flex-col w-60 rounded-lg border border-border bg-background shadow-lg text-sm overflow-hidden">
-                {}
                 <button
                   className={cn(
                     "flex w-full items-center gap-2.5 px-3 py-2 hover:bg-muted transition-colors",
@@ -1075,9 +1061,7 @@ export function DocumentationViewerPage() {
       </div>
 
       <div className="flex flex-col h-[calc(100vh-8rem)] mx-auto z-10">
-        {}
         <div className="flex flex-1 overflow-hidden border border-border rounded-2xl bg-card mt-6">
-          {}
           {isSidebarOpen && (
             <div className="w-56 border-r border-border/70 bg-muted/10 flex flex-col shrink-0">
               <div className="px-4 py-3 border-b border-border/50 flex items-center justify-between">
@@ -1145,7 +1129,6 @@ export function DocumentationViewerPage() {
             </div>
           )}
 
-          {}
           <div className="flex-1 flex flex-col overflow-hidden relative">
             {!isSidebarOpen && (
               <Button
@@ -1158,7 +1141,6 @@ export function DocumentationViewerPage() {
               </Button>
             )}
 
-            {}
             {showStaleBanner && (
               <StaleSectionBanner
                 changeSummary={staleSummary}
@@ -1169,7 +1151,6 @@ export function DocumentationViewerPage() {
               />
             )}
 
-            {}
             {activeTab === "api" && (
               <div className="flex border-b border-border px-4 shrink-0 mt-3">
                 <button
@@ -1197,7 +1178,6 @@ export function DocumentationViewerPage() {
               </div>
             )}
 
-            {}
             {activeTab === "api" && apiSubTab === "spec" && (
               <div className="flex-1 overflow-hidden flex flex-col">
                 {apiSpec ? (
@@ -1235,11 +1215,9 @@ export function DocumentationViewerPage() {
               </div>
             )}
 
-            {}
             {!(activeTab === "api" && apiSubTab === "spec") && (
               <div className={cn("flex-1 overflow-y-auto", !isEditMode && "p-6 md:p-10")} data-content-viewer>
                 <div className={cn("mx-auto", "h-full flex flex-col")}>
-                  {}
                   {(["readme", "api", "schema", "internal"].includes(activeTab) || activeTab.startsWith("custom_")) && (
                     isEditMode ? (
                       <div className="flex flex-col h-full border-0">
@@ -1274,7 +1252,6 @@ export function DocumentationViewerPage() {
                     )
                   )}
 
-                  {}
                   {activeTab === "security" && (
                     editedContent.security ? (
                       <div className="prose prose-slate dark:prose-invert max-w-none">
@@ -1289,7 +1266,6 @@ export function DocumentationViewerPage() {
                     )
                   )}
 
-                  {}
                   {activeTab === "other_docs" && project && (
                     <OtherDocsPanel projectId={project._id} />
                   )}
@@ -1298,7 +1274,6 @@ export function DocumentationViewerPage() {
             )} {}
           </div>
 
-          {}
           {isHistoryOpen && project && activeSectionName && (
             <div className="w-80 shrink-0 flex flex-col overflow-hidden">
               <VersionHistoryPanel
@@ -1313,7 +1288,6 @@ export function DocumentationViewerPage() {
             </div>
           )}
 
-          {}
           {isChatOpen && project && (
             <div className="w-80 border-l border-border bg-card flex flex-col shrink-0">
               <AIChatPanel
@@ -1326,7 +1300,6 @@ export function DocumentationViewerPage() {
           )}
         </div>
 
-        {}
         {showStaleDiff && activeTabDef && (
           <StaleDiffModal
             sectionLabel={activeTabDef.label}
@@ -1338,7 +1311,6 @@ export function DocumentationViewerPage() {
           />
         )}
 
-        {}
         {isOwner && id && (
           <PortalSettingsModal
             isOpen={portalModalOpen}
@@ -1350,7 +1322,6 @@ export function DocumentationViewerPage() {
           />
         )}
 
-        {}
         {id && (
           <ApiSpecImportModal
             projectId={id}
@@ -1394,7 +1365,6 @@ export function DocumentationViewerPage() {
         isLoading={actionLoading === "create-tab"}
       />
 
-      {}
       <ConfirmDialog
         isOpen={confirmState.isOpen}
         title={confirmState.title}

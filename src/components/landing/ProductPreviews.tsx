@@ -1,9 +1,3 @@
-/**
- * Product UI previews for the landing page.
- * Drawn to match guest-landing dark tokens (warm charcoal + cream accent),
- * not third-party product screenshots.
- */
-
 import { cn } from "@/lib/utils"
 
 function Shell({
@@ -56,7 +50,6 @@ function SideNavItem({
   )
 }
 
-/** Docs workspace: sections + markdown body (matches Docnine docs UI). */
 export function DocsWorkspacePreview({ className }: { className?: string }) {
   return (
     <Shell title="acme/payments · Documentation" className={className}>
@@ -85,7 +78,6 @@ export function DocsWorkspacePreview({ className }: { className?: string }) {
   )
 }
 
-/** Sync panel: commit → docs regenerated. */
 export function SyncPreview({ className }: { className?: string }) {
   return (
     <Shell title="GitHub sync · main" className={className}>
@@ -124,7 +116,6 @@ export function SyncPreview({ className }: { className?: string }) {
   )
 }
 
-/** Public docs portal. */
 export function PortalPreview({ className }: { className?: string }) {
   return (
     <Shell title="docs.acme.dev · Portal" className={className}>
@@ -169,7 +160,6 @@ export function PortalPreview({ className }: { className?: string }) {
   )
 }
 
-/** Archive / version history strip. */
 export function ArchivePreview({ className }: { className?: string }) {
   return (
     <Shell title="Version history" className={className}>
@@ -200,7 +190,6 @@ export function ArchivePreview({ className }: { className?: string }) {
   )
 }
 
-/** Share / collaboration. */
 export function SharePreview({ className }: { className?: string }) {
   return (
     <Shell title="Project sharing" className={className}>
@@ -228,7 +217,6 @@ export function SharePreview({ className }: { className?: string }) {
   )
 }
 
-/** Notifications. */
 export function NotifyPreview({ className }: { className?: string }) {
   return (
     <Shell title="Notifications" className={className}>

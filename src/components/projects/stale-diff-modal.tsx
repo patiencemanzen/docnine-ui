@@ -22,7 +22,6 @@ export function StaleDiffModal({
 }: StaleDiffModalProps) {
     return (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex flex-col">
-            {/* Header */}
             <div className="flex items-center justify-between px-6 py-3 border-b border-border bg-card shrink-0">
                 <div>
                     <h2 className="text-[14px] font-semibold">
@@ -54,9 +53,7 @@ export function StaleDiffModal({
                 </div>
             </div>
 
-            {/* Side-by-side panes */}
             <div className="flex flex-1 overflow-hidden">
-                {/* Left : user edit */}
                 <div className="flex-1 flex flex-col overflow-hidden border-r border-border">
                     <div className="px-5 py-2 border-b border-border/40 bg-emerald-500/5 shrink-0">
                         <p className="text-[11px] font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
@@ -70,7 +67,6 @@ export function StaleDiffModal({
                     </div>
                 </div>
 
-                {/* Right : AI version */}
                 <div className="flex-1 flex flex-col overflow-hidden">
                     <div className="px-5 py-2 border-b border-border/40 bg-primary/5 shrink-0">
                         <p className="text-[11px] font-semibold uppercase tracking-wider text-primary">

@@ -28,7 +28,6 @@ function toAbsoluteUrl(
   return `${trimSlash(siteUrl)}${cleanPath}`;
 }
 
-
 function upsertMeta(attr: "name" | "property", value: string, content: string) {
   let el = document.head.querySelector<HTMLMetaElement>(
     `meta[${attr}="${value}"]`,
@@ -73,8 +72,6 @@ function removeStructuredData(id: string) {
   document.head.querySelector<HTMLScriptElement>(`script#${id}`)?.remove();
 }
 
-// ─── Core apply function ──────────────────────────────────────────
-
 export function applySeo(config: SeoConfig | null) {
   if (!config || typeof document === "undefined") return;
 
@@ -89,7 +86,6 @@ export function applySeo(config: SeoConfig | null) {
   const twitterCard =
     config.twitterCard ?? (image ? "summary_large_image" : "summary");
 
-  // Build canonical URL
   const canonicalUrl =
     config.canonicalUrl ??
     toAbsoluteUrl(
@@ -99,7 +95,6 @@ export function applySeo(config: SeoConfig | null) {
     ) ??
     siteUrl;
 
-  // Build title: append " | Docnine" unless the title already contains "Docnine"
   const appendSuffix = config.appendSiteName ?? true
   const fullTitle =
     appendSuffix && !/docnine/i.test(config.title)
@@ -108,10 +103,8 @@ export function applySeo(config: SeoConfig | null) {
 
   const keywords = (config.keywords ?? []).filter(Boolean).join(", ");
 
-  // ── <title> ───────────────────────────────────────────────────
   document.title = fullTitle;
 
-  // ── Canonical + core meta ─────────────────────────────────────
   upsertLink("canonical", canonicalUrl);
   upsertMeta("name", "description", description);
   upsertMeta("name", "robots", robots);
@@ -120,7 +113,6 @@ export function applySeo(config: SeoConfig | null) {
   if (keywords) upsertMeta("name", "keywords", keywords);
   else removeMeta("name", "keywords");
 
-  // ── Open Graph ────────────────────────────────────────────────
   upsertMeta("property", "og:title", fullTitle);
   upsertMeta("property", "og:description", description);
   upsertMeta("property", "og:type", type);
@@ -142,7 +134,6 @@ export function applySeo(config: SeoConfig | null) {
     removeMeta("property", "og:image:alt");
   }
 
-  // ── Twitter / X card ─────────────────────────────────────────
   upsertMeta("name", "twitter:card", twitterCard);
   upsertMeta("name", "twitter:title", fullTitle);
   upsertMeta("name", "twitter:description", description);
@@ -152,19 +143,10 @@ export function applySeo(config: SeoConfig | null) {
   if (config.twitterSite)
     upsertMeta("name", "twitter:site", config.twitterSite);
 
-  // ── Structured data (JSON-LD) ─────────────────────────────────
   if (config.structuredData) upsertStructuredData(config.structuredData, sdId);
   else removeStructuredData(sdId);
 }
 
-// ─── React hook ───────────────────────────────────────────────────
-
-/**
- * Apply SEO config whenever it changes.
- * Restores the previous title and description on unmount so
- * components that set their own SEO don't leave stale values
- * if they're conditionally rendered.
- */
 export function useSeo(config: SeoConfig | null) {
   const prevTitle = useRef<string>("");
   const sdId = config?.structuredDataId ?? "docnine-seo-jsonld";
@@ -174,8 +156,7 @@ export function useSeo(config: SeoConfig | null) {
     applySeo(config);
 
     return () => {
-      // Only clean up structured data : title/meta are overwritten
-      // by the next page's useSeo call, so no flicker needed.
+
       removeStructuredData(sdId);
     };
   }, [config, sdId]);

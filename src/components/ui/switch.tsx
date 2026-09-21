@@ -1,9 +1,6 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
-/**
- * A minimal accessible toggle switch : no Radix dependency required.
- */
 interface SwitchProps {
     checked: boolean
     onCheckedChange: (checked: boolean) => void

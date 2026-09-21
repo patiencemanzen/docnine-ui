@@ -21,7 +21,6 @@ import { SOURCE_CONFIG } from "@/configs/DocVersionConfig"
 import { DocVersion, VersionHistoryPanelProps } from "@/types/DocVersionTypes"
 import Loader1 from "@/components/ui/loader1"
 
-// ── Date helper ────────────────────────────────────────────────────────────
 function timeAgo(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime()
   const mins = Math.floor(diff / 60_000)
@@ -34,7 +33,6 @@ function timeAgo(iso: string): string {
   return new Date(iso).toLocaleDateString()
 }
 
-// ── Version preview modal ──────────────────────────────────────────────────
 function VersionPreviewModal({
   version,
   projectId,
@@ -57,7 +55,6 @@ function VersionPreviewModal({
   return (
     <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
       <div className="bg-card border border-border rounded-xl shadow-xl w-full max-w-3xl max-h-[86vh] flex flex-col">
-        {/* Header */}
         <div className="flex items-center justify-between px-5 py-3 border-b border-border shrink-0">
           <div className="flex items-center gap-2 flex-wrap min-w-0">
             <Icon className="h-4 w-4 text-muted-foreground shrink-0" />
@@ -86,14 +83,12 @@ function VersionPreviewModal({
           </div>
         </div>
 
-        {/* Change summary */}
         {version.meta?.changeSummary && (
           <div className="px-5 py-2 bg-muted/30 border-b border-border/50 text-[12px] text-muted-foreground">
             {version.meta.changeSummary}
           </div>
         )}
 
-        {/* Commit / agents metadata */}
         {(version.meta?.commitSha || (version.meta?.agentsRun?.length ?? 0) > 0) && (
           <div className="px-5 py-2 border-b border-border/30 flex items-center gap-4 text-[11px] text-muted-foreground">
             {version.meta.commitSha && (
@@ -111,7 +106,6 @@ function VersionPreviewModal({
           </div>
         )}
 
-        {/* Content */}
         <div className="flex-1 overflow-y-auto px-6 py-5">
           <div className="prose prose-slate dark:prose-invert max-w-none">
             <DocRenderer content={version.content} />
@@ -122,7 +116,6 @@ function VersionPreviewModal({
   )
 }
 
-// ── Main panel ─────────────────────────────────────────────────────────────
 export function VersionHistoryPanel({
   projectId,
   section,
@@ -150,7 +143,6 @@ export function VersionHistoryPanel({
 
   const [confirmRevert, setConfirmRevert] = useState(false)
 
-  // Initial load
   useEffect(() => {
     let cancelled = false
     setLoading(true)
@@ -174,7 +166,6 @@ export function VersionHistoryPanel({
     return () => { cancelled = true }
   }, [projectId, section])
 
-  // Load next page (append)
   const handleLoadMore = async () => {
     const nextPage = page + 1
     setLoadingMore(true)
@@ -185,13 +176,12 @@ export function VersionHistoryPanel({
       setTotal(r.total)
       setTotalPages(r.totalPages ?? totalPages)
     } catch {
-      // non-fatal; user can retry by clicking again
+
     } finally {
       setLoadingMore(false)
     }
   }
 
-  // Preview a version
   const handlePreview = useCallback(
     async (v: DocVersion) => {
       setLoadingPreviewId(v._id)
@@ -208,7 +198,6 @@ export function VersionHistoryPanel({
     [projectId, section],
   )
 
-  // Restore a version (called from timeline OR from preview modal)
   const handleRestore = useCallback(
     async (versionId: string) => {
       setRestoringId(versionId)
@@ -219,7 +208,7 @@ export function VersionHistoryPanel({
         setRestoredId(versionId)
         setPreviewVersion(null)
         setConfirmingId(null)
-        // Refresh list : restore creates a new entry at the top
+
         const fresh = await versionsApi.list(projectId, section, 1)
         setVersions(fresh.versions)
         setTotal(fresh.total)
@@ -253,7 +242,6 @@ export function VersionHistoryPanel({
 
       <div className="flex flex-col h-full bg-card border-l border-border">
 
-        {/* ── Panel header ──────────────────────────────────────────── */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
           <div className="flex items-center gap-2 min-w-0">
             <Clock className="h-4 w-4 text-muted-foreground shrink-0" />
@@ -277,7 +265,6 @@ export function VersionHistoryPanel({
           </div>
         </div>
 
-        {/* ── User-edit indicator + revert action ───────────────────── */}
         {isUserEdited && onRevertToAI && (
           <div className="px-4 py-2.5 border-b border-border/50 bg-emerald-500/5 shrink-0">
             {!confirmRevert ? (
@@ -327,10 +314,8 @@ export function VersionHistoryPanel({
           </div>
         )}
 
-        {/* ── Body ──────────────────────────────────────────────────── */}
         <div className="flex-1 overflow-y-auto">
 
-          {/* Loading skeleton */}
           {loading && (
             <div className="p-4 space-y-3">
               {[1, 2, 3].map((i) => (
@@ -339,7 +324,6 @@ export function VersionHistoryPanel({
             </div>
           )}
 
-          {/* Load error */}
           {!loading && error && (
             <div className="flex flex-col items-center justify-center py-12 text-center px-4 gap-3">
               <AlertTriangle className="h-7 w-7 text-destructive/70" />
@@ -362,7 +346,6 @@ export function VersionHistoryPanel({
             </div>
           )}
 
-          {/* Restore/preview errors */}
           {(restoreError || previewError) && (
             <div className="mx-4 mt-3 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-[12px] text-destructive flex items-center gap-1.5">
               <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
@@ -370,7 +353,6 @@ export function VersionHistoryPanel({
             </div>
           )}
 
-          {/* Empty */}
           {!loading && !error && versions.length === 0 && (
             <div className="flex flex-col items-center justify-center py-14 text-center px-5 gap-2">
               <Clock className="h-7 w-7 text-muted-foreground/30" />
@@ -381,10 +363,8 @@ export function VersionHistoryPanel({
             </div>
           )}
 
-          {/* Timeline */}
           {!loading && !error && versions.length > 0 && (
             <div className="relative px-4 py-4">
-              {/* Vertical connector */}
               <div className="absolute left-[29px] top-8 bottom-8 w-px bg-border/50" />
 
               <div className="space-y-1">
@@ -399,7 +379,6 @@ export function VersionHistoryPanel({
 
                   return (
                     <div key={v._id} className="relative flex gap-3 pb-1.5">
-                      {/* Timeline dot */}
                       <div
                         className={cn(
                           "relative z-10 mt-3 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2",
@@ -411,7 +390,6 @@ export function VersionHistoryPanel({
                         <Icon className={cn("h-3 w-3", isLatest ? "text-white" : "text-muted-foreground")} />
                       </div>
 
-                      {/* Card */}
                       <div
                         className={cn(
                           "flex-1 rounded-lg border p-3 mt-1 transition-colors",
@@ -420,7 +398,6 @@ export function VersionHistoryPanel({
                             : "border-border/40 hover:border-border bg-background",
                         )}
                       >
-                        {/* Top row : badges + timestamp + actions */}
                         <div className="flex items-start justify-between gap-1">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-1.5 flex-wrap">
@@ -431,7 +408,6 @@ export function VersionHistoryPanel({
                                 {cfg.label}
                               </Badge>
 
-                              {/* "Latest" badge : always truthful: newest snapshot in the list */}
                               {isLatest && (
                                 <Badge
                                   variant="outline"
@@ -441,7 +417,6 @@ export function VersionHistoryPanel({
                                 </Badge>
                               )}
 
-                              {/* Active indicator : only when this latest snapshot IS what's shown */}
                               {isLatest && !isUserEdited && (
                                 <Badge
                                   variant="outline"
@@ -484,9 +459,7 @@ export function VersionHistoryPanel({
                             )}
                           </div>
 
-                          {/* Action icons */}
                           <div className="flex items-center gap-0.5 shrink-0 mt-0.5">
-                            {/* Preview */}
                             <Button
                               variant="ghost"
                               size="icon"
@@ -500,7 +473,6 @@ export function VersionHistoryPanel({
                                 : <Eye className="h-3 w-3" />}
                             </Button>
 
-                            {/* Restore : available on all versions (even latest, as it re-confirms) */}
                             {!isLatest && (
                               <Button
                                 variant="ghost"
@@ -519,7 +491,6 @@ export function VersionHistoryPanel({
                           </div>
                         </div>
 
-                        {/* Restore confirmation inline */}
                         {isConfirming && (
                           <div className="mt-2.5 rounded-md border border-border bg-muted/30 p-2.5 space-y-2">
                             <p className="text-[12px] text-foreground/80 leading-relaxed">
@@ -552,7 +523,6 @@ export function VersionHistoryPanel({
                 })}
               </div>
 
-              {/* Load more */}
               {hasMore && (
                 <div className="pt-3 pb-1 text-center">
                   <Button
@@ -570,7 +540,6 @@ export function VersionHistoryPanel({
                 </div>
               )}
 
-              {/* End of history marker */}
               {!hasMore && versions.length > 3 && (
                 <p className="text-center text-[11px] text-muted-foreground/50 pt-3 pb-1">
                   All {total} snapshot{total !== 1 ? "s" : ""} shown

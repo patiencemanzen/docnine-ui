@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from "react"
+import { lazy, Suspense, useEffect, useMemo } from "react"
 import {
   BrowserRouter as Router,
   Routes,
@@ -21,9 +21,7 @@ import { ApplicationLogo } from "./components/common"
 import { SeoConfig } from "./types/SeoTypes"
 import { PUBLIC_PAGES, SYSTEM_PATHS } from "./configs/SeoConfigs"
 
-// ─── Lazy-loaded pages ────────────────────────────────────────────
-
-const LandingPage = lazy(() => import("@/pages/Home").then(m => ({ default: m.HomePage })))
+const LandingPage = lazy(() => import("@/pages/guest/home").then(m => ({ default: m.HomePage })))
 const LoginPage = lazy(() => import("@/pages/auth/login").then(m => ({ default: m.LoginPage })))
 const SignupPage = lazy(() => import("@/pages/auth/signup").then(m => ({ default: m.SignupPage })))
 const VerifyPage = lazy(() => import("@/pages/auth/verify").then(m => ({ default: m.VerifyPage })))
@@ -36,10 +34,10 @@ const GithubOAuthPage = lazy(() => import("@/pages/auth/github-oauth").then(m =>
 const GitlabOAuthPage = lazy(() => import("@/pages/auth/gitlab-oauth").then(m => ({ default: m.GitlabOAuthPage })))
 const BitbucketOAuthPage = lazy(() => import("@/pages/auth/bitbucket-oauth").then(m => ({ default: m.BitbucketOAuthPage })))
 const AzureOAuthPage = lazy(() => import("@/pages/auth/azure-oauth").then(m => ({ default: m.AzureOAuthPage })))
-const GithubOAuthCompletePage = lazy(() => import("@/components/projects/github-oauth-complete").then(m => ({ default: m.GithubOAuthCompletePage })))
-const GitlabOAuthCompletePage = lazy(() => import("@/components/projects/gitlab-oauth-complete").then(m => ({ default: m.GitlabOAuthCompletePage })))
-const BitbucketOAuthCompletePage = lazy(() => import("@/components/projects/bitbucket-oauth-complete").then(m => ({ default: m.BitbucketOAuthCompletePage })))
-const AzureOAuthCompletePage = lazy(() => import("@/components/projects/azure-oauth-complete").then(m => ({ default: m.AzureOAuthCompletePage })))
+const GithubOAuthCompletePage = lazy(() => import("@/pages/auth/oauth-complete").then(m => ({ default: m.GithubOAuthCompletePage })))
+const GitlabOAuthCompletePage = lazy(() => import("@/pages/auth/oauth-complete").then(m => ({ default: m.GitlabOAuthCompletePage })))
+const BitbucketOAuthCompletePage = lazy(() => import("@/pages/auth/oauth-complete").then(m => ({ default: m.BitbucketOAuthCompletePage })))
+const AzureOAuthCompletePage = lazy(() => import("@/pages/auth/oauth-complete").then(m => ({ default: m.AzureOAuthCompletePage })))
 
 const DashboardLayout = lazy(() => import("@/layout/dashboard").then(m => ({ default: m.DashboardLayout })))
 const DashboardHomePage = lazy(() => import("@/pages/dashboard/home").then(m => ({ default: m.HomePage })))
@@ -177,13 +175,9 @@ function AppRoutes() {
     <>
       <Suspense fallback={<PageLoader />}>
         <Routes>
-
-          {/* Guest layouts */}
           <Route element={<GuestLayout />}>
-            {/* ── Landing ───────────────────────────────────────────── */}
             <Route path="/" element={<LandingOnlyRoute><LandingPage /></LandingOnlyRoute>} />
 
-            {/* ── Public marketing ─────────────────────────────────── */}
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/docs" element={<PlatformDocsPage />} />
             <Route path="/contact" element={<ContactPage />} />
@@ -191,9 +185,7 @@ function AppRoutes() {
             <Route path="/privacy" element={<PrivacyPage />} />
           </Route>
 
-          {/* Guest layouts */}
           <Route element={<AuthLayout />}>
-            {/* ── Auth : open to everyone, including logged-in users ── */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/verify" element={<VerifyPage />} />
@@ -201,28 +193,22 @@ function AppRoutes() {
             <Route path="/reset-password" element={<ResetPasswordPage />} />
           </Route>
 
-
-          {/* ── Public documentation portal ───────────────────────── */}
           <Route path="/docs/:slug" element={<PublicPortalPage />} />
 
-          {/* ── OAuth callbacks ───────────────────────────────────── */}
           <Route path="/auth/callback" element={<AuthCallbackPage />} />
           <Route path="/cli-auth" element={<CliAuthPage />} />
           <Route path="/share/accept/:token" element={<AcceptInvitePage />} />
 
-          {/* ── Repository OAuth initiators ───────────────────────── */}
           <Route path="/auth/github" element={<GithubOAuthPage />} />
           <Route path="/auth/gitlab" element={<GitlabOAuthPage />} />
           <Route path="/auth/bitbucket" element={<BitbucketOAuthPage />} />
           <Route path="/auth/azure" element={<AzureOAuthPage />} />
 
-          {/* ── Repository OAuth completion pages ─────────────────── */}
           <Route path="/github/oauth/complete" element={<GithubOAuthCompletePage />} />
           <Route path="/gitlab/oauth/complete" element={<GitlabOAuthCompletePage />} />
           <Route path="/bitbucket/oauth/complete" element={<BitbucketOAuthCompletePage />} />
           <Route path="/azure/oauth/complete" element={<AzureOAuthCompletePage />} />
 
-          {/* ── Protected workspace ───────────────────────────────── */}
           <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
             <Route path="home" element={<DashboardHomePage />} />
             <Route path="dashboard" element={<Navigate to="/home" replace />} />
@@ -239,7 +225,6 @@ function AppRoutes() {
             <Route path="admin" element={<AdminRoute><SuperAdminPage /></AdminRoute>} />
           </Route>
 
-          {/* ── Fallback ──────────────────────────────────────────── */}
           <Route path="*" element={<Navigate to="/" replace />} />
 
         </Routes>
@@ -249,8 +234,6 @@ function AppRoutes() {
     </>
   )
 }
-
-// ─── Root ─────────────────────────────────────────────────────────
 
 export default function App() {
   return (

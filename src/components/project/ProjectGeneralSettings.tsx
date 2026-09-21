@@ -87,7 +87,6 @@ export function ProjectGeneralSettings({ project, onProjectUpdate }) {
                     description: projectDescription.trim(),
                 };
 
-            // Update parent component
             if (onProjectUpdate) {
                 onProjectUpdate(updatedProject);
             }

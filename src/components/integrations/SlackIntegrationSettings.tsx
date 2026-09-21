@@ -77,13 +77,11 @@ export function SlackIntegrationSettings({ projectId }) {
     const [alertChannelInput, setAlertChannelInput] = useState("");
     const saveChannelTimeout = useRef(null);
 
-    // Custom Slack app credentials
     const [credentials, setCredentials] = useState({
         clientId: "",
         clientSecret: "",
         signingSecret: "",
     });
-
 
     const fetchConfig = useCallback(async () => {
         if (!projectId) return;
@@ -120,12 +118,10 @@ export function SlackIntegrationSettings({ projectId }) {
         fetchConfig();
     }, [fetchConfig]);
 
-
     const showSuccess = (msg) => {
         setSuccess(msg);
         setTimeout(() => setSuccess(null), 3000);
     };
-
 
     const handleConnectSlack = async () => {
         try {
@@ -152,7 +148,6 @@ export function SlackIntegrationSettings({ projectId }) {
             setConnecting(false);
         }
     };
-
 
     const handleUpdateConfig = async (newConfig) => {
         try {
@@ -192,7 +187,6 @@ export function SlackIntegrationSettings({ projectId }) {
             handleUpdateConfig({ ...config, alertChannelName: value });
         }, 800);
     };
-
 
     const handleDisconnect = async () => {
         try {
@@ -258,7 +252,6 @@ export function SlackIntegrationSettings({ projectId }) {
             const body = await res.json();
             const data = body.data ?? {};
 
-            // Update config to reflect the pending state so it persists on reload
             setConfig((prev) => ({
                 ...prev,
                 pendingCustomApp: true,
@@ -275,7 +268,6 @@ export function SlackIntegrationSettings({ projectId }) {
             setUpdating(false);
         }
     };
-
 
     if (loading) {
         return (
@@ -323,7 +315,7 @@ export function SlackIntegrationSettings({ projectId }) {
             {!isConfigured ? (
                 <div className="rounded-xl border border-dashed border-border bg-muted/30 p-6">
                     {hasPendingCredentials && !showCredentialsForm ? (
-                        /* ── Credentials saved, show them + OAuth button ── */
+                        
                         <div className="space-y-4">
                             <div className="rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
                                 <div className="flex items-start gap-3">
@@ -379,7 +371,7 @@ export function SlackIntegrationSettings({ projectId }) {
                             </div>
                         </div>
                     ) : (
-                        /* ── Credentials form (initial or edit mode) ── */
+                        
                         <div className="space-y-4">
                             <div className="text-center mb-2">
                                 <Slack className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-60" />
@@ -444,7 +436,7 @@ export function SlackIntegrationSettings({ projectId }) {
                     )}
                 </div>
             ) : (
-                /* ── Connected state ── */
+                
                 <div className="space-y-6">
                         <div className="rounded-xl border border-border bg-muted/30 p-4">
                         <div className="flex flex-wrap items-start justify-between gap-3">

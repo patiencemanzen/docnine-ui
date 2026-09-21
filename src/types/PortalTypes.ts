@@ -67,9 +67,9 @@ export interface PublicPortalData {
     techStack: string[];
   };
   protected: boolean;
-  /** null when password-protected and not yet verified */
+  
   content: Record<PortalSectionKey, string | null> | null;
-  /** null when password-protected and not yet verified */
+  
   sectionVisibility: Record<PortalSectionKey, PortalSectionVisibility> | null;
 }
 
@@ -77,9 +77,9 @@ export interface PortalSettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
   projectId: string;
-  /** Optional initial portal data (to avoid an extra fetch when already loaded) */
+  
   initialPortal?: ApiPortal | null;
-  /** Optional custom tabs from the project (to include in publishable sections) */
+  
   customTabs?: CustomTab[];
   onPublishChange?: (portal: ApiPortal) => void;
 }

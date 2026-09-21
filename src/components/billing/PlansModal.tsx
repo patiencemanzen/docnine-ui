@@ -1,9 +1,3 @@
-/**
- * ----------------------------------------------------------------------------------
- * PlansModal : inline dialog showing all pricing plans.
- * Opened from UpgradeModal "View all plans" so the user never leaves the page.
- * ----------------------------------------------------------------------------------
- */
 import { useState } from "react"
 import {
     ArrowRight,
@@ -85,7 +79,6 @@ export function PlansModal({ open, onClose }: PlansModalProps) {
                         7-day free trial on all paid plans. No credit card required.
                     </p>
 
-                    {/* Billing toggle */}
                     <div className="flex items-center gap-3 pt-3">
                         <span className={cn("text-sm font-medium transition-colors", !annual ? "text-foreground" : "text-muted-foreground")}>
                             Monthly

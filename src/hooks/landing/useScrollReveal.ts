@@ -1,7 +1,6 @@
 import { useEffect } from "react"
 import { useLocation } from "react-router-dom"
 
-/** Cocoon-style IntersectionObserver: [data-animate] → .is-visible */
 export function useScrollReveal() {
   const { pathname } = useLocation()
 

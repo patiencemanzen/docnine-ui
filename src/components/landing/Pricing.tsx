@@ -50,7 +50,7 @@ export function Pricing() {
         loadPlans()
       })
       .catch(() => {
-        /* leave plans empty on failure */
+        
       })
       .finally(() => setFetching(false))
   }, [loadPlans])

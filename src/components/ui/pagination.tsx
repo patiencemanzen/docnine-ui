@@ -59,24 +59,20 @@ export function Pagination({
         )
     }
 
-    // Default variant with more details
     return (
         <div className="flex items-center justify-between pt-8 border-t border-border">
-            {/* Item count info */}
             {showItemCount && itemCount && currentItemStart !== undefined && currentItemEnd !== undefined && (
                 <div className="text-sm text-muted-foreground">
                     Showing <span className="font-medium">{currentItemStart}</span>–<span className="font-medium">{currentItemEnd}</span> of <span className="font-medium">{itemCount}</span> items
                 </div>
             )}
 
-            {/* Page info only (if item count not shown) */}
             {!showItemCount && showPageInfo && (
                 <div className="text-sm text-muted-foreground">
                     Page <span className="font-medium">{currentPage}</span> of <span className="font-medium">{totalPages}</span>
                 </div>
             )}
 
-            {/* Navigation buttons */}
             <div className="flex items-center gap-2">
                 <Button
                     variant="outline"

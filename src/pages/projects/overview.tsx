@@ -42,7 +42,6 @@ import { useConfirm } from "@/hooks"
 import { ConfirmDialog } from "@/components/dialogs/ConfirmDialog"
 import { cn } from "@/lib/utils"
 
-
 const triggerDownload = (blob: Blob, filename: string) => {
     const url = URL.createObjectURL(blob)
     const a = document.createElement("a")
@@ -51,7 +50,6 @@ const triggerDownload = (blob: Blob, filename: string) => {
     a.click()
     URL.revokeObjectURL(url)
 }
-
 
 const DOC_SECTIONS = [
     { key: "readme", label: "README", icon: FileText, color: "text-blue-600 dark:text-blue-400" },
@@ -346,7 +344,6 @@ export function ProjectOverviewPage() {
     return (
         <>
             <div className="space-y-5 mt-2">
-                {}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-card rounded-xl border border-border p-5">
                     <div className="space-y-1.5 min-w-0">
                         <div className="flex items-center gap-2.5 flex-wrap">
@@ -388,7 +385,6 @@ export function ProjectOverviewPage() {
                         </div>
                     </div>
 
-                    {}
                     <div className="flex items-center gap-2 flex-wrap shrink-0">
                         {project.status === "failed" && isOwner && (
                             <Button size="sm" className="h-9" onClick={handleRetry} disabled={!!actionLoading}>
@@ -441,10 +437,8 @@ export function ProjectOverviewPage() {
                     </div>
                 </div>
 
-                {}
                 <div className="grid gap-4 md:grid-cols-3">
 
-                    {}
                     <Card className="md:col-span-2 order-2 md:order-1 shadow-none">
                         <CardHeader className="pb-3">
                             <CardTitle className="text-[15px] font-semibold">Project Overview</CardTitle>
@@ -455,7 +449,6 @@ export function ProjectOverviewPage() {
                         <CardContent>
                             {project.status === "completed" && (
                                 <div className="space-y-5">
-                                    {}
                                     {generatedSections.length > 0 && (
                                         <div>
                                             <p className="text-[12px] font-medium text-muted-foreground uppercase tracking-wider mb-3">
@@ -475,7 +468,6 @@ export function ProjectOverviewPage() {
                                         </div>
                                     )}
 
-                                    {}
                                     <div className="border-t border-border/50 pt-5">
                                         <div className="flex items-center gap-2 mb-3">
                                             <Github className="h-4 w-4 text-muted-foreground" />
@@ -545,7 +537,6 @@ export function ProjectOverviewPage() {
                         </CardContent>
                     </Card>
 
-                    {}
                     <Card className="order-1 md:order-2 shadow-none">
                         <CardHeader className="pb-3">
                             <CardTitle className="text-[15px] font-semibold">Actions</CardTitle>
@@ -554,7 +545,6 @@ export function ProjectOverviewPage() {
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-2">
-                            {}
                             {exportMessage && (
                                 <div className={cn(
                                     "rounded-lg px-3 py-2 text-[12px] border mb-1",
@@ -571,7 +561,6 @@ export function ProjectOverviewPage() {
                                 </div>
                             )}
 
-                            {}
                             <Button
                                 variant="outline"
                                 size="sm"
@@ -632,7 +621,6 @@ export function ProjectOverviewPage() {
                                 )}
                             </Button>
 
-                            {}
                             {isOwner && (
                                 <div className="border-t border-border/50 pt-2 space-y-1 mt-1">
                                     {project.status !== "archived" && project.status !== "analyzing" && (

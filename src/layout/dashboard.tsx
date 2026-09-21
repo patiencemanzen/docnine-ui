@@ -28,8 +28,6 @@ import { ErrorBoundary } from "@/components/common/ErrorBoundary"
 import { useNotificationStore } from "@/store/useNotificationStore"
 import { NotificationPanel } from "@/components/notifications/NotificationPanel"
 
-// ── Breadcrumb ────────────────────────────────────────────────────────────────
-
 const ROUTE_LABELS: Record<string, string> = {
   projects: "Projects",
   documentations: "Documentations",
@@ -118,8 +116,6 @@ function useBreadcrumbs() {
   return crumbs
 }
 
-// ── Nav config ────────────────────────────────────────────────────────────────
-
 const PRIMARY_NAV = [
   { name: "Home", href: "/home", icon: HomeIcon },
   { name: "Projects", href: "/projects", icon: FolderCodeIcon },
@@ -131,8 +127,6 @@ const ACCOUNT_NAV = [
   { name: "Profile", href: "/profile", icon: User },
   { name: "Settings", href: "/settings", icon: Settings },
 ]
-
-// ── Sidebar nav item ──────────────────────────────────────────────────────────
 
 function NavItem({
   href,
@@ -171,8 +165,6 @@ function NavItem({
   )
 }
 
-// ── Sidebar content ───────────────────────────────────────────────────────────
-
 function SidebarContent({
   user,
   initials,
@@ -188,7 +180,6 @@ function SidebarContent({
 }) {
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      {/* Zone 1 : Workspace identity */}
       <div className="px-4 pt-4 pb-3 shrink-0">
         <ApplicationLogo link="/projects" className="!h-7" />
       </div>
@@ -344,7 +335,7 @@ export function DashboardLayout() {
     try {
       await authApi.logout()
     } catch {
-      // ignore
+
     } finally {
       clearAuth()
       resetSubscription()
@@ -382,10 +373,8 @@ export function DashboardLayout() {
           <SidebarContent {...sidebarProps} onClose={() => setMobileSidebarOpen(false)} />
         </aside>
 
-
         <div className="flex flex-1 flex-col md:ml-[260px] overflow-hidden bg-workspace rounded-3xl m-2 border border-workspace-border">
 
-          {/* Top bar */}
           <header className="grid h-12 shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-3 border-b border-workspace-border px-4 sm:px-6">
             <div className="flex min-w-0 items-center gap-2">
               <button

@@ -54,13 +54,11 @@ function MiniPlanCard({
                 </div>
             )}
 
-            {/* Header */}
             <div className="flex items-center gap-2 mb-3">
                 <Icon className={cn("h-4 w-4", accent)} />
                 <span className="font-semibold text-sm">{plan.name}</span>
             </div>
 
-            {/* Price */}
             <div className="mb-4">
                 {plan.prices.monthly === 0 ? (
                     <span className="text-2xl font-bold">Free</span>
@@ -82,7 +80,6 @@ function MiniPlanCard({
                 )}
             </div>
 
-            {/* CTA */}
             <Button
                 className={cn("w-full mb-4 text-xs h-8", btnClass)}
                 variant={plan.id === "free" ? "outline" : "default"}
@@ -104,7 +101,6 @@ function MiniPlanCard({
                 )}
             </Button>
 
-            {/* Key features */}
             <ul className="space-y-1.5 text-xs text-muted-foreground">
                 {plan.limits.projects !== null ? (
                     <FeatureLine label={`${plan.limits.projects} projects`} />

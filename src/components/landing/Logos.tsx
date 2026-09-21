@@ -9,7 +9,6 @@ type Integration = {
   height: number
 }
 
-/** Real tools Docnine integrates with — not customer logos. */
 const INTEGRATIONS: Integration[] = [
   { name: "GitHub", logo: "/landing/logos/github.svg", width: 96, height: 24 },
   { name: "GitLab", logo: "/landing/logos/gitlab.svg", width: 96, height: 24 },

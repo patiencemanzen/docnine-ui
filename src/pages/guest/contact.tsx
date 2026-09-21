@@ -41,7 +41,6 @@ export function ContactPage() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-5 gap-12">
-                        {}
                         <div className="md:col-span-2 space-y-8">
                             <div>
                                 <h2 className="text-lg font-semibold text-foreground mb-5">Ways to reach us</h2>
@@ -92,7 +91,6 @@ export function ContactPage() {
                                             </a>
                                         </div>
                                     </li>
-                                    {}
                                 </ul>
                             </div>
 
@@ -105,7 +103,6 @@ export function ContactPage() {
                             </div>
                         </div>
 
-                        {}
                         <div className="md:col-span-3">
                             <form
                                 onSubmit={handleSubmit}

@@ -45,7 +45,6 @@ import Loader1 from "@/components/ui/loader1"
 import { BillingPlan, InvoiceData, SubscriptionData, UsageData, PaymentMethodData } from "@/types/BillingTypes"
 import { billingApi } from "@/lib/api"
 
-
 function fmtMoney(cents: number, currency = "USD") {
     return new Intl.NumberFormat("en-US", {
         style: "currency",
@@ -91,7 +90,6 @@ function InvoiceStatusBadge({ status }: { status: InvoiceData["status"] }) {
         </Badge>
     )
 }
-
 
 function ChangePlanModal({
     open,
@@ -209,7 +207,6 @@ function ChangePlanModal({
                     </DialogDescription>
                 </DialogHeader>
 
-                {}
                 <div className="flex items-center gap-1 bg-muted rounded-lg p-1 w-fit">
                     {(["monthly", "annual"] as const).map((c) => (
                         <button
@@ -255,7 +252,6 @@ function ChangePlanModal({
                                         !isSelected && !isCurrent && "border-border hover:border-primary/50 hover:bg-muted/40"
                                     )}
                                 >
-                                    {}
                                     {isCurrent && (
                                         <span className="absolute top-2 right-2 text-[9px] font-bold tracking-wide text-muted-foreground uppercase">Current</span>
                                     )}
@@ -270,7 +266,6 @@ function ChangePlanModal({
                                         {price > 0 && <span className="text-xs font-normal text-muted-foreground">/mo</span>}
                                     </p>
 
-                                    {}
                                     {!isCurrent && (
                                         <div className={cn(
                                             "mt-1.5 inline-flex items-center gap-1 text-[10px] font-semibold rounded-full px-1.5 py-0.5",
@@ -330,7 +325,6 @@ function ChangePlanModal({
         </Dialog>
     )
 }
-
 
 function CurrentPlanCard({
     sub,
@@ -440,7 +434,6 @@ function CurrentPlanCard({
                 </CardHeader>
 
                 <CardContent className="space-y-5">
-                    {}
                     <div className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-4">
                         <div>
                             <p className="text-muted-foreground mb-0.5">Plan</p>
@@ -475,7 +468,6 @@ function CurrentPlanCard({
                         </div>
                     </div>
 
-                    {}
                     {usage && sub.limits.aiChatsPerMonth !== null && (
                         <div>
                             <p className="text-sm text-muted-foreground mb-1">
@@ -500,7 +492,6 @@ function CurrentPlanCard({
                         </div>
                     )}
 
-                    {}
                     {sub.pendingPlan && (
                         <div className="rounded-lg border border-border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
                             Scheduled to downgrade to{" "}
@@ -511,7 +502,6 @@ function CurrentPlanCard({
                         </div>
                     )}
 
-                    {}
                     <div className="flex flex-wrap gap-2 pt-1">
                         <Button
                             size="sm"
@@ -557,7 +547,6 @@ function CurrentPlanCard({
                 onRefresh={onRefresh}
             />
 
-            {}
             <Dialog open={cancelOpen} onOpenChange={(v) => !v && setCancelOpen(false)}>
                 <DialogContent className="max-w-md">
                     <DialogHeader>
@@ -607,7 +596,6 @@ function CurrentPlanCard({
                 </DialogContent>
             </Dialog>
 
-            {}
             <Dialog open={pauseOpen} onOpenChange={(v) => !v && setPauseOpen(false)}>
                 <DialogContent className="max-w-sm">
                     <DialogHeader>
@@ -670,7 +658,6 @@ function CurrentPlanCard({
         </>
     )
 }
-
 
 function SeatsCard({
     sub,
@@ -766,7 +753,6 @@ function SeatsCard({
         </Card>
     )
 }
-
 
 function PaymentMethodsCard({ onRefresh }: { onRefresh: () => void }) {
     const [methods, setMethods] = useState<PaymentMethodData[]>([])
@@ -872,7 +858,6 @@ function PaymentMethodsCard({ onRefresh }: { onRefresh: () => void }) {
                                 )}
                             >
                                 <div className="flex items-center gap-3 min-w-0">
-                                    {}
                                     <div className={cn(
                                         "h-9 w-9 rounded-lg flex items-center justify-center shrink-0",
                                         pm.isDefault ? "bg-primary/10" : "bg-muted"
@@ -880,7 +865,6 @@ function PaymentMethodsCard({ onRefresh }: { onRefresh: () => void }) {
                                         <MethodIcon className={cn("h-4 w-4", pm.isDefault ? "text-primary" : "text-muted-foreground")} />
                                     </div>
 
-                                    {}
                                     <div className="min-w-0">
                                         <div className="flex items-center gap-2 flex-wrap">
                                             <p className="text-sm font-medium">{title}</p>
@@ -929,7 +913,6 @@ function PaymentMethodsCard({ onRefresh }: { onRefresh: () => void }) {
         </Card>
     )
 }
-
 
 function InvoiceDetailsModal({
     invoice,
@@ -1023,7 +1006,6 @@ function InvoiceDetailsModal({
         </Dialog>
     )
 }
-
 
 function BillingHistoryCard() {
     const [invoices, setInvoices] = useState<InvoiceData[]>([])
@@ -1186,7 +1168,6 @@ function BillingHistoryCard() {
     )
 }
 
-
 export function BillingPage() {
     const [searchParams] = useSearchParams()
     const welcome = searchParams.get("welcome") === "1"
@@ -1212,7 +1193,6 @@ export function BillingPage() {
 
     return (
         <div className="mx-auto max-w-3xl px-4 py-8 space-y-6">
-            {}
             <div>
                 <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
                     <CreditCard className="h-6 w-6 text-primary" />
@@ -1223,7 +1203,6 @@ export function BillingPage() {
                 </p>
             </div>
 
-            {}
             {welcome && subscription?.status === "trialing" && (
                 <div className="flex items-center gap-3 rounded-lg border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm text-green-400">
                     <CheckCircle2 className="h-5 w-5 shrink-0" />
@@ -1256,7 +1235,6 @@ export function BillingPage() {
         </div>
     )
 }
-
 
 export function BillingTab() {
     const { subscription, usage, load, refresh } = useSubscriptionStore()
@@ -1338,7 +1316,6 @@ export function BillingTab() {
     return (
         <div className="space-y-6">
 
-            {}
             {verifyState?.status === "verifying" && (
                 <div className="flex items-center gap-3 rounded-lg border border-blue-500/20 bg-blue-500/10 px-4 py-3 text-sm text-blue-400">
                     <Loader1 className="h-4 w-4  shrink-0" />

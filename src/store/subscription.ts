@@ -1,9 +1,3 @@
-/**
- * subscription.ts : Zustand store for the current user's subscription state.
- *
- * Backed by GET /billing/subscription (requires auth).
- * Loaded lazily on first access : not fetched on app startup.
- */
 import { create } from "zustand";
 import { billingApi } from "@/lib/api";
 import { SubscriptionData, SubscriptionState } from "@/types/BillingTypes";
@@ -33,7 +27,7 @@ export const useSubscriptionStore = create<SubscriptionState>((set, get) => ({
       const data = await billingApi.getPlans();
       set({ plans: data.plans });
     } catch {
-      // Silently fail : pricing page will show error state
+
     }
   },
 
@@ -42,29 +36,24 @@ export const useSubscriptionStore = create<SubscriptionState>((set, get) => ({
       const data = await billingApi.getSubscription();
       set({ subscription: data.subscription, usage: data.usage });
     } catch {
-      // Swallow : page already has data
+
     }
   },
 
   reset: () => set({ subscription: null, usage: null, plans: [], error: null }),
 }));
 
-// ── Convenience selectors ─────────────────────────────────────────────────────
-
-/** True when the user's plan is above free (active, trialing, or past_due) */
 export function isPaidPlan(sub: SubscriptionData | null): boolean {
   if (!sub) return false;
   return sub.plan !== "free";
 }
 
-/** Returns effective plan ID, accounting for paused state */
 export function effectivePlan(sub: SubscriptionData | null): string {
   if (!sub) return "free";
   if (sub.status === "paused") return "free";
   return sub.plan;
 }
 
-/** Check if the user's plan has a specific feature */
 export function hasFeature(
   sub: SubscriptionData | null,
   featureKey: keyof SubscriptionData["features"],
@@ -73,7 +62,6 @@ export function hasFeature(
   return !!sub.features?.[featureKey];
 }
 
-/** Plan level for comparison : higher = more powerful */
 export const PLAN_LEVEL: Record<string, number> = {
   free: 0,
   starter: 1,
@@ -81,7 +69,6 @@ export const PLAN_LEVEL: Record<string, number> = {
   team: 3,
 };
 
-/** True if the user's plan meets or exceeds the minimum */
 export function meetsMinPlan(
   sub: SubscriptionData | null,
   minPlan: string,

@@ -19,21 +19,18 @@ export function SessionExpiredDialog({
     const { reset: resetSubscription } = useSubscriptionStore()
 
     const handleLoginAgain = () => {
-        // Auth state is already cleared by apiFetch before this dialog is shown.
-        // Only reset additional stores and redirect.
+
         resetSubscription()
         onOpenChange(false)
         navigate("/login", { replace: true })
     }
 
     return (
-        // Prevent closing via Escape or backdrop click : the user is already
-        // logged out at this point and must re-authenticate to continue.
+
         <Dialog
             open={open}
             onOpenChange={(next) => {
-                // Only allow programmatic close (e.g. after clicking "Log In Again").
-                // Block the user from dismissing the dialog without redirecting.
+
                 if (!next) return
                 onOpenChange(next)
             }}

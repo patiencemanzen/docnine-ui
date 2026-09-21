@@ -71,12 +71,10 @@ export function NotificationItem({ notification, onMarkRead, onArchive }: Notifi
         !notification.isRead && "bg-primary/5"
       )}
     >
-      {/* Icon */}
       <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
         <Icon className="h-4 w-4" />
       </div>
 
-      {/* Body */}
       <div className="flex-1 min-w-0">
         <p className={cn("text-sm leading-snug", !notification.isRead && "font-medium text-foreground", notification.isRead && "text-foreground/80")}>
           {notification.title}
@@ -89,12 +87,10 @@ export function NotificationItem({ notification, onMarkRead, onArchive }: Notifi
         </p>
       </div>
 
-      {/* Unread dot */}
       {!notification.isRead && (
         <span className="absolute top-3.5 right-3 h-2 w-2 rounded-full bg-primary shrink-0" />
       )}
 
-      {/* Hover action buttons */}
       <div className={cn(
         "absolute right-3 top-2 hidden group-hover:flex items-center gap-1",
         !notification.isRead && "right-6"

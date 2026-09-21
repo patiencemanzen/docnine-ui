@@ -20,7 +20,6 @@ import {
 } from "@/components/icons"
 import Loader1 from "@/components/ui/loader1"
 
-
 function Feedback({ type, message }: { type: "success" | "error"; message: string }) {
     return (
         <div
@@ -37,7 +36,6 @@ function Feedback({ type, message }: { type: "success" | "error"; message: strin
         </div>
     )
 }
-
 
 function ProfileInfoCard() {
     const { user, setTokens } = useAuthStore()
@@ -94,7 +92,6 @@ function ProfileInfoCard() {
                 <form onSubmit={handleSubmit} className="space-y-5">
                     {feedback && <Feedback {...feedback} />}
 
-                    {}
                     <div className="flex items-center gap-4">
                         <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center text-xl font-bold text-primary select-none">
                             {(user?.name?.[0] ?? "?").toUpperCase()}
@@ -156,7 +153,6 @@ function ProfileInfoCard() {
         </Card>
     )
 }
-
 
 function ChangePasswordCard() {
     const { clearAuth } = useAuthStore()
@@ -295,7 +291,6 @@ function ChangePasswordCard() {
     )
 }
 
-
 function AccountInfoCard() {
     const { user } = useAuthStore()
     if (!user) return null
@@ -338,7 +333,6 @@ function AccountInfoCard() {
         </Card>
     )
 }
-
 
 export function ProfilePage() {
     return (

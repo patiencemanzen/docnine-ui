@@ -1,5 +1,3 @@
-// ── Status config ─────────────────────────────────────────────────────────────
-
 import {
   DocSectionTrack,
   DocStatus,
@@ -72,7 +70,6 @@ export const DOC_STATUS_CONFIG: Record<DocStatus, StatusConfig> = {
   },
 };
 
-/** All statuses in display order */
 export const DOC_STATUS_ORDER: DocStatus[] = [
   "draft",
   "in_review",

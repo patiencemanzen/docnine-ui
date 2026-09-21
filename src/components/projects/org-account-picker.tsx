@@ -3,26 +3,6 @@ import { cn } from "@/lib/utils"
 import { OrgAccountPickerProps } from "@/types/GithubTypes"
 import { User, Building2 } from "@/components/icons"
 
-// ─────────────────────────────────────────────────────────────────────────────
-// OrgAccountPicker
-//
-// Renders a horizontal row of pill-shaped buttons:
-//   [Personal account]  [Org A]  [Org B]  …
-//
-// The selected pill is highlighted with primary colours.
-// Selection is driven entirely via props : parent owns the state.
-//
-// Props:
-//   username     : GitHub login of the authenticated user (shown as the
-//                  "personal account" option, always present)
-//   orgs         : list of organisations returned by GET /github/orgs
-//   orgsLoading  : show skeleton pills while the orgs request is in flight
-//   selected     : currently selected value:
-//                    null   → personal account
-//                    string → org login
-//   onSelect     : called with null (personal) or org login string
-// ─────────────────────────────────────────────────────────────────────────────
-
 export function OrgAccountPicker({
     username,
     orgs,
@@ -44,7 +24,6 @@ export function OrgAccountPicker({
                 </div>
             ) : (
                 <div className="flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1">
-                    {/* ── Personal account pill ── */}
                     <button
                         type="button"
                         onClick={() => onSelect(null)}
@@ -59,7 +38,6 @@ export function OrgAccountPicker({
                         {username}
                     </button>
 
-                    {/* ── Organisation pills ── */}
                     {orgs.map((org) => (
                         <button
                             key={org.id}
@@ -77,7 +55,6 @@ export function OrgAccountPicker({
                         </button>
                     ))}
 
-                    {/* Surface no-orgs hint only when load is done and there are none */}
                     {orgs.length === 0 && (
                         <span className="self-center text-[11px] text-muted-foreground pl-1">
                             No organisations found.

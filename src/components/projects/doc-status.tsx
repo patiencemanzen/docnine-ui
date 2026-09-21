@@ -1,12 +1,3 @@
-/**
- * doc-status.tsx : Shared UI components for the Documentation Progress Tracker.
- *
- * Exports:
- *  - DOC_STATUS_CONFIG  : display config for each DocStatus value
- *  - DocStatusBadge     : compact badge for use in lists / cards
- *  - DocStatusDot       : tiny coloured dot indicator (for tight spaces)
- *  - DocStatusPanel     : full-featured panel for the documentation sidebar
- */
 import { useState, useRef, useEffect } from "react"
 import { formatDistanceToNow } from "date-fns"
 import { ChevronDown, User, Calendar, AlertCircle, History, PenLine, Eye, RotateCcw, CheckCircle2, Globe, AlertTriangle, Archive } from "@/components/icons"
@@ -15,12 +6,10 @@ import { useDocTrackerStore } from "@/store/doc-tracker"
 import { DocSectionTrack, DocStatus } from "@/types/DocStatusTypes"
 import { DOC_STATUS_CONFIG, DOC_STATUS_ORDER } from "@/configs/DocStatusConfig"
 
-// ── DocStatusBadge ────────────────────────────────────────────────────────────
-
 interface DocStatusBadgeProps {
   status: DocStatus
   className?: string
-  /** Smaller variant for chips / cards */
+  
   compact?: boolean
 }
 
@@ -43,9 +32,6 @@ export function DocStatusBadge({ status, className, compact }: DocStatusBadgePro
   )
 }
 
-// ── DocStatusDot ──────────────────────────────────────────────────────────────
-
-/** Tiny dot indicator : only shown when status is not 'draft' */
 export function DocStatusDot({ status, className }: { status: DocStatus; className?: string }) {
   if (status === "draft") return null
   const cfg = DOC_STATUS_CONFIG[status]
@@ -58,8 +44,6 @@ export function DocStatusDot({ status, className }: { status: DocStatus; classNa
   )
 }
 
-// ── DocStatusSelector (dropdown) ──────────────────────────────────────────────
-
 interface DocStatusSelectorProps {
   current: DocStatus
   onSelect: (status: DocStatus) => void
@@ -70,7 +54,6 @@ export function DocStatusSelector({ current, onSelect, className }: DocStatusSel
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
-  // Close on outside click
   useEffect(() => {
     if (!open) return
     const handler = (e: MouseEvent) => {
@@ -124,15 +107,13 @@ export function DocStatusSelector({ current, onSelect, className }: DocStatusSel
   )
 }
 
-// ── DocStatusPanel ────────────────────────────────────────────────────────────
-
 interface DocStatusPanelProps {
   projectId: string
-  /** sectionKey, e.g. "readme", "apiReference" */
+  
   section: string
-  /** Human-readable section name for the panel header */
+  
   sectionLabel: string
-  /** Username or email to attribute status changes to */
+  
   currentUser?: string
 }
 
@@ -143,7 +124,6 @@ export function DocStatusPanel({ projectId, section, sectionLabel, currentUser }
   const [editAssignee, setEditAssignee] = useState(false)
   const [assigneeInput, setAssigneeInput] = useState(entry.assignee ?? "")
 
-  // Keep local input in sync if store changes externally
   useEffect(() => {
     setAssigneeInput(getEntry(projectId, section)?.assignee ?? "")
   }, [projectId, section]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -153,20 +133,17 @@ export function DocStatusPanel({ projectId, section, sectionLabel, currentUser }
   return (
     <div className="border-t border-border">
       <div className="p-3 space-y-3">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             {sectionLabel} Status
           </span>
         </div>
 
-        {/* Status selector */}
         <DocStatusSelector
           current={entry.status}
           onSelect={(s) => setStatus(projectId, section, s, currentUser)}
         />
 
-        {/* Overdue warning */}
         {overdue && (
           <div className="flex items-center gap-1.5 text-[10px] text-red-600 dark:text-red-400">
             <AlertCircle className="h-3 w-3 shrink-0" />
@@ -174,7 +151,6 @@ export function DocStatusPanel({ projectId, section, sectionLabel, currentUser }
           </div>
         )}
 
-        {/* Assignee */}
         <div className="flex items-center gap-1.5 min-w-0">
           <User className="h-3 w-3 text-muted-foreground shrink-0" />
           {editAssignee ? (
@@ -209,7 +185,6 @@ export function DocStatusPanel({ projectId, section, sectionLabel, currentUser }
           )}
         </div>
 
-        {/* Due date */}
         <div className="flex items-center gap-1.5">
           <Calendar className="h-3 w-3 text-muted-foreground shrink-0" />
           <input
@@ -223,7 +198,6 @@ export function DocStatusPanel({ projectId, section, sectionLabel, currentUser }
           />
         </div>
 
-        {/* Audit log toggle */}
         {entry.log.length > 0 && (
           <div>
             <button

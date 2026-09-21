@@ -148,7 +148,6 @@ const FRAG_SRC = [
   "}",
 ].join("\n")
 
-/** Auroalis WebGL2 aurora shader,exact palette and uniforms from hero-shader.js */
 export function useHeroShader(canvasRef: RefObject<HTMLCanvasElement | null>) {
   useEffect(() => {
     const canvas = canvasRef.current
@@ -229,8 +228,7 @@ export function useHeroShader(canvasRef: RefObject<HTMLCanvasElement | null>) {
     gl.uniform1f(loc("u_turbAmp"), 1.0)
     gl.uniform1f(loc("u_turbFreq"), 0.18)
     gl.uniform1f(loc("u_waveFreq"), 2.4)
-    // Slightly stronger film-grain than the template default so the
-    // aurora reads with the same noisy texture on high-DPI displays.
+
     gl.uniform1f(loc("u_dither"), 0.28)
     gl.uniform1f(loc("u_contrast"), 1.15)
     gl.uniform1f(loc("u_exposure"), 1.0)

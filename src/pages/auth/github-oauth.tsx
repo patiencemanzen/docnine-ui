@@ -4,7 +4,6 @@ import { githubApi } from "@/lib/api"
 import Loader1 from "@/components/ui/loader1"
 import { ApiException } from "@/types/ApiTypes"
 
-
 export function GithubOAuthPage() {
     const [searchParams] = useSearchParams()
     const isPopup = searchParams.get("popup") === "1"

@@ -14,16 +14,13 @@ export function ApiSpecImportModal({ projectId, open, onClose, onImported, exist
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
-    // File tab
     const [dragOver, setDragOver] = useState(false)
     const [selectedFile, setSelectedFile] = useState<File | null>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
-    // URL tab
     const [url, setUrl] = useState("")
     const [autoSync, setAutoSync] = useState(false)
 
-    // Raw tab
     const [rawText, setRawText] = useState("")
 
     const reset = useCallback(() => {
@@ -41,8 +38,6 @@ export function ApiSpecImportModal({ projectId, open, onClose, onImported, exist
         onClose()
     }
 
-    // ── File drag & drop ─────────────────────────────────────────
-
     const handleDrop = useCallback((e: React.DragEvent) => {
         e.preventDefault()
         setDragOver(false)
@@ -54,8 +49,6 @@ export function ApiSpecImportModal({ projectId, open, onClose, onImported, exist
         const file = e.target.files?.[0] ?? null
         setSelectedFile(file)
     }
-
-    // ── Submit ───────────────────────────────────────────────────
 
     const handleImport = async () => {
         setError(null)
@@ -114,7 +107,6 @@ export function ApiSpecImportModal({ projectId, open, onClose, onImported, exist
                     </div>
                 )}
 
-                {/* Tab switcher */}
                 <div className="flex gap-1 rounded-lg bg-muted p-1">
                     {TABS.map(({ key, icon: Icon, label }) => (
                         <button
@@ -133,10 +125,8 @@ export function ApiSpecImportModal({ projectId, open, onClose, onImported, exist
                     ))}
                 </div>
 
-                {/* Tab panels */}
                 <div className="mt-1 min-h-50">
 
-                    {/* File upload */}
                     {tab === "file" && (
                         <div className="space-y-3">
                             <div
@@ -188,7 +178,6 @@ export function ApiSpecImportModal({ projectId, open, onClose, onImported, exist
                         </div>
                     )}
 
-                    {/* URL import */}
                     {tab === "url" && (
                         <div className="space-y-4">
                             <div className="space-y-1.5">
@@ -223,7 +212,6 @@ export function ApiSpecImportModal({ projectId, open, onClose, onImported, exist
                         </div>
                     )}
 
-                    {/* Raw paste */}
                     {tab === "raw" && (
                         <div className="space-y-2">
                             <Label className="text-xs">Paste OpenAPI / Swagger / Postman JSON or YAML</Label>
@@ -237,7 +225,6 @@ export function ApiSpecImportModal({ projectId, open, onClose, onImported, exist
                     )}
                 </div>
 
-                {/* Error */}
                 {error && (
                     <div className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
                         <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />

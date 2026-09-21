@@ -1,14 +1,3 @@
-/**
- * doc-tracker.ts : Per-project documentation status tracker.
- *
- * Persisted to localStorage via zustand/middleware.
- * Tracks a status, optional assignee, optional due date, and an audit log
- * for each (projectId, sectionKey) pair.
- *
- * Note: Uses localStorage for now as a temporary solution. This allows
- * per-user documentation tracking across sessions without requiring backend
- * API integration. Can be migrated to an API-backed solution in the future.
- */
 import { DEFAULT_SECTION } from "@/configs/DocStatusConfig";
 import {
   DocSectionTrack,
@@ -19,11 +8,10 @@ import {
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-// ── Store interface ──────────────────────────────────────────────────────────
 interface DocTrackerState {
   entries: Entries;
 
-  /** Change the status of a section and append an audit log entry. */
+  
   setStatus: (
     projectId: string,
     section: string,
@@ -32,31 +20,30 @@ interface DocTrackerState {
     note?: string,
   ) => void;
 
-  /** Update the assignee for a section. */
+  
   setAssignee: (
     projectId: string,
     section: string,
     assignee: string | undefined,
   ) => void;
 
-  /** Update the due date for a section (ISO date string or undefined to clear). */
+  
   setDueDate: (
     projectId: string,
     section: string,
     dueDate: string | undefined,
   ) => void;
 
-  /** Get the tracker entry for one section, or undefined if never set. */
+  
   getEntry: (projectId: string, section: string) => DocSectionTrack | undefined;
 
-  /** Get all section entries for a project as a map. */
+  
   getProjectSummary: (projectId: string) => Record<string, DocSectionTrack>;
 
-  /** True if the due date has passed and status is not approved/published/archived. */
+  
   isOverdue: (projectId: string, section: string) => boolean;
 }
 
-// ── Store implementation ─────────────────────────────────────────────────────
 export const useDocTrackerStore = create<DocTrackerState>()(
   persist(
     (set, get) => ({
@@ -83,7 +70,7 @@ export const useDocTrackerStore = create<DocTrackerState>()(
                 [section]: {
                   ...existing,
                   status,
-                  log: [logEntry, ...existing.log].slice(0, 30), // keep last 30
+                  log: [logEntry, ...existing.log].slice(0, 30),
                 },
               },
             },

@@ -1,13 +1,11 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
-// Dropdown Menu Context
 const DropdownMenuContext = React.createContext<{
     open: boolean
     setOpen: (open: boolean) => void
 } | null>(null)
 
-// Root Component
 interface DropdownMenuProps {
     children: React.ReactNode
     open?: boolean
@@ -36,7 +34,6 @@ const DropdownMenu = ({ children, open: controlledOpen, onOpenChange }: Dropdown
     )
 }
 
-// Trigger Component
 interface DropdownMenuTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     asChild?: boolean
     children?: React.ReactNode
@@ -71,7 +68,6 @@ const DropdownMenuTrigger = React.forwardRef<HTMLButtonElement, DropdownMenuTrig
 
 DropdownMenuTrigger.displayName = "DropdownMenuTrigger"
 
-// Content Component
 interface DropdownMenuContentProps extends React.HTMLAttributes<HTMLDivElement> {
     align?: "start" | "end"
     side?: "bottom" | "top"
@@ -85,13 +81,11 @@ const DropdownMenuContent = React.forwardRef<HTMLDivElement, DropdownMenuContent
 
         return (
             <>
-                {/* Backdrop to close menu */}
                 <div
                     className="fixed inset-0 z-40"
                     onClick={() => context.setOpen(false)}
                     onContextMenu={(e) => e.preventDefault()}
                 />
-                {/* Menu Content */}
                 <div
                     ref={ref}
                     className={cn(
@@ -110,7 +104,6 @@ const DropdownMenuContent = React.forwardRef<HTMLDivElement, DropdownMenuContent
 
 DropdownMenuContent.displayName = "DropdownMenuContent"
 
-// MenuItem Component
 interface DropdownMenuItemProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     inset?: boolean
 }
@@ -138,7 +131,6 @@ const DropdownMenuItem = React.forwardRef<HTMLButtonElement, DropdownMenuItemPro
 )
 DropdownMenuItem.displayName = "DropdownMenuItem"
 
-// Separator Component
 const DropdownMenuSeparator = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
     ({ className, ...props }, ref) => (
         <div

@@ -62,7 +62,7 @@ export function UpgradeModal({
     }
 
     function handleViewPlans() {
-        // Ensure plans are loaded before opening
+
         if (plans.length === 0) loadPlans()
 
         onClose()
