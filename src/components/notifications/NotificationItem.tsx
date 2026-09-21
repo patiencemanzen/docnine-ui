@@ -68,7 +68,7 @@ export function NotificationItem({ notification, onMarkRead, onArchive }: Notifi
         "group relative flex items-start gap-3 px-4 py-3 cursor-pointer",
         "hover:bg-muted/60 transition-colors",
         borderClass,
-        !notification.isRead && "bg-primary/5"
+        !notification.isRead && "bg-primary/5",
       )}
     >
       <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
@@ -76,12 +76,16 @@ export function NotificationItem({ notification, onMarkRead, onArchive }: Notifi
       </div>
 
       <div className="flex-1 min-w-0">
-        <p className={cn("text-sm leading-snug", !notification.isRead && "font-medium text-foreground", notification.isRead && "text-foreground/80")}>
+        <p
+          className={cn(
+            "text-sm leading-snug",
+            !notification.isRead && "font-medium text-foreground",
+            notification.isRead && "text-foreground/80",
+          )}
+        >
           {notification.title}
         </p>
-        <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
-          {notification.message}
-        </p>
+        <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{notification.message}</p>
         <p className="text-xs text-muted-foreground/70 mt-1">
           {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
         </p>
@@ -91,14 +95,19 @@ export function NotificationItem({ notification, onMarkRead, onArchive }: Notifi
         <span className="absolute top-3.5 right-3 h-2 w-2 rounded-full bg-primary shrink-0" />
       )}
 
-      <div className={cn(
-        "absolute right-3 top-2 hidden group-hover:flex items-center gap-1",
-        !notification.isRead && "right-6"
-      )}>
+      <div
+        className={cn(
+          "absolute right-3 top-2 hidden group-hover:flex items-center gap-1",
+          !notification.isRead && "right-6",
+        )}
+      >
         {!notification.isRead && (
           <button
             title="Mark as read"
-            onClick={(e) => { e.stopPropagation(); onMarkRead(notification._id); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onMarkRead(notification._id);
+            }}
             className="flex h-6 w-6 items-center justify-center rounded hover:bg-muted border border-border text-muted-foreground hover:text-foreground transition-colors"
           >
             <CheckCheck className="h-3.5 w-3.5" />
@@ -106,7 +115,10 @@ export function NotificationItem({ notification, onMarkRead, onArchive }: Notifi
         )}
         <button
           title="Archive"
-          onClick={(e) => { e.stopPropagation(); onArchive(notification._id); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onArchive(notification._id);
+          }}
           className="flex h-6 w-6 items-center justify-center rounded hover:bg-muted border border-border text-muted-foreground hover:text-foreground transition-colors"
         >
           <Archive className="h-3.5 w-3.5" />

@@ -1,17 +1,11 @@
 import { DEFAULT_SECTION } from "@/configs/DocStatusConfig";
-import {
-  DocSectionTrack,
-  DocStatus,
-  DocStatusLogEntry,
-  Entries,
-} from "@/types/DocStatusTypes";
+import { DocSectionTrack, DocStatus, DocStatusLogEntry, Entries } from "@/types/DocStatusTypes";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 interface DocTrackerState {
   entries: Entries;
 
-  
   setStatus: (
     projectId: string,
     section: string,
@@ -20,27 +14,14 @@ interface DocTrackerState {
     note?: string,
   ) => void;
 
-  
-  setAssignee: (
-    projectId: string,
-    section: string,
-    assignee: string | undefined,
-  ) => void;
+  setAssignee: (projectId: string, section: string, assignee: string | undefined) => void;
 
-  
-  setDueDate: (
-    projectId: string,
-    section: string,
-    dueDate: string | undefined,
-  ) => void;
+  setDueDate: (projectId: string, section: string, dueDate: string | undefined) => void;
 
-  
   getEntry: (projectId: string, section: string) => DocSectionTrack | undefined;
 
-  
   getProjectSummary: (projectId: string) => Record<string, DocSectionTrack>;
 
-  
   isOverdue: (projectId: string, section: string) => boolean;
 }
 
@@ -125,11 +106,7 @@ export const useDocTrackerStore = create<DocTrackerState>()(
       isOverdue: (projectId, section) => {
         const entry = get().entries[projectId]?.[section];
         if (!entry?.dueDate) return false;
-        const nonOverdueStatuses: DocStatus[] = [
-          "approved",
-          "published",
-          "archived",
-        ];
+        const nonOverdueStatuses: DocStatus[] = ["approved", "published", "archived"];
         if (nonOverdueStatuses.includes(entry.status)) return false;
         return new Date(entry.dueDate) < new Date();
       },

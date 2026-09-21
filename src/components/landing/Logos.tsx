@@ -1,13 +1,13 @@
-import Marquee from "react-fast-marquee"
+import Marquee from "react-fast-marquee";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 type Integration = {
-  name: string
-  logo: string
-  width: number
-  height: number
-}
+  name: string;
+  logo: string;
+  width: number;
+  height: number;
+};
 
 const INTEGRATIONS: Integration[] = [
   { name: "GitHub", logo: "/landing/logos/github.svg", width: 96, height: 24 },
@@ -18,7 +18,7 @@ const INTEGRATIONS: Integration[] = [
   { name: "Google Drive", logo: "/landing/logos/drive.svg", width: 100, height: 22 },
   { name: "Confluence", logo: "/landing/logos/confluence.svg", width: 110, height: 22 },
   { name: "Jira", logo: "/landing/logos/jira.svg", width: 72, height: 22 },
-]
+];
 
 export function Logos() {
   return (
@@ -29,8 +29,7 @@ export function Logos() {
             Fits the tools you already use
           </h2>
           <p className="mt-4 leading-relaxed text-muted-foreground">
-            Connect your repos, bring your own AI keys, and export where your team
-            already works.
+            Connect your repos, bring your own AI keys, and export where your team already works.
           </p>
         </div>
 
@@ -53,7 +52,7 @@ export function Logos() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 function IntegrationMark({ item }: { item: Integration }) {
@@ -67,5 +66,5 @@ function IntegrationMark({ item }: { item: Integration }) {
         "h-6 w-auto object-contain opacity-50 transition-opacity hover:opacity-80 dark:invert dark:opacity-60 dark:hover:opacity-90",
       )}
     />
-  )
+  );
 }

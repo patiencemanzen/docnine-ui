@@ -9,19 +9,16 @@ export const useAuthStore = create<AuthState>((set) => ({
   isAuthenticated: false,
   initialized: false,
 
-  
   setTokens: (user, token) => {
     setAccessToken(token);
     set({ user, isAuthenticated: true });
   },
 
-  
   clearAuth: () => {
     setAccessToken(null);
     set({ user: null, isAuthenticated: false });
   },
 
-  
   initAuth: async () => {
     if (_initAuthPromise) return _initAuthPromise;
 
@@ -31,7 +28,6 @@ export const useAuthStore = create<AuthState>((set) => ({
         setAccessToken(data.accessToken);
         set({ user: data.user, isAuthenticated: true });
       } catch {
-
         setAccessToken(null);
         set({ user: null, isAuthenticated: false });
       } finally {

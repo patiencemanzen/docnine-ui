@@ -1,29 +1,29 @@
-import { Moon, Sun } from "@/components/icons"
-import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
-import { useTheme } from "@/providers/theme-provider"
-import type { Theme } from "@/types/ThemeProviderTypes"
+import { Moon, Sun } from "@/components/icons";
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { useTheme } from "@/providers/theme-provider";
+import type { Theme } from "@/types/ThemeProviderTypes";
 
 function resolveTheme(theme: Theme): "light" | "dark" {
-  if (theme === "light" || theme === "dark") return theme
-  if (typeof window === "undefined") return "light"
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+  if (theme === "light" || theme === "dark") return theme;
+  if (typeof window === "undefined") return "light";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme()
-  const [resolved, setResolved] = useState<"light" | "dark">(() => resolveTheme(theme))
+  const { theme, setTheme } = useTheme();
+  const [resolved, setResolved] = useState<"light" | "dark">(() => resolveTheme(theme));
 
   useEffect(() => {
-    setResolved(resolveTheme(theme))
+    setResolved(resolveTheme(theme));
 
-    if (theme !== "system") return
+    if (theme !== "system") return;
 
-    const media = window.matchMedia("(prefers-color-scheme: dark)")
-    const onChange = () => setResolved(media.matches ? "dark" : "light")
-    media.addEventListener("change", onChange)
-    return () => media.removeEventListener("change", onChange)
-  }, [theme])
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const onChange = () => setResolved(media.matches ? "dark" : "light");
+    media.addEventListener("change", onChange);
+    return () => media.removeEventListener("change", onChange);
+  }, [theme]);
 
   return (
     <Button
@@ -39,5 +39,5 @@ export function ThemeToggle() {
       <Moon className="absolute h-[1.15rem] w-[1.15rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
       <span className="sr-only">Toggle theme</span>
     </Button>
-  )
+  );
 }

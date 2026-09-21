@@ -1,13 +1,13 @@
-import { useState, useEffect, useCallback, useRef } from "react"
-import { formatDistanceToNow, format, isToday, isYesterday, isSameWeek } from "date-fns"
-import { activityLogsApi } from "@/lib/api"
-import { ActivityLog } from "@/types/activity-log"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Select } from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { useState, useEffect, useCallback, useRef } from "react";
+import { formatDistanceToNow, format, isToday, isYesterday, isSameWeek } from "date-fns";
+import { activityLogsApi } from "@/lib/api";
+import { ActivityLog } from "@/types/activity-log";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 import {
   CheckCircle2,
@@ -30,11 +30,11 @@ import {
   User as UserIcon,
   ChevronDown,
   ChevronRight,
-} from "@/components/icons"
-import { formatActivityLabel, CATEGORY_LABELS, visibleMetadata } from "@/lib/activity-copy"
-import { useAuthStore } from "@/store/auth"
-import { cn } from "@/lib/utils"
-import TopBar from "@/components/projects/top-bar"
+} from "@/components/icons";
+import { formatActivityLabel, CATEGORY_LABELS, visibleMetadata } from "@/lib/activity-copy";
+import { useAuthStore } from "@/store/auth";
+import { cn } from "@/lib/utils";
+import TopBar from "@/components/projects/top-bar";
 
 const CATEGORY_ICON: Record<string, React.ReactNode> = {
   auth: <UserIcon className="h-3.5 w-3.5" />,
@@ -50,7 +50,7 @@ const CATEGORY_ICON: Record<string, React.ReactNode> = {
   integration: <Plug className="h-3.5 w-3.5" />,
   subscription: <CreditCard className="h-3.5 w-3.5" />,
   system: <AlertTriangle className="h-3.5 w-3.5" />,
-}
+};
 
 const CATEGORY_COLOR: Record<string, string> = {
   auth: "bg-violet-500/10 text-violet-600 dark:text-violet-400",
@@ -66,44 +66,45 @@ const CATEGORY_COLOR: Record<string, string> = {
   integration: "bg-orange-500/10 text-orange-600 dark:text-orange-400",
   subscription: "bg-green-500/10 text-green-600 dark:text-green-400",
   system: "bg-rose-500/10 text-rose-600 dark:text-rose-400",
-}
+};
 
 const SEVERITY_BADGE: Record<string, { label: string; cls: string } | undefined> = {
-  warning: { label: "Warning", cls: "bg-yellow-500/10 text-yellow-600 border border-yellow-500/20" },
+  warning: {
+    label: "Warning",
+    cls: "bg-yellow-500/10 text-yellow-600 border border-yellow-500/20",
+  },
   error: { label: "Error", cls: "bg-red-500/10 text-red-600 border border-red-500/20" },
   critical: { label: "Critical", cls: "bg-rose-700/10 text-rose-700 border border-rose-700/20" },
-}
+};
 
 const SEVERITY_ROW: Record<string, string> = {
   warning: "border-l-2 border-yellow-500/40",
   error: "border-l-2 border-red-500/40",
   critical: "border-l-2 border-rose-700/60 bg-rose-500/5",
-}
+};
 
 function Initials({ name }: { name: string }) {
-  const parts = (name || "?").trim().split(/\s+/)
-  const text = parts.length >= 2
-    ? parts[0][0] + parts[parts.length - 1][0]
-    : (parts[0][0] ?? "?")
+  const parts = (name || "?").trim().split(/\s+/);
+  const text = parts.length >= 2 ? parts[0][0] + parts[parts.length - 1][0] : (parts[0][0] ?? "?");
   return (
     <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary text-[10px] font-semibold shrink-0 select-none uppercase">
       {text}
     </span>
-  )
+  );
 }
 
 function dateGroup(d: Date): string {
-  if (isToday(d)) return "Today"
-  if (isYesterday(d)) return "Yesterday"
-  if (isSameWeek(d, new Date(), { weekStartsOn: 1 })) return "This Week"
-  return "Earlier"
+  if (isToday(d)) return "Today";
+  if (isYesterday(d)) return "Yesterday";
+  if (isSameWeek(d, new Date(), { weekStartsOn: 1 })) return "This Week";
+  return "Earlier";
 }
 
-const GROUP_ORDER = ["Today", "Yesterday", "This Week", "Earlier"]
+const GROUP_ORDER = ["Today", "Yesterday", "This Week", "Earlier"];
 
 function MetadataPanel({ metadata }: { metadata: Record<string, unknown> }) {
-  const entries = Object.entries(metadata).filter(([, v]) => v !== undefined && v !== null)
-  if (entries.length === 0) return null
+  const entries = Object.entries(metadata).filter(([, v]) => v !== undefined && v !== null);
+  if (entries.length === 0) return null;
   return (
     <div className="mt-2 rounded-md bg-muted/60 border border-border/50 p-3 text-xs font-mono space-y-1">
       {entries.map(([k, v]) => (
@@ -113,28 +114,31 @@ function MetadataPanel({ metadata }: { metadata: Record<string, unknown> }) {
         </div>
       ))}
     </div>
-  )
+  );
 }
 
 function LogEntry({ log, viewerUserId }: { log: ActivityLog; viewerUserId?: string }) {
-  const [expanded, setExpanded] = useState(false)
-  const ts = new Date(log.createdAt)
-  const relTime = formatDistanceToNow(ts, { addSuffix: true })
-  const absTime = format(ts, "MMM d, yyyy 'at' HH:mm:ss")
-  const sevBadge = SEVERITY_BADGE[log.severity]
-  const rowHighlight = SEVERITY_ROW[log.severity] ?? ""
-  const catColor = CATEGORY_COLOR[log.category] ?? "bg-muted text-muted-foreground"
-  const catIcon = CATEGORY_ICON[log.category] ?? <Info className="h-3.5 w-3.5" />
-  const details = visibleMetadata(log.metadata as Record<string, unknown> | undefined)
-  const hasMeta = Object.keys(details).length > 0
-  const isSelf = !!(viewerUserId && log.userId === viewerUserId)
-  const displayName = isSelf ? "You" : (log.actorName?.trim() || log.actorEmail || "?")
+  const [expanded, setExpanded] = useState(false);
+  const ts = new Date(log.createdAt);
+  const relTime = formatDistanceToNow(ts, { addSuffix: true });
+  const absTime = format(ts, "MMM d, yyyy 'at' HH:mm:ss");
+  const sevBadge = SEVERITY_BADGE[log.severity];
+  const rowHighlight = SEVERITY_ROW[log.severity] ?? "";
+  const catColor = CATEGORY_COLOR[log.category] ?? "bg-muted text-muted-foreground";
+  const catIcon = CATEGORY_ICON[log.category] ?? <Info className="h-3.5 w-3.5" />;
+  const details = visibleMetadata(log.metadata as Record<string, unknown> | undefined);
+  const hasMeta = Object.keys(details).length > 0;
+  const isSelf = !!(viewerUserId && log.userId === viewerUserId);
+  const displayName = isSelf ? "You" : log.actorName?.trim() || log.actorEmail || "?";
 
   return (
-    <div className={cn("group px-4 py-3 flex items-start gap-3 hover:bg-muted/30 transition-colors", rowHighlight)}>
-      <span className={cn("mt-0.5 rounded-md p-1.5 shrink-0", catColor)}>
-        {catIcon}
-      </span>
+    <div
+      className={cn(
+        "group px-4 py-3 flex items-start gap-3 hover:bg-muted/30 transition-colors",
+        rowHighlight,
+      )}
+    >
+      <span className={cn("mt-0.5 rounded-md p-1.5 shrink-0", catColor)}>{catIcon}</span>
 
       <div className="flex-1 min-w-0">
         <div className="flex items-start gap-2 flex-wrap">
@@ -143,7 +147,9 @@ function LogEntry({ log, viewerUserId }: { log: ActivityLog; viewerUserId?: stri
             {formatActivityLabel(log, { viewerUserId })}
           </span>
           {sevBadge && (
-            <span className={cn("text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0", sevBadge.cls)}>
+            <span
+              className={cn("text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0", sevBadge.cls)}
+            >
               {sevBadge.label}
             </span>
           )}
@@ -154,16 +160,11 @@ function LogEntry({ log, viewerUserId }: { log: ActivityLog; viewerUserId?: stri
             className="mt-1 flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors"
             onClick={() => setExpanded((v) => !v)}
           >
-            {expanded
-              ? <ChevronDown className="h-3 w-3" />
-              : <ChevronRight className="h-3 w-3" />
-            }
+            {expanded ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
             {expanded ? "Hide details" : "Show details"}
           </button>
         )}
-        {expanded && hasMeta && (
-          <MetadataPanel metadata={details} />
-        )}
+        {expanded && hasMeta && <MetadataPanel metadata={details} />}
       </div>
 
       <time
@@ -174,71 +175,90 @@ function LogEntry({ log, viewerUserId }: { log: ActivityLog; viewerUserId?: stri
         {relTime}
       </time>
     </div>
-  )
+  );
 }
 
-const CATEGORIES = ["auth", "project", "pipeline", "doc", "security", "apispec", "attachment", "sharing", "portal", "export", "integration", "subscription", "system"] as const
-const SEVERITIES = ["info", "success", "warning", "error", "critical"] as const
+const CATEGORIES = [
+  "auth",
+  "project",
+  "pipeline",
+  "doc",
+  "security",
+  "apispec",
+  "attachment",
+  "sharing",
+  "portal",
+  "export",
+  "integration",
+  "subscription",
+  "system",
+] as const;
+const SEVERITIES = ["info", "success", "warning", "error", "critical"] as const;
 
 export function LogsPage() {
-  const viewerUserId = useAuthStore((s) => s.user?.id)
-  const [logs, setLogs] = useState<ActivityLog[]>([])
-  const [total, setTotal] = useState(0)
-  const [page, setPage] = useState(1)
-  const [hasMore, setHasMore] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [loadingMore, setLoadingMore] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const viewerUserId = useAuthStore((s) => s.user?.id);
+  const [logs, setLogs] = useState<ActivityLog[]>([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const [category, setCategory] = useState("")
-  const [severity, setSeverity] = useState("")
-  const [from, setFrom] = useState("")
-  const [to, setTo] = useState("")
+  const [category, setCategory] = useState("");
+  const [severity, setSeverity] = useState("");
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
 
-  const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const load = useCallback(async (reset = true) => {
-    const targetPage = reset ? 1 : page + 1
-    reset ? setLoading(true) : setLoadingMore(true)
-    setError(null)
-    try {
-      const data = await activityLogsApi.list({
-        ...(category && { category }),
-        ...(severity && { severity }),
-        ...(from && { from }),
-        ...(to && { to }),
-        page: targetPage,
-        limit: 30,
-      })
-      setLogs((prev) => reset ? data.logs : [...prev, ...data.logs])
-      setTotal(data.total)
-      setPage(data.page)
-      setHasMore(data.hasMore)
-    } catch (err: any) {
-      setError(err?.message ?? "Failed to load activity log.")
-    } finally {
-      reset ? setLoading(false) : setLoadingMore(false)
-    }
-  }, [category, severity, from, to, page])
+  const load = useCallback(
+    async (reset = true) => {
+      const targetPage = reset ? 1 : page + 1;
+      reset ? setLoading(true) : setLoadingMore(true);
+      setError(null);
+      try {
+        const data = await activityLogsApi.list({
+          ...(category && { category }),
+          ...(severity && { severity }),
+          ...(from && { from }),
+          ...(to && { to }),
+          page: targetPage,
+          limit: 30,
+        });
+        setLogs((prev) => (reset ? data.logs : [...prev, ...data.logs]));
+        setTotal(data.total);
+        setPage(data.page);
+        setHasMore(data.hasMore);
+      } catch (err: any) {
+        setError(err?.message ?? "Failed to load activity log.");
+      } finally {
+        reset ? setLoading(false) : setLoadingMore(false);
+      }
+    },
+    [category, severity, from, to, page],
+  );
 
-  
   useEffect(() => {
-    load(true)
-    pollingRef.current = setInterval(() => load(true), 30_000)
-    return () => { if (pollingRef.current) clearInterval(pollingRef.current) }
-    
-  }, [category, severity, from, to])
+    load(true);
+    pollingRef.current = setInterval(() => load(true), 30_000);
+    return () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+    };
+  }, [category, severity, from, to]);
 
-  
   const grouped = logs.reduce<Record<string, ActivityLog[]>>((acc, log) => {
-    const g = dateGroup(new Date(log.createdAt))
-      ; (acc[g] ??= []).push(log)
-    return acc
-  }, {})
+    const g = dateGroup(new Date(log.createdAt));
+    (acc[g] ??= []).push(log);
+    return acc;
+  }, {});
 
   return (
     <div>
-      <TopBar title="Activity" description="What happened in your account and projects — documentation, sharing, billing, and settings.">
+      <TopBar
+        title="Activity"
+        description="What happened in your account and projects — documentation, sharing, billing, and settings."
+      >
         <Button
           variant="outline"
           size="sm"
@@ -262,7 +282,9 @@ export function LogsPage() {
             >
               <option value="">All categories</option>
               {CATEGORIES.map((c) => (
-                <option key={c} value={c}>{CATEGORY_LABELS[c] ?? c}</option>
+                <option key={c} value={c}>
+                  {CATEGORY_LABELS[c] ?? c}
+                </option>
               ))}
             </Select>
           </div>
@@ -276,7 +298,9 @@ export function LogsPage() {
             >
               <option value="">All severities</option>
               {SEVERITIES.map((s) => (
-                <option key={s} value={s} className="capitalize">{s}</option>
+                <option key={s} value={s} className="capitalize">
+                  {s}
+                </option>
               ))}
             </Select>
           </div>
@@ -306,7 +330,12 @@ export function LogsPage() {
               variant="ghost"
               size="sm"
               className="h-8 text-muted-foreground"
-              onClick={() => { setCategory(""); setSeverity(""); setFrom(""); setTo("") }}
+              onClick={() => {
+                setCategory("");
+                setSeverity("");
+                setFrom("");
+                setTo("");
+              }}
             >
               Clear filters
             </Button>
@@ -392,6 +421,5 @@ export function LogsPage() {
         </p>
       </div>
     </div>
-  )
+  );
 }
-

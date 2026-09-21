@@ -1,1 +1,1 @@
-export { DocumentationsPage } from "@/pages/dashboard/documentations"
+export { DocumentationsPage } from "@/pages/dashboard/documentations";

@@ -8,7 +8,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@google/genai": "^1.29.0",
@@ -52,6 +54,7 @@
     "@types/node": "^22.14.0",
     "@types/react-syntax-highlighter": "^15.5.13",
     "autoprefixer": "^10.4.21",
+    "prettier": "^3.9.8",
     "tailwindcss": "^4.1.14",
     "tsx": "^4.21.0",
     "typescript": "~5.8.2",

@@ -1,17 +1,13 @@
-import React from "react"
-import { cn } from "@/lib/utils"
+import React from "react";
+import { cn } from "@/lib/utils";
 
 type BackgroundProps = {
-  children: React.ReactNode
-  variant?: "top" | "bottom"
-  className?: string
-}
+  children: React.ReactNode;
+  variant?: "top" | "bottom";
+  className?: string;
+};
 
-export function Background({
-  children,
-  variant = "top",
-  className,
-}: BackgroundProps) {
+export function Background({ children, variant = "top", className }: BackgroundProps) {
   return (
     <div
       className={cn(
@@ -23,5 +19,5 @@ export function Background({
     >
       {children}
     </div>
-  )
+  );
 }

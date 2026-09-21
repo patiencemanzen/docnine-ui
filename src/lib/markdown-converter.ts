@@ -18,10 +18,7 @@ export function markdownToFormattedText(markdown: string): string {
 
   text = text.replace(/`([^`]+)`/g, "「$1」");
 
-  text = text.replace(
-    /```(?:\w+)?\n([\s\S]*?)```/g,
-    "\n┌─ Code Block:\n$1\n└─\n",
-  );
+  text = text.replace(/```(?:\w+)?\n([\s\S]*?)```/g, "\n┌─ Code Block:\n$1\n└─\n");
 
   text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, "$1 ($2)");
 
@@ -39,10 +36,7 @@ export function markdownToFormattedText(markdown: string): string {
   text = text.replace(/^(-{3}|_{3}|\*{3})$/gm, "─".repeat(40));
 
   text = text.replace(/^::: note\n([\s\S]*?)\n:::$/gm, "\n📝 Note:\n$1\n");
-  text = text.replace(
-    /^::: warning\n([\s\S]*?)\n:::$/gm,
-    "\n⚠️  Warning:\n$1\n",
-  );
+  text = text.replace(/^::: warning\n([\s\S]*?)\n:::$/gm, "\n⚠️  Warning:\n$1\n");
   text = text.replace(/^::: tip\n([\s\S]*?)\n:::$/gm, "\n💡 Tip:\n$1\n");
   text = text.replace(/^::: danger\n([\s\S]*?)\n:::$/gm, "\n⛔ Danger:\n$1\n");
 
@@ -96,9 +90,7 @@ export interface FormattedContentBlock {
   children?: FormattedContentBlock[];
 }
 
-export function markdownToStructuredContent(
-  markdown: string,
-): FormattedContentBlock[] {
+export function markdownToStructuredContent(markdown: string): FormattedContentBlock[] {
   const blocks: FormattedContentBlock[] = [];
   const lines = markdown.split("\n");
   let currentList: FormattedContentBlock[] = [];

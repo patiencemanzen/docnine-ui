@@ -1,10 +1,10 @@
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 
 interface DocStatusFilterProps {
-  filters: string[]
-  activeFilter: string
-  onFilterChange: (filter: string) => void
-  counts: Record<string, number>
+  filters: string[];
+  activeFilter: string;
+  onFilterChange: (filter: string) => void;
+  counts: Record<string, number>;
 }
 
 export function DocStatusFilter({
@@ -26,9 +26,9 @@ export function DocStatusFilter({
         All
       </button>
       {filters.map((filter) => {
-        const count = counts[filter] ?? 0
-        if (count === 0) return null
-        const isActive = activeFilter === filter
+        const count = counts[filter] ?? 0;
+        if (count === 0) return null;
+        const isActive = activeFilter === filter;
         return (
           <button
             key={filter}
@@ -42,8 +42,8 @@ export function DocStatusFilter({
             <span className="capitalize">{filter.replace("_", " ")}</span>
             <span className="font-tabular">{count}</span>
           </button>
-        )
+        );
       })}
     </div>
-  )
+  );
 }

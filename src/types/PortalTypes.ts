@@ -15,11 +15,7 @@ export type PortalTemplateId =
   | "agency-portfolio";
 
 export type PortalSectionKey =
-  | "readme"
-  | "internalDocs"
-  | "apiReference"
-  | "schemaDocs"
-  | "securityReport";
+  "readme" | "internalDocs" | "apiReference" | "schemaDocs" | "securityReport";
 
 export interface PortalSectionConfig {
   sectionKey: PortalSectionKey;
@@ -67,9 +63,9 @@ export interface PublicPortalData {
     techStack: string[];
   };
   protected: boolean;
-  
+
   content: Record<PortalSectionKey, string | null> | null;
-  
+
   sectionVisibility: Record<PortalSectionKey, PortalSectionVisibility> | null;
 }
 
@@ -77,9 +73,9 @@ export interface PortalSettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
   projectId: string;
-  
+
   initialPortal?: ApiPortal | null;
-  
+
   customTabs?: CustomTab[];
   onPublishChange?: (portal: ApiPortal) => void;
 }

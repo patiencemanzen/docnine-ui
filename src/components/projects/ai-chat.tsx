@@ -1,68 +1,68 @@
-import { useState, useRef, useEffect, useCallback } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Bot, Send, User, X, Trash2, Sparkles, Square } from "@/components/icons"
-import ReactMarkdown, { type Components } from "react-markdown"
-import remarkGfm from "remark-gfm"
-import { cn } from "@/lib/utils"
-import { chatStream, chatApi } from "@/lib/api"
-import { CodeBlock } from "@/components/projects/doc-render"
-import Loader1 from "../ui/loader1"
-import { ApiProject } from "@/types/ProjectTypes"
-import { AIChatPanelProps, Message } from "@/types/AIChatTypes"
+import { useState, useRef, useEffect, useCallback } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Bot, Send, User, X, Trash2, Sparkles, Square } from "@/components/icons";
+import ReactMarkdown, { type Components } from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { cn } from "@/lib/utils";
+import { chatStream, chatApi } from "@/lib/api";
+import { CodeBlock } from "@/components/projects/doc-render";
+import Loader1 from "../ui/loader1";
+import { ApiProject } from "@/types/ProjectTypes";
+import { AIChatPanelProps, Message } from "@/types/AIChatTypes";
 
 function buildSuggestedPrompts(project: ApiProject): string[] {
-  const prompts: string[] = []
+  const prompts: string[] = [];
   if ((project.stats?.endpoints ?? 0) > 0) {
-    prompts.push(`Summarise all ${project.stats.endpoints} API endpoints and what each one does`)
+    prompts.push(`Summarise all ${project.stats.endpoints} API endpoints and what each one does`);
   }
   if ((project.stats?.models ?? 0) > 0) {
-    prompts.push(`Explain the ${project.stats.models} data models and how they relate to each other`)
+    prompts.push(
+      `Explain the ${project.stats.models} data models and how they relate to each other`,
+    );
   }
   const critHigh =
-    (project.security?.counts?.CRITICAL ?? 0) + (project.security?.counts?.HIGH ?? 0)
+    (project.security?.counts?.CRITICAL ?? 0) + (project.security?.counts?.HIGH ?? 0);
   if (critHigh > 0) {
-    prompts.push(`What are the ${critHigh} critical/high security findings and how do I fix them?`)
+    prompts.push(`What are the ${critHigh} critical/high security findings and how do I fix them?`);
   }
   if (project.meta?.language) {
-    prompts.push(`How do I set up and run this ${project.meta.language} project locally?`)
+    prompts.push(`How do I set up and run this ${project.meta.language} project locally?`);
   }
-  prompts.push(
-    `What is the overall architecture of ${project.meta?.name ?? "this project"}?`,
-  )
-  return prompts.slice(0, 4)
+  prompts.push(`What is the overall architecture of ${project.meta?.name ?? "this project"}?`);
+  return prompts.slice(0, 4);
 }
 
 function storageKey(projectId: string, sessionId: string) {
-  return `docnine-chat:${projectId}:${sessionId}`
+  return `docnine-chat:${projectId}:${sessionId}`;
 }
 
 const chatComponents: Components = {
   pre({ children }) {
-    const child = children as any
+    const child = children as any;
     if (child?.type === "code") {
-      const lang = (child.props?.className ?? "").replace("language-", "")
-      const code = String(child.props?.children ?? "").replace(/\n$/, "")
-      return <CodeBlock lang={lang} code={code} />
+      const lang = (child.props?.className ?? "").replace("language-", "");
+      const code = String(child.props?.children ?? "").replace(/\n$/, "");
+      return <CodeBlock lang={lang} code={code} />;
     }
     return (
       <pre className="my-3 overflow-x-auto rounded-lg bg-[#0d1117] border border-white/10 p-4 text-xs">
         {children}
       </pre>
-    )
+    );
   },
   code({ className, children }) {
     return (
       <code className="rounded bg-muted/70 px-1 py-0.5 text-[0.8em] font-mono text-foreground/90 border border-border/40">
         {children}
       </code>
-    )
+    );
   },
   p({ children }) {
-    return <p className="my-1 leading-relaxed">{children}</p>
+    return <p className="my-1 leading-relaxed">{children}</p>;
   },
-}
+};
 
 export function AIChatPanel({
   project,
@@ -70,93 +70,91 @@ export function AIChatPanel({
   activeSectionContent: _activeSectionContent,
   onClose,
 }: AIChatPanelProps) {
-  const projectId = project._id
-  const sessionId = project.chatSessionId ?? null
-  const localKey = sessionId ? storageKey(projectId, sessionId) : null
+  const projectId = project._id;
+  const sessionId = project.chatSessionId ?? null;
+  const localKey = sessionId ? storageKey(projectId, sessionId) : null;
 
   const [messages, setMessages] = useState<Message[]>(() => {
-    if (!localKey) return []
+    if (!localKey) return [];
     try {
-      const stored = localStorage.getItem(localKey)
-      return stored ? (JSON.parse(stored) as Message[]) : []
+      const stored = localStorage.getItem(localKey);
+      return stored ? (JSON.parse(stored) as Message[]) : [];
     } catch {
-      return []
+      return [];
     }
-  })
+  });
 
-  const [input, setInput] = useState("")
-  const [isStreaming, setIsStreaming] = useState(false)
-  const [streamingContent, setStreamingContent] = useState("")
-  const [error, setError] = useState<string | null>(null)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
-  const abortRef = useRef<ReturnType<typeof chatStream> | null>(null)
-  const streamBufRef = useRef("")
+  const [input, setInput] = useState("");
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [streamingContent, setStreamingContent] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const abortRef = useRef<ReturnType<typeof chatStream> | null>(null);
+  const streamBufRef = useRef("");
 
-  const suggestedPrompts = buildSuggestedPrompts(project)
+  const suggestedPrompts = buildSuggestedPrompts(project);
 
   useEffect(() => {
-    if (!localKey || messages.length === 0) return
+    if (!localKey || messages.length === 0) return;
     try {
-      localStorage.setItem(localKey, JSON.stringify(messages))
-    } catch {
-
-    }
-  }, [messages, localKey])
+      localStorage.setItem(localKey, JSON.stringify(messages));
+    } catch {}
+  }, [messages, localKey]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [messages, streamingContent])
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, streamingContent]);
 
   const handleSend = useCallback(
     async (text?: string) => {
-      const msg = (text ?? input).trim()
-      if (!msg || isStreaming) return
+      const msg = (text ?? input).trim();
+      if (!msg || isStreaming) return;
 
       if (!sessionId) {
-        setError("Run the documentation pipeline first to enable chat.")
-        return
+        setError("Run the documentation pipeline first to enable chat.");
+        return;
       }
 
-      setInput("")
-      setError(null)
+      setInput("");
+      setError(null);
 
-      const userMsg: Message = { id: Date.now().toString(), role: "user", content: msg }
-      setMessages((prev) => [...prev, userMsg])
-      setIsStreaming(true)
-      setStreamingContent("")
-      streamBufRef.current = ""
+      const userMsg: Message = { id: Date.now().toString(), role: "user", content: msg };
+      setMessages((prev) => [...prev, userMsg]);
+      setIsStreaming(true);
+      setStreamingContent("");
+      streamBufRef.current = "";
 
       abortRef.current = chatStream(projectId, msg, {
         onToken(token) {
-          streamBufRef.current += token
-          setStreamingContent(streamBufRef.current)
+          streamBufRef.current += token;
+          setStreamingContent(streamBufRef.current);
         },
         onDone() {
           const aiMsg: Message = {
             id: (Date.now() + 1).toString(),
             role: "ai",
             content: streamBufRef.current,
-          }
-          setMessages((prev) => [...prev, aiMsg])
-          setStreamingContent("")
-          streamBufRef.current = ""
-          setIsStreaming(false)
+          };
+          setMessages((prev) => [...prev, aiMsg]);
+          setStreamingContent("");
+          streamBufRef.current = "";
+          setIsStreaming(false);
         },
         onError(err) {
           if (err?.name !== "AbortError") {
-            setError("Failed to get a response. Please try again.")
+            setError("Failed to get a response. Please try again.");
           }
-          setStreamingContent("")
-          streamBufRef.current = ""
-          setIsStreaming(false)
+          setStreamingContent("");
+          streamBufRef.current = "";
+          setIsStreaming(false);
         },
-      })
+      });
     },
     [input, isStreaming, sessionId, projectId],
-  )
+  );
 
   const handleStop = () => {
-    abortRef.current?.abort()
+    abortRef.current?.abort();
     if (streamBufRef.current) {
       setMessages((prev) => [
         ...prev,
@@ -165,27 +163,25 @@ export function AIChatPanel({
           role: "ai",
           content: streamBufRef.current + " *(stopped)*",
         },
-      ])
+      ]);
     }
-    setStreamingContent("")
-    streamBufRef.current = ""
-    setIsStreaming(false)
-  }
+    setStreamingContent("");
+    streamBufRef.current = "";
+    setIsStreaming(false);
+  };
 
   const handleClear = async () => {
-    abortRef.current?.abort()
-    setIsStreaming(false)
-    setStreamingContent("")
-    setMessages([])
-    if (localKey) localStorage.removeItem(localKey)
+    abortRef.current?.abort();
+    setIsStreaming(false);
+    setStreamingContent("");
+    setMessages([]);
+    if (localKey) localStorage.removeItem(localKey);
     try {
-      await chatApi.reset(projectId)
-    } catch {
+      await chatApi.reset(projectId);
+    } catch {}
+  };
 
-    }
-  }
-
-  const isEmpty = messages.length === 0 && !isStreaming
+  const isEmpty = messages.length === 0 && !isStreaming;
 
   return (
     <Card className="flex flex-col h-full border-0 rounded-none shadow-none">
@@ -228,8 +224,7 @@ export function AIChatPanel({
           {isEmpty && sessionId && (
             <div className="space-y-3">
               <p className="text-xs text-muted-foreground text-center pt-2">
-                Ask me anything about{" "}
-                <strong>{project.meta?.name ?? "this codebase"}</strong>
+                Ask me anything about <strong>{project.meta?.name ?? "this codebase"}</strong>
               </p>
               <div className="grid gap-2">
                 {suggestedPrompts.map((prompt) => (
@@ -313,8 +308,8 @@ export function AIChatPanel({
         <div className="p-3 border-t border-border shrink-0">
           <form
             onSubmit={(e) => {
-              e.preventDefault()
-              handleSend()
+              e.preventDefault();
+              handleSend();
             }}
             className="flex items-center gap-2"
           >
@@ -355,5 +350,5 @@ export function AIChatPanel({
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

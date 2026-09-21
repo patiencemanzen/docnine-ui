@@ -11,7 +11,7 @@ export interface DocVersion {
   };
   createdAt: string;
   updatedAt: string;
-  
+
   content?: string;
 }
 
@@ -25,17 +25,14 @@ export interface VersionListResponse {
 
 export interface VersionHistoryPanelProps {
   projectId: string;
-  
+
   section: string;
-  
+
   sectionLabel: string;
-  
+
   isUserEdited?: boolean;
   onClose: () => void;
-  onRestored: (
-    effectiveOutput: Record<string, string>,
-    editedSections: any[],
-  ) => void;
-  
+  onRestored: (effectiveOutput: Record<string, string>, editedSections: any[]) => void;
+
   onRevertToAI?: () => void;
 }

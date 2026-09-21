@@ -1,10 +1,7 @@
 import { PDFExportOptions } from "@/types/PdfTypes";
 import { ExportDocumentData } from "@/types/ExportTypes";
 
-export function generatePDFHTML(
-  data: ExportDocumentData,
-  options: PDFExportOptions = {},
-): string {
+export function generatePDFHTML(data: ExportDocumentData, options: PDFExportOptions = {}): string {
   const {
     includeTableOfContents = true,
     includeTimestamp = true,
@@ -374,10 +371,7 @@ function markdownToHtml(markdown: string): string {
   html = html.replace(/\*(.+?)\*/g, "<em>$1</em>");
   html = html.replace(/_(.+?)_/g, "<em>$1</em>");
 
-  html = html.replace(
-    /```(?:\w+)?\n([\s\S]*?)\n```/g,
-    "<pre><code>$1</code></pre>",
-  );
+  html = html.replace(/```(?:\w+)?\n([\s\S]*?)\n```/g, "<pre><code>$1</code></pre>");
 
   html = html.replace(/`(.+?)`/g, "<code>$1</code>");
 

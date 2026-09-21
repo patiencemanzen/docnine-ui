@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 
 interface UseClientPaginationOptions {
-  itemsPerPage?: number
-  items: any[]
-  resetOnChange?: boolean
+  itemsPerPage?: number;
+  items: any[];
+  resetOnChange?: boolean;
 }
 
 export function useClientPagination({
@@ -11,34 +11,34 @@ export function useClientPagination({
   items,
   resetOnChange = true,
 }: UseClientPaginationOptions) {
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     if (resetOnChange) {
-      setCurrentPage(1)
+      setCurrentPage(1);
     }
-  }, [items, resetOnChange])
+  }, [items, resetOnChange]);
 
-  const totalPages = Math.max(1, Math.ceil(items.length / itemsPerPage))
-  const startIdx = (currentPage - 1) * itemsPerPage
-  const endIdx = startIdx + itemsPerPage
-  const paginatedItems = items.slice(startIdx, endIdx)
+  const totalPages = Math.max(1, Math.ceil(items.length / itemsPerPage));
+  const startIdx = (currentPage - 1) * itemsPerPage;
+  const endIdx = startIdx + itemsPerPage;
+  const paginatedItems = items.slice(startIdx, endIdx);
 
   const goToPrevious = () => {
-    setCurrentPage((prev) => Math.max(1, prev - 1))
-  }
+    setCurrentPage((prev) => Math.max(1, prev - 1));
+  };
 
   const goToNext = () => {
-    setCurrentPage((prev) => Math.min(totalPages, prev + 1))
-  }
+    setCurrentPage((prev) => Math.min(totalPages, prev + 1));
+  };
 
   const goToPage = (page: number) => {
-    const pageNum = Math.max(1, Math.min(totalPages, page))
-    setCurrentPage(pageNum)
-  }
+    const pageNum = Math.max(1, Math.min(totalPages, page));
+    setCurrentPage(pageNum);
+  };
 
-  const canGoPrevious = currentPage > 1
-  const canGoNext = currentPage < totalPages
+  const canGoPrevious = currentPage > 1;
+  const canGoNext = currentPage < totalPages;
 
   return {
     currentPage,
@@ -53,5 +53,5 @@ export function useClientPagination({
     canGoPrevious,
     canGoNext,
     setCurrentPage,
-  }
+  };
 }

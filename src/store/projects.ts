@@ -168,9 +168,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
 
   updateLocalProject: (id, changes) => {
     set((state) => ({
-      projects: state.projects.map((p) =>
-        p.id === id ? { ...p, ...changes } : p,
-      ),
+      projects: state.projects.map((p) => (p.id === id ? { ...p, ...changes } : p)),
     }));
   },
 

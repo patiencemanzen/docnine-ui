@@ -39,13 +39,7 @@ export interface DocumentationViewerState {
   isOwner: boolean;
 }
 
-export type NativeTab =
-  | "readme"
-  | "api"
-  | "schema"
-  | "internal"
-  | "security"
-  | "other_docs";
+export type NativeTab = "readme" | "api" | "schema" | "internal" | "security" | "other_docs";
 export type DocTab = NativeTab | `custom_${string}`;
 
 export interface TabDef {

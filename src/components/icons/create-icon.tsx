@@ -1,12 +1,12 @@
-import { forwardRef, type ComponentPropsWithoutRef } from "react"
-import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
+import { forwardRef, type ComponentPropsWithoutRef } from "react";
+import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
 
 export type IconProps = Omit<ComponentPropsWithoutRef<"svg">, "ref" | "children"> & {
-  size?: string | number
-  strokeWidth?: number
-  absoluteStrokeWidth?: boolean
-  color?: string
-}
+  size?: string | number;
+  strokeWidth?: number;
+  absoluteStrokeWidth?: boolean;
+  color?: string;
+};
 
 export function createIcon(icon: IconSvgElement, displayName: string) {
   const Icon = forwardRef<SVGSVGElement, IconProps>(
@@ -32,8 +32,8 @@ export function createIcon(icon: IconSvgElement, displayName: string) {
         {...props}
       />
     ),
-  )
+  );
 
-  Icon.displayName = displayName
-  return Icon
+  Icon.displayName = displayName;
+  return Icon;
 }

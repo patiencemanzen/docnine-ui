@@ -1,2 +1,2 @@
-export { NewProjectModal } from "./new-project/index"
-export type { NewProjectModalProps } from "../../types/ProjectTypes"
+export { NewProjectModal } from "./new-project/index";
+export type { NewProjectModalProps } from "../../types/ProjectTypes";

@@ -1,9 +1,4 @@
-import {
-  GithubIcon,
-  GitlabIcon,
-  Code2Icon,
-  CloudCheckIcon,
-} from "@/components/icons";
+import { GithubIcon, GitlabIcon, Code2Icon, CloudCheckIcon } from "@/components/icons";
 import type { ProviderKey, ProviderConfig } from "@/types/ProjectTypes";
 
 export const SELECTED_ORG_KEY = "docnine:selected-org" as const;
@@ -79,9 +74,7 @@ export function readSavedOrg(): string | null {
 export function saveOrg(org: string | null): void {
   try {
     localStorage.setItem(SELECTED_ORG_KEY, org ?? "");
-  } catch {
-    
-  }
+  } catch {}
 }
 
 export function readOAuthResult(provider: ProviderKey): any | null {
@@ -99,7 +92,5 @@ export function clearOAuthResult(provider: ProviderKey): void {
   try {
     const key = PROVIDER_OAUTH_KEYS[provider];
     localStorage.removeItem(key);
-  } catch {
-    
-  }
+  } catch {}
 }

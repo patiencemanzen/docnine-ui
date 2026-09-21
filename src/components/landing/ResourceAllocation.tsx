@@ -1,10 +1,6 @@
-import { DashedLine } from "@/components/landing/DashedLine"
-import {
-  ArchivePreview,
-  NotifyPreview,
-  SharePreview,
-} from "@/components/landing/ProductPreviews"
-import { cn } from "@/lib/utils"
+import { DashedLine } from "@/components/landing/DashedLine";
+import { ArchivePreview, NotifyPreview, SharePreview } from "@/components/landing/ProductPreviews";
+import { cn } from "@/lib/utils";
 
 const topItems = [
   {
@@ -12,18 +8,16 @@ const topItems = [
     description:
       "Start from clear sections — README, API reference, schemas, and security — then edit what matters.",
     kind: "templates" as const,
-    className:
-      "flex-1 [&>.title-container]:mb-5 md:[&>.title-container]:mb-8",
+    className: "flex-1 [&>.title-container]:mb-5 md:[&>.title-container]:mb-8",
   },
   {
     title: "Simplify your stack.",
     description:
       "Connect GitHub, GitLab, and Notion. Stop juggling Confluence, SharePoint, and stale wikis.",
     kind: "stack" as const,
-    className:
-      "flex-1 [&>.title-container]:mb-5 md:[&>.title-container]:mb-8",
+    className: "flex-1 [&>.title-container]:mb-5 md:[&>.title-container]:mb-8",
   },
-]
+];
 
 const bottomItems = [
   {
@@ -38,17 +32,15 @@ const bottomItems = [
     description:
       "Invite editors and viewers so documentation stays a team habit, not a solo chore.",
     kind: "share" as const,
-    className:
-      "justify-normal [&>.title-container]:mb-5 md:[&>.title-container]:mb-0",
+    className: "justify-normal [&>.title-container]:mb-5 md:[&>.title-container]:mb-0",
   },
   {
     title: "Stay notified.",
-    description:
-      "Know when docs regenerate after a push, a portal goes live, or a teammate joins.",
+    description: "Know when docs regenerate after a push, a portal goes live, or a teammate joins.",
     kind: "notify" as const,
     className: "[&>.title-container]:mb-5 md:[&>.title-container]:mb-8",
   },
-]
+];
 
 const STACK_LOGOS = [
   { src: "/landing/logos/github.svg", alt: "GitHub" },
@@ -59,14 +51,11 @@ const STACK_LOGOS = [
   { src: "/landing/logos/drive.svg", alt: "Google Drive" },
   { src: "/landing/logos/confluence.svg", alt: "Confluence" },
   { src: "/landing/logos/jira.svg", alt: "Jira" },
-]
+];
 
 export function ResourceAllocation() {
   return (
-    <section
-      id="resource-allocation"
-      className="overflow-hidden py-[calc(48px+8vh)]"
-    >
+    <section id="resource-allocation" className="overflow-hidden py-[calc(48px+8vh)]">
       <div className="mx-auto max-w-5xl px-6">
         <h2
           data-animate
@@ -80,11 +69,7 @@ export function ResourceAllocation() {
 
           <div className="relative flex max-md:flex-col">
             {topItems.map((item, i) => (
-              <Item
-                key={item.title}
-                item={item}
-                isLast={i === topItems.length - 1}
-              />
+              <Item key={item.title} item={item} isLast={i === topItems.length - 1} />
             ))}
           </div>
           <DashedLine orientation="horizontal" className="scale-x-105" />
@@ -102,17 +87,15 @@ export function ResourceAllocation() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
-type ItemData =
-  | (typeof topItems)[number]
-  | (typeof bottomItems)[number]
+type ItemData = (typeof topItems)[number] | (typeof bottomItems)[number];
 
 interface ItemProps {
-  item: ItemData
-  isLast?: boolean
-  className?: string
+  item: ItemData;
+  isLast?: boolean;
+  className?: string;
 }
 
 function ItemVisual({ kind }: { kind: ItemData["kind"] }) {
@@ -150,39 +133,33 @@ function ItemVisual({ kind }: { kind: ItemData["kind"] }) {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   if (kind === "templates") {
     return (
       <div className="rounded-xl border border-border/60 bg-background/40 p-3">
         <div className="space-y-2">
-          {["README", "API reference", "Schemas", "Security report"].map(
-            (label, i) => (
-              <div
-                key={label}
-                className={cn(
-                  "flex items-center justify-between rounded-lg border px-3 py-2 text-sm",
-                  i === 1
-                    ? "border-primary/40 bg-primary/10"
-                    : "border-border/60 bg-muted/30",
-                )}
-              >
-                <span className="font-medium">{label}</span>
-                <span className="text-xs text-muted-foreground">
-                  {i === 1 ? "Editing" : "Ready"}
-                </span>
-              </div>
-            ),
-          )}
+          {["README", "API reference", "Schemas", "Security report"].map((label, i) => (
+            <div
+              key={label}
+              className={cn(
+                "flex items-center justify-between rounded-lg border px-3 py-2 text-sm",
+                i === 1 ? "border-primary/40 bg-primary/10" : "border-border/60 bg-muted/30",
+              )}
+            >
+              <span className="font-medium">{label}</span>
+              <span className="text-xs text-muted-foreground">{i === 1 ? "Editing" : "Ready"}</span>
+            </div>
+          ))}
         </div>
       </div>
-    )
+    );
   }
 
-  if (kind === "archive") return <ArchivePreview />
-  if (kind === "share") return <SharePreview />
-  return <NotifyPreview />
+  if (kind === "archive") return <ArchivePreview />;
+  if (kind === "share") return <SharePreview />;
+  return <NotifyPreview />;
 }
 
 function Item({ item, isLast, className }: ItemProps) {
@@ -196,13 +173,8 @@ function Item({ item, isLast, className }: ItemProps) {
       )}
     >
       <div className="title-container text-balance">
-        <h3 className="inline text-base font-semibold tracking-tight">
-          {item.title}{" "}
-        </h3>
-        <span className="text-sm leading-relaxed text-muted-foreground">
-          {" "}
-          {item.description}
-        </span>
+        <h3 className="inline text-base font-semibold tracking-tight">{item.title} </h3>
+        <span className="text-sm leading-relaxed text-muted-foreground"> {item.description}</span>
       </div>
 
       <div className="image-container mt-5">
@@ -211,16 +183,10 @@ function Item({ item, isLast, className }: ItemProps) {
 
       {!isLast && (
         <>
-          <DashedLine
-            orientation="vertical"
-            className="absolute top-0 right-0 max-md:hidden"
-          />
-          <DashedLine
-            orientation="horizontal"
-            className="absolute inset-x-0 bottom-0 md:hidden"
-          />
+          <DashedLine orientation="vertical" className="absolute top-0 right-0 max-md:hidden" />
+          <DashedLine orientation="horizontal" className="absolute inset-x-0 bottom-0 md:hidden" />
         </>
       )}
     </div>
-  )
+  );
 }

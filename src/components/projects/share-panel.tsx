@@ -1,18 +1,36 @@
-import { useState, useEffect, useCallback } from "react"
-import { UserPlus, X, Mail, Shield, Eye, Pencil, RotateCcw, Ban, Check, AlertCircle, User } from "@/components/icons"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import { sharingApi } from "@/lib/api"
-import { useSubscriptionStore, hasFeature, meetsMinPlan } from "@/store/subscription"
-import { UpgradeModal } from "@/components/billing/UpgradeModal"
-import { ConfirmDialog } from "@/components/dialogs/ConfirmDialog"
-import { useConfirm } from "@/hooks/useConfirm"
-import { formatDistanceToNow } from "date-fns"
-import Loader1 from "../ui/loader1"
-import { ApiShare, SharePanelProps } from "@/types/ProjectShareTypes"
+import { useState, useEffect, useCallback } from "react";
+import {
+  UserPlus,
+  X,
+  Mail,
+  Shield,
+  Eye,
+  Pencil,
+  RotateCcw,
+  Ban,
+  Check,
+  AlertCircle,
+  User,
+} from "@/components/icons";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { sharingApi } from "@/lib/api";
+import { useSubscriptionStore, hasFeature, meetsMinPlan } from "@/store/subscription";
+import { UpgradeModal } from "@/components/billing/UpgradeModal";
+import { ConfirmDialog } from "@/components/dialogs/ConfirmDialog";
+import { useConfirm } from "@/hooks/useConfirm";
+import { formatDistanceToNow } from "date-fns";
+import Loader1 from "../ui/loader1";
+import { ApiShare, SharePanelProps } from "@/types/ProjectShareTypes";
 
 function RoleBadge({ role }: { role: "owner" | "editor" | "viewer" }) {
   if (role === "owner")
@@ -20,204 +38,229 @@ function RoleBadge({ role }: { role: "owner" | "editor" | "viewer" }) {
       <Badge variant="secondary" className="flex items-center gap-1 text-xs">
         <User className="h-3 w-3 text-yellow-500" /> Owner
       </Badge>
-    )
+    );
   if (role === "editor")
     return (
       <Badge variant="secondary" className="flex items-center gap-1 text-xs">
         <Pencil className="h-3 w-3 text-blue-500" /> Editor
       </Badge>
-    )
+    );
   return (
     <Badge variant="secondary" className="flex items-center gap-1 text-xs">
       <Eye className="h-3 w-3 text-muted-foreground" /> Viewer
     </Badge>
-  )
+  );
 }
 
 function StatusBadge({ status }: { status: "pending" | "accepted" | "revoked" }) {
   if (status === "accepted")
-    return <span className="text-xs text-green-600 font-medium">Active</span>
+    return <span className="text-xs text-green-600 font-medium">Active</span>;
   if (status === "pending")
-    return <span className="text-xs text-yellow-600 font-medium">Pending</span>
-  return <span className="text-xs text-muted-foreground">Revoked</span>
+    return <span className="text-xs text-yellow-600 font-medium">Pending</span>;
+  return <span className="text-xs text-muted-foreground">Revoked</span>;
 }
 
-export function SharePanel({ open, onOpenChange, projectId, projectName, isOwner }: SharePanelProps) {
-  const [shares, setShares] = useState<ApiShare[]>([])
-  const [isLoadingShares, setIsLoadingShares] = useState(false)
-  const [loadError, setLoadError] = useState<string | null>(null)
-  const { confirm, state, handleConfirm, handleCancel } = useConfirm()
+export function SharePanel({
+  open,
+  onOpenChange,
+  projectId,
+  projectName,
+  isOwner,
+}: SharePanelProps) {
+  const [shares, setShares] = useState<ApiShare[]>([]);
+  const [isLoadingShares, setIsLoadingShares] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const { confirm, state, handleConfirm, handleCancel } = useConfirm();
 
-  const { subscription } = useSubscriptionStore()
-  const canShareEdit = hasFeature(subscription, "shareEdit")
-  const maxShares: number | null = subscription?.features?.maxShares ?? null
-  const [upgradeOpen, setUpgradeOpen] = useState(false)
-  const [upgradeFeature, setUpgradeFeature] = useState<{ name: string; plan: string; description?: string }>({ name: "", plan: "pro" })
+  const { subscription } = useSubscriptionStore();
+  const canShareEdit = hasFeature(subscription, "shareEdit");
+  const maxShares: number | null = subscription?.features?.maxShares ?? null;
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
+  const [upgradeFeature, setUpgradeFeature] = useState<{
+    name: string;
+    plan: string;
+    description?: string;
+  }>({ name: "", plan: "pro" });
 
-  const [inviteEmail, setInviteEmail] = useState("")
-  const [inviteRole, setInviteRole] = useState<"viewer" | "editor">("viewer")
-  const [isInviting, setIsInviting] = useState(false)
-  const [inviteResult, setInviteResult] = useState<{ type: "success" | "error"; message: string } | null>(null)
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteRole, setInviteRole] = useState<"viewer" | "editor">("viewer");
+  const [isInviting, setIsInviting] = useState(false);
+  const [inviteResult, setInviteResult] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
 
-  const [rowAction, setRowAction] = useState<{ id: string; action: string } | null>(null)
+  const [rowAction, setRowAction] = useState<{ id: string; action: string } | null>(null);
 
   const loadShares = useCallback(async () => {
-    if (!isOwner) return
-    setIsLoadingShares(true)
-    setLoadError(null)
+    if (!isOwner) return;
+    setIsLoadingShares(true);
+    setLoadError(null);
     try {
-      const data = await sharingApi.listAccess(projectId)
-      setShares(data.shares)
+      const data = await sharingApi.listAccess(projectId);
+      setShares(data.shares);
     } catch (err: any) {
-      setLoadError(err?.message ?? "Failed to load access list.")
+      setLoadError(err?.message ?? "Failed to load access list.");
     } finally {
-      setIsLoadingShares(false)
+      setIsLoadingShares(false);
     }
-  }, [projectId, isOwner])
+  }, [projectId, isOwner]);
 
   useEffect(() => {
     if (open) {
-      loadShares()
-      setInviteResult(null)
-      setInviteEmail("")
-      setInviteRole("viewer")
+      loadShares();
+      setInviteResult(null);
+      setInviteEmail("");
+      setInviteRole("viewer");
     }
-  }, [open, loadShares])
+  }, [open, loadShares]);
 
   const handleInvite = async (e: React.FormEvent) => {
-    e.preventDefault()
-    const email = inviteEmail.trim()
-    if (!email) return
+    e.preventDefault();
+    const email = inviteEmail.trim();
+    if (!email) return;
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setInviteResult({ type: "error", message: "Please enter a valid email address." })
-      return
+      setInviteResult({ type: "error", message: "Please enter a valid email address." });
+      return;
     }
 
     if (maxShares !== null && shares.length >= maxShares) {
-      setUpgradeFeature({ name: "More Collaborators", plan: "pro", description: `Your plan allows up to ${maxShares} collaborator${maxShares === 1 ? "" : "s"}. Upgrade to invite unlimited team members.` })
-      setUpgradeOpen(true)
-      return
+      setUpgradeFeature({
+        name: "More Collaborators",
+        plan: "pro",
+        description: `Your plan allows up to ${maxShares} collaborator${maxShares === 1 ? "" : "s"}. Upgrade to invite unlimited team members.`,
+      });
+      setUpgradeOpen(true);
+      return;
     }
 
     if (inviteRole === "editor" && !canShareEdit) {
-      setUpgradeFeature({ name: "Editor Access", plan: "pro", description: "Upgrade to Pro to invite collaborators with editor access." })
-      setUpgradeOpen(true)
-      return
+      setUpgradeFeature({
+        name: "Editor Access",
+        plan: "pro",
+        description: "Upgrade to Pro to invite collaborators with editor access.",
+      });
+      setUpgradeOpen(true);
+      return;
     }
 
-    setIsInviting(true)
-    setInviteResult(null)
+    setIsInviting(true);
+    setInviteResult(null);
     try {
-      const data = await sharingApi.invite(projectId, [{ email, role: inviteRole }])
-      const result = data.results[0]
+      const data = await sharingApi.invite(projectId, [{ email, role: inviteRole }]);
+      const result = data.results[0];
       if (result?.status === "skipped") {
-        setInviteResult({ type: "error", message: result.reason ?? "Could not invite." })
+        setInviteResult({ type: "error", message: result.reason ?? "Could not invite." });
       } else {
-        setInviteResult({ type: "success", message: `Invite sent to ${email}!` })
-        setInviteEmail("")
-        await loadShares()
+        setInviteResult({ type: "success", message: `Invite sent to ${email}!` });
+        setInviteEmail("");
+        await loadShares();
       }
     } catch (err: any) {
-      setInviteResult({ type: "error", message: err?.message ?? "Failed to send invite." })
+      setInviteResult({ type: "error", message: err?.message ?? "Failed to send invite." });
     } finally {
-      setIsInviting(false)
+      setIsInviting(false);
     }
-  }
+  };
 
   const handleRoleChange = async (shareId: string, newRole: "viewer" | "editor") => {
     if (newRole === "editor" && !canShareEdit) {
-      setUpgradeFeature({ name: "Editor Access", plan: "pro", description: "Upgrade to Pro to grant editor access to collaborators." })
-      setUpgradeOpen(true)
-      return
+      setUpgradeFeature({
+        name: "Editor Access",
+        plan: "pro",
+        description: "Upgrade to Pro to grant editor access to collaborators.",
+      });
+      setUpgradeOpen(true);
+      return;
     }
-    setRowAction({ id: shareId, action: "role" })
+    setRowAction({ id: shareId, action: "role" });
     try {
-      const data = await sharingApi.changeRole(projectId, shareId, newRole)
-      setShares((s) => s.map((sh) => (sh._id === shareId ? { ...sh, role: data.share.role } : sh)))
+      const data = await sharingApi.changeRole(projectId, shareId, newRole);
+      setShares((s) => s.map((sh) => (sh._id === shareId ? { ...sh, role: data.share.role } : sh)));
     } catch (err: any) {
       const confirmed = await confirm({
         title: "Error",
         message: err?.message ?? "Failed to change role.",
         confirmText: "OK",
-        cancelText: ""
-      })
+        cancelText: "",
+      });
     } finally {
-      setRowAction(null)
+      setRowAction(null);
     }
-  }
+  };
 
   const handleRevokeAccess = async (shareId: string, email: string) => {
     const confirmed = await confirm({
       title: "Revoke Access",
       message: `Remove ${email}'s access? This cannot be undone.`,
-      isDangerous: true
-    })
-    if (!confirmed) return
-    
-    setRowAction({ id: shareId, action: "revoke" })
+      isDangerous: true,
+    });
+    if (!confirmed) return;
+
+    setRowAction({ id: shareId, action: "revoke" });
     try {
-      await sharingApi.revokeAccess(projectId, shareId)
-      setShares((s) => s.filter((sh) => sh._id !== shareId))
+      await sharingApi.revokeAccess(projectId, shareId);
+      setShares((s) => s.filter((sh) => sh._id !== shareId));
     } catch (err: any) {
       await confirm({
         title: "Error",
         message: err?.message ?? "Failed to revoke access.",
         confirmText: "OK",
-        cancelText: ""
-      })
+        cancelText: "",
+      });
     } finally {
-      setRowAction(null)
+      setRowAction(null);
     }
-  }
+  };
 
   const handleResendInvite = async (shareId: string) => {
-    setRowAction({ id: shareId, action: "resend" })
+    setRowAction({ id: shareId, action: "resend" });
     try {
-      await sharingApi.resendInvite(projectId, shareId)
+      await sharingApi.resendInvite(projectId, shareId);
       setShares((s) =>
         s.map((sh) =>
           sh._id === shareId
             ? { ...sh, expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() }
             : sh,
         ),
-      )
+      );
     } catch (err: any) {
       await confirm({
         title: "Error",
         message: err?.message ?? "Failed to resend invite.",
         confirmText: "OK",
-        cancelText: ""
-      })
+        cancelText: "",
+      });
     } finally {
-      setRowAction(null)
+      setRowAction(null);
     }
-  }
+  };
 
   const handleCancelInvite = async (shareId: string, email: string) => {
     const confirmed = await confirm({
       title: "Cancel Invite",
       message: `Cancel invite for ${email}? They will no longer be invited to this project.`,
-      isDangerous: true
-    })
-    if (!confirmed) return
-    
-    setRowAction({ id: shareId, action: "cancel" })
+      isDangerous: true,
+    });
+    if (!confirmed) return;
+
+    setRowAction({ id: shareId, action: "cancel" });
     try {
-      await sharingApi.cancelInvite(projectId, shareId)
-      setShares((s) => s.filter((sh) => sh._id !== shareId))
+      await sharingApi.cancelInvite(projectId, shareId);
+      setShares((s) => s.filter((sh) => sh._id !== shareId));
     } catch (err: any) {
       await confirm({
         title: "Error",
         message: err?.message ?? "Failed to cancel invite.",
         confirmText: "OK",
-        cancelText: ""
-      })
+        cancelText: "",
+      });
     } finally {
-      setRowAction(null)
+      setRowAction(null);
     }
-  }
+  };
 
-  const isRowBusy = (shareId: string) => rowAction?.id === shareId
+  const isRowBusy = (shareId: string) => rowAction?.id === shareId;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -268,13 +311,17 @@ export function SharePanel({ open, onOpenChange, projectId, projectName, isOwner
               <Select
                 value={inviteRole}
                 onChange={(e) => {
-                  const newRole = e.target.value as "viewer" | "editor"
+                  const newRole = e.target.value as "viewer" | "editor";
                   if (newRole === "editor" && !canShareEdit) {
-                    setUpgradeFeature({ name: "Editor Access", plan: "pro", description: "Upgrade to Pro to invite collaborators with editor access." })
-                    setUpgradeOpen(true)
-                    return
+                    setUpgradeFeature({
+                      name: "Editor Access",
+                      plan: "pro",
+                      description: "Upgrade to Pro to invite collaborators with editor access.",
+                    });
+                    setUpgradeOpen(true);
+                    return;
                   }
-                  setInviteRole(newRole)
+                  setInviteRole(newRole);
                 }}
                 className="w-[110px]"
                 disabled={isInviting}
@@ -284,11 +331,7 @@ export function SharePanel({ open, onOpenChange, projectId, projectName, isOwner
               </Select>
             </div>
             <Button type="submit" disabled={isInviting || !inviteEmail.trim()} className="shrink-0">
-              {isInviting ? (
-                <Loader1 className="h-4 w-4 " />
-              ) : (
-                <UserPlus className="h-4 w-4" />
-              )}
+              {isInviting ? <Loader1 className="h-4 w-4 " /> : <UserPlus className="h-4 w-4" />}
               <span className="ml-1.5 hidden sm:inline">Invite</span>
             </Button>
           </form>
@@ -296,10 +339,11 @@ export function SharePanel({ open, onOpenChange, projectId, projectName, isOwner
 
         {inviteResult && (
           <div
-            className={`shrink-0 flex items-center gap-2 rounded-md px-3 py-2 text-sm ${inviteResult.type === "success"
+            className={`shrink-0 flex items-center gap-2 rounded-md px-3 py-2 text-sm ${
+              inviteResult.type === "success"
                 ? "bg-green-50 text-green-800 border border-green-200"
                 : "bg-destructive/10 text-destructive border border-destructive/20"
-              }`}
+            }`}
           >
             {inviteResult.type === "success" ? (
               <Check className="h-4 w-4 shrink-0" />
@@ -334,8 +378,8 @@ export function SharePanel({ open, onOpenChange, projectId, projectName, isOwner
               </p>
               {shares.map((share) => {
                 const displayName =
-                  share.inviteeUser?.name || share.inviteeUser?.email || share.inviteeEmail
-                const busy = isRowBusy(share._id)
+                  share.inviteeUser?.name || share.inviteeUser?.email || share.inviteeEmail;
+                const busy = isRowBusy(share._id);
 
                 return (
                   <div
@@ -357,7 +401,8 @@ export function SharePanel({ open, onOpenChange, projectId, projectName, isOwner
                           <StatusBadge status={share.status} />
                           {share.status === "pending" && (
                             <span className="text-xs text-muted-foreground">
-                              · expires {formatDistanceToNow(new Date(share.expiresAt), { addSuffix: true })}
+                              · expires{" "}
+                              {formatDistanceToNow(new Date(share.expiresAt), { addSuffix: true })}
                             </span>
                           )}
                         </div>
@@ -408,7 +453,8 @@ export function SharePanel({ open, onOpenChange, projectId, projectName, isOwner
                                 : handleRevokeAccess(share._id, share.inviteeEmail)
                             }
                           >
-                            {busy && (rowAction?.action === "revoke" || rowAction?.action === "cancel") ? (
+                            {busy &&
+                            (rowAction?.action === "revoke" || rowAction?.action === "cancel") ? (
                               <Loader1 className="h-3.5 w-3.5 " />
                             ) : (
                               <Ban className="h-3.5 w-3.5" />
@@ -420,7 +466,7 @@ export function SharePanel({ open, onOpenChange, projectId, projectName, isOwner
                       )}
                     </div>
                   </div>
-                )
+                );
               })}
             </>
           )}
@@ -430,12 +476,40 @@ export function SharePanel({ open, onOpenChange, projectId, projectName, isOwner
           <p>
             <strong>Viewer</strong> : can read documentation and attachments.{" "}
             <strong>Editor</strong> : can also edit docs and upload files.{" "}
-            {!canShareEdit && <span className="text-primary font-medium cursor-pointer" onClick={() => { setUpgradeFeature({ name: "Editor Access", plan: "pro", description: "Upgrade to Pro to invite collaborators with editor access." }); setUpgradeOpen(true) }}>Upgrade to Pro for editor access.</span>}
+            {!canShareEdit && (
+              <span
+                className="text-primary font-medium cursor-pointer"
+                onClick={() => {
+                  setUpgradeFeature({
+                    name: "Editor Access",
+                    plan: "pro",
+                    description: "Upgrade to Pro to invite collaborators with editor access.",
+                  });
+                  setUpgradeOpen(true);
+                }}
+              >
+                Upgrade to Pro for editor access.
+              </span>
+            )}
           </p>
           {maxShares !== null && (
             <p className="mt-1">
               Collaborators: {shares.length} / {maxShares}.{" "}
-              {shares.length >= maxShares && <span className="text-primary font-medium cursor-pointer" onClick={() => { setUpgradeFeature({ name: "More Collaborators", plan: "pro", description: `Upgrade to invite unlimited collaborators.` }); setUpgradeOpen(true) }}>Upgrade for unlimited.</span>}
+              {shares.length >= maxShares && (
+                <span
+                  className="text-primary font-medium cursor-pointer"
+                  onClick={() => {
+                    setUpgradeFeature({
+                      name: "More Collaborators",
+                      plan: "pro",
+                      description: `Upgrade to invite unlimited collaborators.`,
+                    });
+                    setUpgradeOpen(true);
+                  }}
+                >
+                  Upgrade for unlimited.
+                </span>
+              )}
             </p>
           )}
         </div>
@@ -460,5 +534,5 @@ export function SharePanel({ open, onOpenChange, projectId, projectName, isOwner
         onCancel={handleCancel}
       />
     </Dialog>
-  )
+  );
 }

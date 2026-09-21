@@ -1,98 +1,94 @@
-import { Search, AlertCircle } from "@/components/icons"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { DialogFooter } from "@/components/ui/dialog"
-import Loader1 from "@/components/ui/loader1"
-import { OrgAccountPicker } from "@/components/projects/org-account-picker"
-import { RepoList } from "./RepoList"
-import { PROVIDER_CONFIG } from "@/configs/ProjectConfig"
-import type { ProviderRepoSelectorProps, ProviderKey } from "../../../types/ProjectTypes"
+import { Search, AlertCircle } from "@/components/icons";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { DialogFooter } from "@/components/ui/dialog";
+import Loader1 from "@/components/ui/loader1";
+import { OrgAccountPicker } from "@/components/projects/org-account-picker";
+import { RepoList } from "./RepoList";
+import { PROVIDER_CONFIG } from "@/configs/ProjectConfig";
+import type { ProviderRepoSelectorProps, ProviderKey } from "../../../types/ProjectTypes";
 
 export function ProviderRepoSelector({
-    provider,
-    repos,
-    filteredRepos,
-    selectedRepo,
-    searchQuery,
-    loading,
-    hasNextPage,
-    isConnecting,
-    username,
-    githubOrgs,
-    githubOrgsLoading,
-    githubSelectedOrg,
-    onSearchChange,
-    onSelectRepo,
-    onLoadMore,
-    onBack,
-    onSubmit,
-    onGithubOrgChange,
+  provider,
+  repos,
+  filteredRepos,
+  selectedRepo,
+  searchQuery,
+  loading,
+  hasNextPage,
+  isConnecting,
+  username,
+  githubOrgs,
+  githubOrgsLoading,
+  githubSelectedOrg,
+  onSearchChange,
+  onSelectRepo,
+  onLoadMore,
+  onBack,
+  onSubmit,
+  onGithubOrgChange,
 }: ProviderRepoSelectorProps) {
-    const config = PROVIDER_CONFIG[provider]
+  const config = PROVIDER_CONFIG[provider];
 
-    if (isConnecting && repos.length === 0) {
-        return (
-            <div className="grid gap-4 py-8">
-                <div className="flex flex-col items-center justify-center gap-4 text-center">
-                    <Loader1 className="h-8 w-8 text-primary" />
-                    <div>
-                        <p className="text-sm font-medium">Connecting to {config.label}...</p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                            Please complete the authorization in the popup window
-                        </p>
-                    </div>
-                </div>
-            </div>
-        )
-    }
-
+  if (isConnecting && repos.length === 0) {
     return (
-        <div className="grid gap-4 py-4">
-
-            {provider === "github" && onGithubOrgChange && (
-                <OrgAccountPicker
-                    username={username}
-                    orgs={githubOrgs || []}
-                    orgsLoading={githubOrgsLoading || false}
-                    selected={githubSelectedOrg || null}
-                    onSelect={onGithubOrgChange}
-                />
-            )}
-
-            <div className="relative">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                    placeholder="Search repositories…"
-                    className="pl-9"
-                    value={searchQuery}
-                    onChange={(e) => onSearchChange(e.target.value)}
-                    disabled={loading || isConnecting || repos.length === 0}
-                />
-            </div>
-
-            <div className="max-h-62.5 overflow-y-auto rounded-md border border-border">
-                <RepoList
-                    repos={filteredRepos}
-                    loading={loading}
-                    hasNextPage={hasNextPage}
-                    selectedRepo={selectedRepo}
-                    onSelect={onSelectRepo}
-                    onLoadMore={onLoadMore}
-                />
-            </div>
-
-            <DialogFooter className="mt-4">
-                <Button type="button" variant="ghost" onClick={onBack} disabled={isConnecting}>
-                    Back
-                </Button>
-                <Button
-                    onClick={onSubmit}
-                    disabled={!selectedRepo || isConnecting || repos.length === 0}
-                >
-                    {isConnecting && <Loader1 className="mr-2 h-4 w-4" />}
-                    Import Repository
-                </Button>
-            </DialogFooter>
+      <div className="grid gap-4 py-8">
+        <div className="flex flex-col items-center justify-center gap-4 text-center">
+          <Loader1 className="h-8 w-8 text-primary" />
+          <div>
+            <p className="text-sm font-medium">Connecting to {config.label}...</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Please complete the authorization in the popup window
+            </p>
+          </div>
         </div>
-    )
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid gap-4 py-4">
+      {provider === "github" && onGithubOrgChange && (
+        <OrgAccountPicker
+          username={username}
+          orgs={githubOrgs || []}
+          orgsLoading={githubOrgsLoading || false}
+          selected={githubSelectedOrg || null}
+          onSelect={onGithubOrgChange}
+        />
+      )}
+
+      <div className="relative">
+        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search repositories…"
+          className="pl-9"
+          value={searchQuery}
+          onChange={(e) => onSearchChange(e.target.value)}
+          disabled={loading || isConnecting || repos.length === 0}
+        />
+      </div>
+
+      <div className="max-h-62.5 overflow-y-auto rounded-md border border-border">
+        <RepoList
+          repos={filteredRepos}
+          loading={loading}
+          hasNextPage={hasNextPage}
+          selectedRepo={selectedRepo}
+          onSelect={onSelectRepo}
+          onLoadMore={onLoadMore}
+        />
+      </div>
+
+      <DialogFooter className="mt-4">
+        <Button type="button" variant="ghost" onClick={onBack} disabled={isConnecting}>
+          Back
+        </Button>
+        <Button onClick={onSubmit} disabled={!selectedRepo || isConnecting || repos.length === 0}>
+          {isConnecting && <Loader1 className="mr-2 h-4 w-4" />}
+          Import Repository
+        </Button>
+      </DialogFooter>
+    </div>
+  );
 }

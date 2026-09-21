@@ -1,12 +1,12 @@
-import { cn } from "@/lib/utils"
-import { ApplicationLogo } from "./application-logo"
-import { AuroraBackdrop } from "@/components/landing/hero/AuroraBackdrop"
+import { cn } from "@/lib/utils";
+import { ApplicationLogo } from "./application-logo";
+import { AuroraBackdrop } from "@/components/landing/hero/AuroraBackdrop";
 
 interface AuthShellProps {
-  children: React.ReactNode
-  className?: string
-  headline?: string
-  subcopy?: string
+  children: React.ReactNode;
+  className?: string;
+  headline?: string;
+  subcopy?: string;
 }
 
 export function AuthShell({
@@ -33,8 +33,7 @@ export function AuthShell({
           </div>
 
           <p className="relative z-10 shrink-0 select-none text-xs text-white/50">
-            © {new Date().getFullYear()} Docnine, Seablings Technology. All
-            rights reserved.
+            © {new Date().getFullYear()} Docnine, Seablings Technology. All rights reserved.
           </p>
         </div>
       </div>
@@ -56,5 +55,5 @@ export function AuthShell({
         </p>
       </div>
     </div>
-  )
+  );
 }

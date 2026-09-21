@@ -1,11 +1,11 @@
-import { Link } from "react-router-dom"
-import { ArrowRight } from "@/components/icons"
-import { Button } from "@/components/ui/button"
-import { API_BASE } from "@/lib/api"
-import { AuroraBackdrop } from "./AuroraBackdrop"
+import { Link } from "react-router-dom";
+import { ArrowRight } from "@/components/icons";
+import { Button } from "@/components/ui/button";
+import { API_BASE } from "@/lib/api";
+import { AuroraBackdrop } from "./AuroraBackdrop";
 
 function startGoogleOAuth() {
-  window.location.href = `${API_BASE}/auth/google/start`
+  window.location.href = `${API_BASE}/auth/google/start`;
 }
 
 export function HeroSection() {
@@ -23,8 +23,8 @@ export function HeroSection() {
           </h1>
           <div data-animate data-delay="1" className="flex flex-col gap-5">
             <p className="leading-relaxed text-white/70 drop-shadow-[0_1px_12px_rgba(0,0,0,0.4)]">
-              Connect a repo, generate clear documentation, and keep every page
-              up to date as your team ships — without rewriting by hand.
+              Connect a repo, generate clear documentation, and keep every page up to date as your
+              team ships — without rewriting by hand.
             </p>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <Button
@@ -50,5 +50,5 @@ export function HeroSection() {
 
       <div className="hero-section-fade" aria-hidden />
     </section>
-  )
+  );
 }

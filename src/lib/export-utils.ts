@@ -1,8 +1,5 @@
 import { ExportDocumentData, ExportTabContent } from "@/types/ExportTypes";
-import {
-  markdownToFormattedText,
-  markdownToStructuredContent,
-} from "./markdown-converter";
+import { markdownToFormattedText, markdownToStructuredContent } from "./markdown-converter";
 
 export function prepareExportData(
   projectName: string,
@@ -151,8 +148,6 @@ export function exportToStructuredFormat(data: ExportDocumentData) {
 }
 
 export function getExportSummary(data: ExportDocumentData): string {
-  const sections = data.tabs
-    .map((t) => `${t.label}${t.isCustom ? " *" : ""}`)
-    .join(", ");
+  const sections = data.tabs.map((t) => `${t.label}${t.isCustom ? " *" : ""}`).join(", ");
   return `Exporting ${data.totalTabs} section(s): ${sections}`;
 }

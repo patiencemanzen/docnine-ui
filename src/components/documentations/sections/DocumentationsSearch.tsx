@@ -1,10 +1,10 @@
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Search } from "@/components/icons"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Search } from "@/components/icons";
 
 interface DocumentationsSearchProps {
-  search: string
-  onSearchChange: (value: string) => void
+  search: string;
+  onSearchChange: (value: string) => void;
 }
 
 export function DocumentationsSearch({ search, onSearchChange }: DocumentationsSearchProps) {
@@ -18,5 +18,5 @@ export function DocumentationsSearch({ search, onSearchChange }: DocumentationsS
         onChange={(e) => onSearchChange(e.target.value)}
       />
     </div>
-  )
+  );
 }

@@ -1,11 +1,11 @@
 import { SeoConfig } from "@/types/SeoTypes";
 import { useEffect, useRef } from "react";
 
-const DEFAULT_SITE_NAME = "Docnine"
+const DEFAULT_SITE_NAME = "Docnine";
 const DEFAULT_DESCRIPTION =
-  "Generate and maintain developer documentation with AI. Docnine creates docs from your codebase and keeps them up to date as your code evolves."
-const DEFAULT_IMAGE_PATH = "/web-app-manifest-512x512.png"
-const TITLE_SUFFIX = " | Docnine"
+  "Generate and maintain developer documentation with AI. Docnine creates docs from your codebase and keeps them up to date as your code evolves.";
+const DEFAULT_IMAGE_PATH = "/web-app-manifest-512x512.png";
+const TITLE_SUFFIX = " | Docnine";
 
 function trimSlash(value: string): string {
   return value.replace(/\/+$/, "");
@@ -18,10 +18,7 @@ export function getSiteUrl(): string {
   return "https://docnineai.com";
 }
 
-function toAbsoluteUrl(
-  urlOrPath: string | undefined,
-  siteUrl: string,
-): string | undefined {
+function toAbsoluteUrl(urlOrPath: string | undefined, siteUrl: string): string | undefined {
   if (!urlOrPath) return undefined;
   if (/^https?:\/\//i.test(urlOrPath)) return urlOrPath;
   const cleanPath = urlOrPath.startsWith("/") ? urlOrPath : `/${urlOrPath}`;
@@ -29,9 +26,7 @@ function toAbsoluteUrl(
 }
 
 function upsertMeta(attr: "name" | "property", value: string, content: string) {
-  let el = document.head.querySelector<HTMLMetaElement>(
-    `meta[${attr}="${value}"]`,
-  );
+  let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${value}"]`);
   if (!el) {
     el = document.createElement("meta");
     el.setAttribute(attr, value);
@@ -83,23 +78,21 @@ export function applySeo(config: SeoConfig | null) {
   const type = config.type ?? "website";
   const sdId = config.structuredDataId ?? "docnine-seo-jsonld";
   const image = toAbsoluteUrl(config.image ?? DEFAULT_IMAGE_PATH, siteUrl);
-  const twitterCard =
-    config.twitterCard ?? (image ? "summary_large_image" : "summary");
+  const twitterCard = config.twitterCard ?? (image ? "summary_large_image" : "summary");
 
   const canonicalUrl =
     config.canonicalUrl ??
     toAbsoluteUrl(
-      config.pathname ??
-        (typeof window !== "undefined" ? window.location.pathname : "/"),
+      config.pathname ?? (typeof window !== "undefined" ? window.location.pathname : "/"),
       siteUrl,
     ) ??
     siteUrl;
 
-  const appendSuffix = config.appendSiteName ?? true
+  const appendSuffix = config.appendSiteName ?? true;
   const fullTitle =
     appendSuffix && !/docnine/i.test(config.title)
       ? `${config.title}${TITLE_SUFFIX}`
-      : config.title
+      : config.title;
 
   const keywords = (config.keywords ?? []).filter(Boolean).join(", ");
 
@@ -122,10 +115,8 @@ export function applySeo(config: SeoConfig | null) {
 
   if (image) {
     upsertMeta("property", "og:image", image);
-    if (config.imageWidth)
-      upsertMeta("property", "og:image:width", String(config.imageWidth));
-    if (config.imageHeight)
-      upsertMeta("property", "og:image:height", String(config.imageHeight));
+    if (config.imageWidth) upsertMeta("property", "og:image:width", String(config.imageWidth));
+    if (config.imageHeight) upsertMeta("property", "og:image:height", String(config.imageHeight));
     upsertMeta("property", "og:image:alt", fullTitle);
   } else {
     removeMeta("property", "og:image");
@@ -140,8 +131,7 @@ export function applySeo(config: SeoConfig | null) {
   if (image) upsertMeta("name", "twitter:image", image);
   else removeMeta("name", "twitter:image");
 
-  if (config.twitterSite)
-    upsertMeta("name", "twitter:site", config.twitterSite);
+  if (config.twitterSite) upsertMeta("name", "twitter:site", config.twitterSite);
 
   if (config.structuredData) upsertStructuredData(config.structuredData, sdId);
   else removeStructuredData(sdId);
@@ -156,7 +146,6 @@ export function useSeo(config: SeoConfig | null) {
     applySeo(config);
 
     return () => {
-
       removeStructuredData(sdId);
     };
   }, [config, sdId]);

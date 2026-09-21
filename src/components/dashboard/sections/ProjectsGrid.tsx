@@ -1,9 +1,9 @@
-import { useState } from "react"
-import { Link } from "react-router-dom"
-import { formatDistanceToNow } from "date-fns"
-import { Button } from "@/components/ui/button"
-import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { formatDistanceToNow } from "date-fns";
+import { Button } from "@/components/ui/button";
+import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   MoreVertical,
   Archive,
@@ -12,10 +12,10 @@ import {
   Github,
   FolderGitIcon,
   PencilLineIcon,
-} from "@/components/icons"
-import Loader1 from "@/components/ui/loader1"
-import { cn } from "@/lib/utils"
-import { ProjectsGridProps } from "@/types/DashboardTypes"
+} from "@/components/icons";
+import Loader1 from "@/components/ui/loader1";
+import { cn } from "@/lib/utils";
+import { ProjectsGridProps } from "@/types/DashboardTypes";
 
 export function ProjectsGrid({
   projects,
@@ -25,7 +25,7 @@ export function ProjectsGrid({
   onRetry,
   actionLoading,
 }: ProjectsGridProps) {
-  const [openMenuId, setOpenMenuId] = useState<string | null>(null)
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   if (isLoading) {
     return (
@@ -43,17 +43,17 @@ export function ProjectsGrid({
           </Card>
         ))}
       </div>
-    )
+    );
   }
 
   if (projects.length === 0) {
-    return null
+    return null;
   }
 
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {projects.map((project) => {
-        const isFailed = project.status === "failed"
+        const isFailed = project.status === "failed";
 
         return (
           <Card
@@ -69,7 +69,10 @@ export function ProjectsGrid({
               <div className="flex items-start justify-between">
                 <div className="space-y-1 flex-1 min-w-0">
                   <CardTitle className="text-lg line-clamp-1" title={project.name}>
-                    <Link to={`/projects/${project.id}`} className="hover:underline hover:text-primary">
+                    <Link
+                      to={`/projects/${project.id}`}
+                      className="hover:underline hover:text-primary"
+                    >
                       {project.name}
                     </Link>
                   </CardTitle>
@@ -90,7 +93,10 @@ export function ProjectsGrid({
                       {project.repoOwner} / {project.name}
                     </span>
                   </div>
-                  <div className="flex items-center text-sm text-muted-foreground mt-2" title={project.description}>
+                  <div
+                    className="flex items-center text-sm text-muted-foreground mt-2"
+                    title={project.description}
+                  >
                     <span className="line-clamp-2">{project.description}</span>
                   </div>
                 </div>
@@ -101,8 +107,8 @@ export function ProjectsGrid({
                     size="icon"
                     className="h-8 w-8 -mr-2 -mt-2 text-muted-foreground hover:text-foreground"
                     onClick={(e) => {
-                      e.stopPropagation()
-                      setOpenMenuId(openMenuId === project.id ? null : project.id)
+                      e.stopPropagation();
+                      setOpenMenuId(openMenuId === project.id ? null : project.id);
                     }}
                     disabled={actionLoading === project.id}
                   >
@@ -121,8 +127,8 @@ export function ProjectsGrid({
                         <button
                           className="flex w-full items-center gap-2 px-3 py-2 hover:bg-muted transition-colors"
                           onClick={(e) => {
-                            onRetry(project.id, e)
-                            setOpenMenuId(null)
+                            onRetry(project.id, e);
+                            setOpenMenuId(null);
                           }}
                         >
                           <RefreshCw className="h-4 w-4 text-primary" /> Retry Pipeline
@@ -132,8 +138,8 @@ export function ProjectsGrid({
                         <button
                           className="flex w-full items-center gap-2 px-3 py-2 hover:bg-muted transition-colors"
                           onClick={(e) => {
-                            onArchive(project.id, e)
-                            setOpenMenuId(null)
+                            onArchive(project.id, e);
+                            setOpenMenuId(null);
                           }}
                         >
                           <Archive className="h-4 w-4 text-muted-foreground" /> Archive
@@ -143,8 +149,8 @@ export function ProjectsGrid({
                         <button
                           className="flex w-full items-center gap-2 px-3 py-2 hover:bg-destructive/10 text-destructive transition-colors"
                           onClick={(e) => {
-                            onDelete(project.id, e)
-                            setOpenMenuId(null)
+                            onDelete(project.id, e);
+                            setOpenMenuId(null);
                           }}
                         >
                           <Trash2 className="h-4 w-4" /> Delete
@@ -161,16 +167,17 @@ export function ProjectsGrid({
                 isFailed ? "border-red-500/15 bg-red-500/[0.03]" : "border-border/50 bg-muted/20",
               )}
             >
-              <span>
-                {formatDistanceToNow(new Date(project.updatedAt), { addSuffix: true })}
-              </span>
-              <Link to={`/projects/${project.id}`} className="font-medium text-primary hover:underline">
+              <span>{formatDistanceToNow(new Date(project.updatedAt), { addSuffix: true })}</span>
+              <Link
+                to={`/projects/${project.id}`}
+                className="font-medium text-primary hover:underline"
+              >
                 View Details
               </Link>
             </CardFooter>
           </Card>
-        )
+        );
       })}
     </div>
-  )
+  );
 }

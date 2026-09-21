@@ -1,8 +1,8 @@
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
 
-import { ArrowUp } from "@/components/icons"
+import { ArrowUp } from "@/components/icons";
 
-const GITHUB_URL = "https://github.com/docnineai"
+const GITHUB_URL = "https://github.com/docnineai";
 
 export function Footer() {
   const navigation = [
@@ -11,20 +11,17 @@ export function Footer() {
     { name: "Docs", href: "/docs" },
     { name: "FAQ", href: "/#faq" },
     { name: "Contact", href: "/contact" },
-  ]
+  ];
 
   const legal = [
     { name: "Privacy", href: "/privacy" },
     { name: "Terms", href: "/terms" },
-  ]
+  ];
 
   return (
     <footer className="flex flex-col items-center gap-12 pt-[calc(48px+8vh)]">
       <div className="mx-auto max-w-5xl space-y-4 px-6 text-center">
-        <h2
-          data-animate
-          className="text-3xl font-bold tracking-tight sm:text-4xl"
-        >
+        <h2 data-animate className="text-3xl font-bold tracking-tight sm:text-4xl">
           Start documenting for free
         </h2>
         <p
@@ -32,8 +29,7 @@ export function Footer() {
           data-delay="1"
           className="mx-auto max-w-xl text-balance leading-relaxed text-muted-foreground"
         >
-          Connect a repo, generate clear docs, and keep every page up to date as
-          your team ships.
+          Connect a repo, generate clear docs, and keep every page up to date as your team ships.
         </p>
         <div data-animate data-delay="2">
           <Link
@@ -64,8 +60,7 @@ export function Footer() {
               rel="noopener noreferrer"
               className="flex items-center gap-0.5 text-sm font-medium transition-opacity hover:opacity-75"
             >
-              GitHub{" "}
-              <ArrowUp className="size-3.5 rotate-45" aria-hidden="true" />
+              GitHub <ArrowUp className="size-3.5 rotate-45" aria-hidden="true" />
             </a>
           </li>
         </ul>
@@ -92,5 +87,5 @@ export function Footer() {
         </p>
       </div>
     </footer>
-  )
+  );
 }

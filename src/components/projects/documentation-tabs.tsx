@@ -14,9 +14,5 @@ export function buildTabList(customTabs: CustomTab[] = []): TabDef[] {
       isCustom: true,
       customTab: ct,
     }));
-  return [
-    ...NATIVE_TABS.slice(0, -1),
-    ...customDefs,
-    NATIVE_TABS[NATIVE_TABS.length - 1],
-  ];
+  return [...NATIVE_TABS.slice(0, -1), ...customDefs, NATIVE_TABS[NATIVE_TABS.length - 1]];
 }

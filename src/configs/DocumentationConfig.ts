@@ -1,12 +1,5 @@
 import { NativeTab, TabDef } from "@/types/DocumentationTypes";
-import {
-  Book,
-  BookOpen,
-  Database,
-  FileCode,
-  FileCode2,
-  ShieldAlert,
-} from "@/components/icons";
+import { Book, BookOpen, Database, FileCode, FileCode2, ShieldAlert } from "@/components/icons";
 
 export const NATIVE_TABS: TabDef[] = [
   {

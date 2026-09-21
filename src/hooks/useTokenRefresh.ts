@@ -13,7 +13,6 @@ export function useTokenRefresh() {
     try {
       const data = await authApi.refresh();
       if (data?.accessToken) {
-
         setAccessToken(data.accessToken);
         if (data.user) {
           useAuthStore.getState().setTokens(data.user, data.accessToken);
@@ -21,14 +20,12 @@ export function useTokenRefresh() {
         console.debug("[useTokenRefresh] Token refreshed successfully");
       }
     } catch {
-
       console.debug("[useTokenRefresh] Token refresh failed : session will expire on next request");
     }
   };
 
   useEffect(() => {
     if (!isAuthenticated) {
-
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;

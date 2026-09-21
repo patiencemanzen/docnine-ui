@@ -165,12 +165,7 @@ export interface CreateTabModalProps {
   isLoading?: boolean;
 }
 
-export type ApiProjectStatus =
-  | "queued"
-  | "running"
-  | "done"
-  | "error"
-  | "archived";
+export type ApiProjectStatus = "queued" | "running" | "done" | "error" | "archived";
 
 export interface ApiProjectEditedSection {
   section: string;
@@ -301,7 +296,6 @@ export interface ProjectState {
   sharedLoading: boolean;
   sharedError: string | null;
 
-  
   fetchProjects: (params?: {
     page?: number;
     limit?: number;
@@ -310,22 +304,16 @@ export interface ProjectState {
     search?: string;
   }) => Promise<void>;
 
-  
   createProject: (repoUrl: string) => Promise<Project & { streamUrl: string }>;
 
-  
   deleteProject: (id: string) => Promise<void>;
 
-  
   archiveProject: (id: string) => Promise<void>;
 
-  
   retryProject: (id: string) => Promise<Project & { streamUrl: string }>;
 
-  
   getProject: (id: string) => Promise<Project>;
 
-  
   getProjectData: (id: string) => Promise<{
     project: ApiProject;
     editedSections: any;
@@ -334,9 +322,7 @@ export interface ProjectState {
     shareRole: "owner" | "editor" | "viewer";
   }>;
 
-  
   updateLocalProject: (id: string, changes: Partial<Project>) => void;
 
-  
   fetchSharedProjects: () => Promise<void>;
 }

@@ -1,5 +1,5 @@
-import { getSiteUrl } from "@/lib/seo"
-import { SeoConfig } from "@/types/SeoTypes"
+import { getSiteUrl } from "@/lib/seo";
+import { SeoConfig } from "@/types/SeoTypes";
 
 export const SYSTEM_PATHS = [
   "/verify",
@@ -15,7 +15,7 @@ export const SYSTEM_PATHS = [
   "/azure/oauth/complete",
   "/forgot-password",
   "/reset-password",
-]
+];
 
 export const MARKETING_KEYWORDS = [
   "ai documentation",
@@ -28,7 +28,7 @@ export const MARKETING_KEYWORDS = [
   "keep docs in sync",
   "docnine",
   "docnine ai",
-]
+];
 
 export const AUTH_KEYWORDS = [
   "docnine login",
@@ -36,9 +36,9 @@ export const AUTH_KEYWORDS = [
   "sign into docnine",
   "create docnine account",
   "developer documentation tool",
-]
+];
 
-const siteUrl = getSiteUrl()
+const siteUrl = getSiteUrl();
 
 export const PUBLIC_PAGES: Record<string, SeoConfig> = {
   "/": {
@@ -65,8 +65,7 @@ export const PUBLIC_PAGES: Record<string, SeoConfig> = {
         "@type": "WebSite",
         name: "Docnine",
         url: siteUrl,
-        description:
-          "Generate and maintain developer documentation from your code with AI.",
+        description: "Generate and maintain developer documentation from your code with AI.",
         publisher: { "@type": "Organization", name: "Docnine", url: siteUrl },
       },
       {
@@ -76,8 +75,7 @@ export const PUBLIC_PAGES: Record<string, SeoConfig> = {
         applicationCategory: "DeveloperApplication",
         operatingSystem: "Web",
         url: siteUrl,
-        description:
-          "Generate and maintain developer documentation from your code with AI.",
+        description: "Generate and maintain developer documentation from your code with AI.",
         offers: {
           "@type": "Offer",
           price: "0",
@@ -89,8 +87,7 @@ export const PUBLIC_PAGES: Record<string, SeoConfig> = {
   },
   "/login": {
     title: "Sign in",
-    description:
-      "Sign in to Docnine to generate and maintain documentation for your codebase.",
+    description: "Sign in to Docnine to generate and maintain documentation for your codebase.",
     pathname: "/login",
     keywords: AUTH_KEYWORDS,
     robots: "index, follow",
@@ -107,19 +104,14 @@ export const PUBLIC_PAGES: Record<string, SeoConfig> = {
     description:
       "Create a free Docnine account, connect a repo, and generate your first docs in minutes.",
     pathname: "/signup",
-    keywords: [
-      ...AUTH_KEYWORDS,
-      "free developer documentation",
-      "docnine free plan",
-    ],
+    keywords: [...AUTH_KEYWORDS, "free developer documentation", "docnine free plan"],
     robots: "index, follow",
     structuredData: {
       "@context": "https://schema.org",
       "@type": "WebPage",
       name: "Sign up for Docnine",
       url: `${siteUrl}/signup`,
-      description:
-        "Create a free Docnine account to generate documentation from your codebase.",
+      description: "Create a free Docnine account to generate documentation from your codebase.",
     },
   },
   "/pricing": {
@@ -147,12 +139,7 @@ export const PUBLIC_PAGES: Record<string, SeoConfig> = {
     description:
       "Guides for setting up Docnine, GitHub, webhooks, AI workflows, portals, exports, and billing.",
     pathname: "/docs",
-    keywords: [
-      ...MARKETING_KEYWORDS,
-      "docnine docs",
-      "docnine setup guide",
-      "how to use docnine",
-    ],
+    keywords: [...MARKETING_KEYWORDS, "docnine docs", "docnine setup guide", "how to use docnine"],
     structuredData: {
       "@context": "https://schema.org",
       "@type": "TechArticle",
@@ -164,8 +151,7 @@ export const PUBLIC_PAGES: Record<string, SeoConfig> = {
   },
   "/contact": {
     title: "Contact us",
-    description:
-      "Questions, feedback, or partnership ideas? Reach the Docnine team.",
+    description: "Questions, feedback, or partnership ideas? Reach the Docnine team.",
     pathname: "/contact",
     keywords: ["contact docnine", "docnine support", "docnine enterprise"],
     structuredData: {
@@ -189,8 +175,7 @@ export const PUBLIC_PAGES: Record<string, SeoConfig> = {
   },
   "/privacy": {
     title: "Privacy policy",
-    description:
-      "How Docnine collects, uses, and protects your information.",
+    description: "How Docnine collects, uses, and protects your information.",
     pathname: "/privacy",
     keywords: ["docnine privacy", "privacy policy", "data protection", "GDPR"],
     structuredData: {
@@ -200,4 +185,4 @@ export const PUBLIC_PAGES: Record<string, SeoConfig> = {
       url: `${siteUrl}/privacy`,
     },
   },
-}
+};

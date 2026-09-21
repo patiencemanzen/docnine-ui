@@ -26,18 +26,14 @@ export const useSubscriptionStore = create<SubscriptionState>((set, get) => ({
     try {
       const data = await billingApi.getPlans();
       set({ plans: data.plans });
-    } catch {
-
-    }
+    } catch {}
   },
 
   refresh: async () => {
     try {
       const data = await billingApi.getSubscription();
       set({ subscription: data.subscription, usage: data.usage });
-    } catch {
-
-    }
+    } catch {}
   },
 
   reset: () => set({ subscription: null, usage: null, plans: [], error: null }),
@@ -69,10 +65,7 @@ export const PLAN_LEVEL: Record<string, number> = {
   team: 3,
 };
 
-export function meetsMinPlan(
-  sub: SubscriptionData | null,
-  minPlan: string,
-): boolean {
+export function meetsMinPlan(sub: SubscriptionData | null, minPlan: string): boolean {
   const current = effectivePlan(sub);
   return (PLAN_LEVEL[current] ?? 0) >= (PLAN_LEVEL[minPlan] ?? 0);
 }

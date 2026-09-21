@@ -1,43 +1,37 @@
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
-type LoaderSize = "xs" | "sm" | "md" | "lg" | "xl"
+type LoaderSize = "xs" | "sm" | "md" | "lg" | "xl";
 
 const SIZE_MAP: Record<LoaderSize, number> = {
-    xs: 14,
-    sm: 18,
-    md: 24,
-    lg: 32,
-    xl: 48,
-}
+  xs: 14,
+  sm: 18,
+  md: 24,
+  lg: 32,
+  xl: 48,
+};
 
 interface LoaderProps {
-    
-    size?: LoaderSize | number
-    
-    color?: string
-    
-    className?: string
-    
-    label?: string
+  size?: LoaderSize | number;
+
+  color?: string;
+
+  className?: string;
+
+  label?: string;
 }
 
-export default function Loader1({
-    size = "lg",
-    color,
-    className,
-    label = "Loading",
-}: LoaderProps) {
-    const px = typeof size === "number" ? size : SIZE_MAP[size]
-    const primaryColor = color || "var(--color-primary)"
-    const dotSize = Math.max(px / 5, 4)
+export default function Loader1({ size = "lg", color, className, label = "Loading" }: LoaderProps) {
+  const px = typeof size === "number" ? size : SIZE_MAP[size];
+  const primaryColor = color || "var(--color-primary)";
+  const dotSize = Math.max(px / 5, 4);
 
-    return (
-        <div
-            role="status"
-            aria-label={label}
-            className={cn("flex items-center justify-center gap-2", className)}
-        >
-            <style>{`
+  return (
+    <div
+      role="status"
+      aria-label={label}
+      className={cn("flex items-center justify-center gap-2", className)}
+    >
+      <style>{`
                 @keyframes apple-bounce {
                     0%, 80%, 100% {
                         transform: scale(0.6);
@@ -66,9 +60,9 @@ export default function Loader1({
                 }
             `}</style>
 
-            <div className="loader-dot" />
-            <div className="loader-dot" />
-            <div className="loader-dot" />
-        </div>
-    )
+      <div className="loader-dot" />
+      <div className="loader-dot" />
+      <div className="loader-dot" />
+    </div>
+  );
 }

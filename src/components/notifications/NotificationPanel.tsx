@@ -80,7 +80,7 @@ export function NotificationPanel({ onClose: _onClose }: NotificationPanelProps)
               "py-2 text-xs font-medium border-b-2 transition-colors",
               filter === tab.key
                 ? "border-primary text-primary"
-                : "border-transparent text-muted-foreground hover:text-foreground"
+                : "border-transparent text-muted-foreground hover:text-foreground",
             )}
           >
             {tab.label}

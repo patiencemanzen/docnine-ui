@@ -1,13 +1,13 @@
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 function Shell({
   title,
   children,
   className,
 }: {
-  title: string
-  children: React.ReactNode
-  className?: string
+  title: string;
+  children: React.ReactNode;
+  className?: string;
 }) {
   return (
     <div
@@ -26,16 +26,10 @@ function Shell({
       </div>
       <div className="min-h-0 flex-1 overflow-hidden p-3">{children}</div>
     </div>
-  )
+  );
 }
 
-function SideNavItem({
-  label,
-  active,
-}: {
-  label: string
-  active?: boolean
-}) {
+function SideNavItem({ label, active }: { label: string; active?: boolean }) {
   return (
     <div
       className={cn(
@@ -47,7 +41,7 @@ function SideNavItem({
     >
       {label}
     </div>
-  )
+  );
 }
 
 export function DocsWorkspacePreview({ className }: { className?: string }) {
@@ -75,7 +69,7 @@ export function DocsWorkspacePreview({ className }: { className?: string }) {
         </div>
       </div>
     </Shell>
-  )
+  );
 }
 
 export function SyncPreview({ className }: { className?: string }) {
@@ -84,9 +78,7 @@ export function SyncPreview({ className }: { className?: string }) {
       <div className="space-y-2">
         <div className="flex items-center justify-between rounded-lg border border-white/8 bg-black/25 px-2.5 py-2">
           <div>
-            <div className="text-[10px] font-medium text-white/80">
-              Push detected
-            </div>
+            <div className="text-[10px] font-medium text-white/80">Push detected</div>
             <div className="mt-0.5 font-mono text-[9px] text-white/40">
               feat: add refunds endpoint
             </div>
@@ -102,9 +94,7 @@ export function SyncPreview({ className }: { className?: string }) {
               className="rounded-md border border-white/8 bg-black/20 px-2 py-2 text-center"
             >
               <div className="text-[9px] text-white/40">Updated</div>
-              <div className="mt-0.5 text-[10px] font-medium text-white/75">
-                {s}
-              </div>
+              <div className="mt-0.5 text-[10px] font-medium text-white/75">{s}</div>
             </div>
           ))}
         </div>
@@ -113,7 +103,7 @@ export function SyncPreview({ className }: { className?: string }) {
         </div>
       </div>
     </Shell>
-  )
+  );
 }
 
 export function PortalPreview({ className }: { className?: string }) {
@@ -134,9 +124,7 @@ export function PortalPreview({ className }: { className?: string }) {
               key={t}
               className={cn(
                 "rounded-full px-2 py-0.5 text-[9px]",
-                i === 1
-                  ? "bg-white text-[#141210]"
-                  : "border border-white/10 text-white/50",
+                i === 1 ? "bg-white text-[#141210]" : "border border-white/10 text-white/50",
               )}
             >
               {t}
@@ -144,9 +132,7 @@ export function PortalPreview({ className }: { className?: string }) {
           ))}
         </div>
         <div className="rounded-lg border border-white/8 bg-black/25 p-2.5">
-          <div className="mb-1.5 text-[10px] font-medium text-white/70">
-            Authentication
-          </div>
+          <div className="mb-1.5 text-[10px] font-medium text-white/70">Authentication</div>
           <div className="space-y-1">
             <div className="h-1.5 w-full rounded bg-white/10" />
             <div className="h-1.5 w-[85%] rounded bg-white/8" />
@@ -157,7 +143,7 @@ export function PortalPreview({ className }: { className?: string }) {
         </div>
       </div>
     </Shell>
-  )
+  );
 }
 
 export function ArchivePreview({ className }: { className?: string }) {
@@ -187,7 +173,7 @@ export function ArchivePreview({ className }: { className?: string }) {
         ))}
       </div>
     </Shell>
-  )
+  );
 }
 
 export function SharePreview({ className }: { className?: string }) {
@@ -214,7 +200,7 @@ export function SharePreview({ className }: { className?: string }) {
         ))}
       </div>
     </Shell>
-  )
+  );
 }
 
 export function NotifyPreview({ className }: { className?: string }) {
@@ -241,5 +227,5 @@ export function NotifyPreview({ className }: { className?: string }) {
         ))}
       </div>
     </Shell>
-  )
+  );
 }

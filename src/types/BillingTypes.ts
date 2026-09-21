@@ -38,12 +38,7 @@ export interface BillingPlan {
 }
 
 export type SubscriptionStatus =
-  | "free"
-  | "trialing"
-  | "active"
-  | "past_due"
-  | "cancelled"
-  | "paused";
+  "free" | "trialing" | "active" | "past_due" | "cancelled" | "paused";
 
 export interface SubscriptionData {
   plan: string;
@@ -93,7 +88,7 @@ export interface PaymentMethodData {
   type: "card" | "mobile_money" | "bank_transfer";
   isDefault: boolean;
   displayLabel: string;
-  
+
   currency: string;
   card?: {
     last4: string;
@@ -111,7 +106,7 @@ export interface PaymentMethodData {
 
 export interface PlanBadgeProps {
   className?: string;
-  
+
   showStatus?: boolean;
 }
 
@@ -123,11 +118,11 @@ export interface PlansModalProps {
 export interface UpgradeModalProps {
   open: boolean;
   onClose: () => void;
-  
+
   featureName: string;
-  
+
   requiredPlan: string;
-  
+
   description?: string;
 }
 

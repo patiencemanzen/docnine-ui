@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from "react"
-import { Link, Outlet, useLocation, useNavigate, useSearchParams } from "react-router-dom"
+import { useState, useRef, useEffect } from "react";
+import { Link, Outlet, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import {
   Github,
   Search,
@@ -14,19 +14,19 @@ import {
   Bell,
   ChevronRight,
   HomeIcon,
-} from "@/components/icons"
-import { Input } from "@/components/ui/input"
-import { useAuthStore } from "@/store/auth"
-import { useSubscriptionStore } from "@/store/subscription"
-import { useProjectStore } from "@/store/projects"
-import { authApi } from "@/lib/api"
-import { cn } from "@/lib/utils"
-import { ThemeToggle } from "@/components/common/theme-toggle"
-import { ApplicationLogo } from "../components/common/application-logo"
-import { PlanBadge } from "@/components/billing/PlanBadge"
-import { ErrorBoundary } from "@/components/common/ErrorBoundary"
-import { useNotificationStore } from "@/store/useNotificationStore"
-import { NotificationPanel } from "@/components/notifications/NotificationPanel"
+} from "@/components/icons";
+import { Input } from "@/components/ui/input";
+import { useAuthStore } from "@/store/auth";
+import { useSubscriptionStore } from "@/store/subscription";
+import { useProjectStore } from "@/store/projects";
+import { authApi } from "@/lib/api";
+import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/common/theme-toggle";
+import { ApplicationLogo } from "../components/common/application-logo";
+import { PlanBadge } from "@/components/billing/PlanBadge";
+import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+import { useNotificationStore } from "@/store/useNotificationStore";
+import { NotificationPanel } from "@/components/notifications/NotificationPanel";
 
 const ROUTE_LABELS: Record<string, string> = {
   projects: "Projects",
@@ -39,81 +39,82 @@ const ROUTE_LABELS: Record<string, string> = {
   admin: "Administration",
   billing: "Billing",
   home: "Home",
-}
+};
 
 function isProjectIdSegment(seg: string) {
-  return /^[a-f\d]{24}$/i.test(seg) || /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(seg)
+  return (
+    /^[a-f\d]{24}$/i.test(seg) ||
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(seg)
+  );
 }
 
 function useBreadcrumbs() {
-  const location = useLocation()
-  const projects = useProjectStore((s) => s.projects)
-  const getProject = useProjectStore((s) => s.getProject)
-  const segments = location.pathname.split("/").filter(Boolean)
+  const location = useLocation();
+  const projects = useProjectStore((s) => s.projects);
+  const getProject = useProjectStore((s) => s.getProject);
+  const segments = location.pathname.split("/").filter(Boolean);
 
   const projectId =
     segments[0] === "projects" && segments[1] && isProjectIdSegment(segments[1])
       ? segments[1]
-      : null
+      : null;
 
-  const cachedName = projectId
-    ? projects.find((p) => p.id === projectId)?.name ?? null
-    : null
-  const [projectName, setProjectName] = useState<string | null>(cachedName)
+  const cachedName = projectId ? (projects.find((p) => p.id === projectId)?.name ?? null) : null;
+  const [projectName, setProjectName] = useState<string | null>(cachedName);
 
   useEffect(() => {
     if (!projectId) {
-      setProjectName(null)
-      return
+      setProjectName(null);
+      return;
     }
 
-    const fromCache = projects.find((p) => p.id === projectId)?.name
+    const fromCache = projects.find((p) => p.id === projectId)?.name;
     if (fromCache) {
-      setProjectName(fromCache)
-      return
+      setProjectName(fromCache);
+      return;
     }
 
-    let cancelled = false
+    let cancelled = false;
     getProject(projectId)
       .then((p) => {
-        if (!cancelled) setProjectName(p.name)
+        if (!cancelled) setProjectName(p.name);
       })
       .catch(() => {
-        if (!cancelled) setProjectName(null)
-      })
+        if (!cancelled) setProjectName(null);
+      });
 
     return () => {
-      cancelled = true
-    }
-  }, [projectId, projects, getProject])
+      cancelled = true;
+    };
+  }, [projectId, projects, getProject]);
 
-  const crumbs: { label: string; href: string; isLast: boolean }[] = []
+  const crumbs: { label: string; href: string; isLast: boolean }[] = [];
 
   for (let i = 0; i < segments.length; i++) {
-    const seg = segments[i]
-    const href = "/" + segments.slice(0, i + 1).join("/")
+    const seg = segments[i];
+    const href = "/" + segments.slice(0, i + 1).join("/");
 
     if (projectId && i === 1 && isProjectIdSegment(seg)) {
       crumbs.push({
         label: projectName || "Project",
         href,
         isLast: false,
-      })
-      continue
+      });
+      continue;
     }
 
     crumbs.push({
       label: ROUTE_LABELS[seg] ?? seg,
       href,
       isLast: false,
-    })
+    });
   }
 
   if (crumbs.length > 0) {
-    crumbs[crumbs.length - 1] = { ...crumbs[crumbs.length - 1], isLast: true }
+    crumbs[crumbs.length - 1] = { ...crumbs[crumbs.length - 1], isLast: true };
   }
 
-  return crumbs
+  return crumbs;
 }
 
 const PRIMARY_NAV = [
@@ -121,12 +122,12 @@ const PRIMARY_NAV = [
   { name: "Projects", href: "/projects", icon: FolderCodeIcon },
   { name: "Doc Sites", href: "/documentations", icon: FilesIcon },
   { name: "Activity", href: "/logs", icon: TerminalIcon },
-]
+];
 
 const ACCOUNT_NAV = [
   { name: "Profile", href: "/profile", icon: User },
   { name: "Settings", href: "/settings", icon: Settings },
-]
+];
 
 function NavItem({
   href,
@@ -135,11 +136,11 @@ function NavItem({
   isActive,
   onClick,
 }: {
-  href: string
-  icon: React.ElementType
-  label: string
-  isActive: boolean
-  onClick?: () => void
+  href: string;
+  icon: React.ElementType;
+  label: string;
+  isActive: boolean;
+  onClick?: () => void;
 }) {
   return (
     <Link
@@ -162,7 +163,7 @@ function NavItem({
       />
       {label}
     </Link>
-  )
+  );
 }
 
 function SidebarContent({
@@ -172,11 +173,11 @@ function SidebarContent({
   onLogout,
   onClose,
 }: {
-  user: { name: string; email: string; role: string } | null
-  initials: string
-  location: ReturnType<typeof useLocation>
-  onLogout: () => void
-  onClose?: () => void
+  user: { name: string; email: string; role: string } | null;
+  initials: string;
+  location: ReturnType<typeof useLocation>;
+  onLogout: () => void;
+  onClose?: () => void;
 }) {
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -243,7 +244,6 @@ function SidebarContent({
             />
           )}
         </div>
-
       </div>
 
       <div className="border-t border-sidebar-border" />
@@ -258,102 +258,100 @@ function SidebarContent({
         </button>
       </div>
     </div>
-  )
+  );
 }
 
 export function DashboardLayout() {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const { user, clearAuth } = useAuthStore()
-  const { load: loadSubscription, reset: resetSubscription } = useSubscriptionStore()
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { user, clearAuth } = useAuthStore();
+  const { load: loadSubscription, reset: resetSubscription } = useSubscriptionStore();
 
   useEffect(() => {
-    loadSubscription()
-  }, [loadSubscription])
+    loadSubscription();
+  }, [loadSubscription]);
 
-  const searchValue = searchParams.get("q") ?? ""
+  const searchValue = searchParams.get("q") ?? "";
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value
+    const val = e.target.value;
     if (!location.pathname.startsWith("/projects")) {
-      navigate(`/projects?q=${encodeURIComponent(val)}`)
-      return
+      navigate(`/projects?q=${encodeURIComponent(val)}`);
+      return;
     }
     setSearchParams(
       (prev) => {
-        if (val) prev.set("q", val)
-        else prev.delete("q")
-        return prev
+        if (val) prev.set("q", val);
+        else prev.delete("q");
+        return prev;
       },
       { replace: true },
-    )
-  }
+    );
+  };
 
-  const [userMenuOpen, setUserMenuOpen] = useState(false)
-  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
-  const [notificationOpen, setNotificationOpen] = useState(false)
-  const userMenuRef = useRef<HTMLDivElement>(null)
-  const notificationRef = useRef<HTMLDivElement>(null)
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [notificationOpen, setNotificationOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+  const notificationRef = useRef<HTMLDivElement>(null);
 
-  const { unreadCount, fetchUnreadCount } = useNotificationStore()
-  const breadcrumbs = useBreadcrumbs()
+  const { unreadCount, fetchUnreadCount } = useNotificationStore();
+  const breadcrumbs = useBreadcrumbs();
 
   useEffect(() => {
-    setMobileSidebarOpen(false)
-  }, [location.pathname])
+    setMobileSidebarOpen(false);
+  }, [location.pathname]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
-        setUserMenuOpen(false)
+        setUserMenuOpen(false);
       }
       if (notificationRef.current && !notificationRef.current.contains(e.target as Node)) {
-        setNotificationOpen(false)
+        setNotificationOpen(false);
       }
-    }
-    document.addEventListener("mousedown", handler)
-    return () => document.removeEventListener("mousedown", handler)
-  }, [])
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   useEffect(() => {
-    fetchUnreadCount()
-    const interval = setInterval(fetchUnreadCount, 30_000)
-    return () => clearInterval(interval)
-  }, [fetchUnreadCount])
+    fetchUnreadCount();
+    const interval = setInterval(fetchUnreadCount, 30_000);
+    return () => clearInterval(interval);
+  }, [fetchUnreadCount]);
 
   const initials = user?.name
     ? user.name
-      .split(" ")
-      .map((w) => w[0])
-      .slice(0, 2)
-      .join("")
-      .toUpperCase()
-    : "?"
+        .split(" ")
+        .map((w) => w[0])
+        .slice(0, 2)
+        .join("")
+        .toUpperCase()
+    : "?";
 
   const handleLogout = async () => {
     try {
-      await authApi.logout()
+      await authApi.logout();
     } catch {
-
     } finally {
-      clearAuth()
-      resetSubscription()
-      navigate("/login", { replace: true })
+      clearAuth();
+      resetSubscription();
+      navigate("/login", { replace: true });
     }
-  }
+  };
 
   const sidebarProps = {
     user: user as { name: string; email: string; role: string } | null,
     initials,
     location,
     onLogout: handleLogout,
-  }
+  };
 
   return (
     <ErrorBoundary>
       <div className="flex h-screen overflow-hidden bg-page">
-
         <aside className="hidden md:flex fixed inset-y-0 left-0 z-40 w-[260px] flex-col bg-page">
           <SidebarContent {...sidebarProps} />
         </aside>
@@ -374,7 +372,6 @@ export function DashboardLayout() {
         </aside>
 
         <div className="flex flex-1 flex-col md:ml-[260px] overflow-hidden bg-workspace rounded-3xl m-2 border border-workspace-border">
-
           <header className="grid h-12 shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-3 border-b border-workspace-border px-4 sm:px-6">
             <div className="flex min-w-0 items-center gap-2">
               <button
@@ -458,8 +455,8 @@ export function DashboardLayout() {
                     </div>
                     <button
                       onClick={() => {
-                        setUserMenuOpen(false)
-                        handleLogout()
+                        setUserMenuOpen(false);
+                        handleLogout();
                       }}
                       className="flex w-full items-center justify-between gap-2 px-4 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors"
                     >
@@ -480,5 +477,5 @@ export function DashboardLayout() {
         </div>
       </div>
     </ErrorBoundary>
-  )
+  );
 }

@@ -182,9 +182,7 @@ function stripComments(code, { jsx, css }) {
       while (k >= 0 && /[ \t\r\n]/.test(result[k])) k--;
       const prev = k >= 0 ? result[k] : "";
       const prev2 = result.slice(Math.max(0, k - 5), k + 1);
-      const regexPrefix = jsx
-        ? /[=({[;,:!?&|^~+\-*%]/
-        : /[=({[;,:!?&|^~+\-*%<>]/;
+      const regexPrefix = jsx ? /[=({[;,:!?&|^~+\-*%]/ : /[=({[;,:!?&|^~+\-*%<>]/;
       if (
         k < 0 ||
         regexPrefix.test(prev) ||

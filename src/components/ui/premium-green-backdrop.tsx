@@ -1,10 +1,10 @@
-import { cn } from "@/lib/utils"
-import { NoiseOverlay } from "@/components/ui/noise-overlay"
+import { cn } from "@/lib/utils";
+import { NoiseOverlay } from "@/components/ui/noise-overlay";
 
 interface PremiumGreenBackdropProps {
-  className?: string
-  grain?: "subtle" | "medium"
-  forceDark?: boolean
+  className?: string;
+  grain?: "subtle" | "medium";
+  forceDark?: boolean;
 }
 
 export function PremiumGreenBackdrop({
@@ -12,7 +12,7 @@ export function PremiumGreenBackdrop({
   grain = "medium",
   forceDark = false,
 }: PremiumGreenBackdropProps) {
-  const grainOpacity = grain === "medium" ? 0.18 : 0.1
+  const grainOpacity = grain === "medium" ? 0.18 : 0.1;
 
   return (
     <div
@@ -34,10 +34,7 @@ export function PremiumGreenBackdrop({
           : undefined
       }
     >
-      <div
-        className="absolute inset-0"
-        style={{ backgroundColor: "var(--hero-surface)" }}
-      />
+      <div className="absolute inset-0" style={{ backgroundColor: "var(--hero-surface)" }} />
 
       <div
         className="absolute inset-0"
@@ -54,5 +51,5 @@ export function PremiumGreenBackdrop({
         className="[background-size:160px_160px]"
       />
     </div>
-  )
+  );
 }

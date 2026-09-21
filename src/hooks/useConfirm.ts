@@ -19,23 +19,20 @@ export function useConfirm() {
     resolvePromise: null as ((value: boolean) => void) | null,
   });
 
-  const confirm = useCallback(
-    (options: UseConfirmOptions): Promise<boolean> => {
-      return new Promise((resolve) => {
-        setConfirmState((prev) => ({
-          ...prev,
-          isOpen: true,
-          title: options.title,
-          message: options.message,
-          confirmText: options.confirmText || "Confirm",
-          cancelText: options.cancelText || "Cancel",
-          isDangerous: options.isDangerous || false,
-          resolvePromise: resolve,
-        }));
-      });
-    },
-    [],
-  );
+  const confirm = useCallback((options: UseConfirmOptions): Promise<boolean> => {
+    return new Promise((resolve) => {
+      setConfirmState((prev) => ({
+        ...prev,
+        isOpen: true,
+        title: options.title,
+        message: options.message,
+        confirmText: options.confirmText || "Confirm",
+        cancelText: options.cancelText || "Cancel",
+        isDangerous: options.isDangerous || false,
+        resolvePromise: resolve,
+      }));
+    });
+  }, []);
 
   const handleConfirm = useCallback(() => {
     if (confirmState.resolvePromise) {

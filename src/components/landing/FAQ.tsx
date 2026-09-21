@@ -1,12 +1,12 @@
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
 
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"
-import { cn } from "@/lib/utils"
+} from "@/components/ui/accordion";
+import { cn } from "@/lib/utils";
 
 const categories = [
   {
@@ -44,30 +44,25 @@ const categories = [
       },
     ],
   },
-]
+];
 
 export function FAQ({
   headerTag = "h2",
   className,
   className2,
 }: {
-  headerTag?: "h1" | "h2"
-  className?: string
-  className2?: string
+  headerTag?: "h1" | "h2";
+  className?: string;
+  className2?: string;
 }) {
-  const Heading = headerTag
+  const Heading = headerTag;
 
   return (
     <section id="faq" className={cn("py-[calc(48px+8vh)]", className)}>
       <div className="mx-auto max-w-5xl px-6 md:px-10">
-        <div
-          className={cn("mx-auto grid gap-10 lg:grid-cols-2 lg:gap-12", className2)}
-        >
+        <div className={cn("mx-auto grid gap-10 lg:grid-cols-2 lg:gap-12", className2)}>
           <div>
-            <Heading
-              data-animate
-              className="text-3xl font-bold tracking-tight sm:text-4xl"
-            >
+            <Heading data-animate className="text-3xl font-bold tracking-tight sm:text-4xl">
               Got Questions?
             </Heading>
             <p
@@ -76,10 +71,7 @@ export function FAQ({
               className="mt-4 max-w-md leading-relaxed text-muted-foreground"
             >
               If you can&apos;t find what you&apos;re looking for,{" "}
-              <Link
-                to="/contact"
-                className="text-sm font-medium underline underline-offset-4"
-              >
+              <Link to="/contact" className="text-sm font-medium underline underline-offset-4">
                 get in touch
               </Link>
               .
@@ -88,20 +80,13 @@ export function FAQ({
 
           <div className="grid gap-6 text-start">
             {categories.map((category, categoryIndex) => (
-              <div
-                key={category.title}
-                data-animate
-                data-delay={String(categoryIndex + 1)}
-              >
+              <div key={category.title} data-animate data-delay={String(categoryIndex + 1)}>
                 <h3 className="border-b py-3 text-sm font-semibold uppercase tracking-widest text-muted-foreground">
                   {category.title}
                 </h3>
                 <Accordion type="single" collapsible className="w-full">
                   {category.questions.map((item, i) => (
-                    <AccordionItem
-                      key={item.question}
-                      value={`${categoryIndex}-${i}`}
-                    >
+                    <AccordionItem key={item.question} value={`${categoryIndex}-${i}`}>
                       <AccordionTrigger className="text-left text-sm font-medium">
                         {item.question}
                       </AccordionTrigger>
@@ -117,5 +102,5 @@ export function FAQ({
         </div>
       </div>
     </section>
-  )
+  );
 }
